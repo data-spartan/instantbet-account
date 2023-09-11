@@ -32,7 +32,7 @@ export class User {
   @Column({ type: 'boolean', default: false })
   public verifiedEmail: boolean;
 
-  @Column('enum', { enum: UserRolesEnum, default: UserRolesEnum.Guest })
+  @Column('enum', { enum: UserRolesEnum, default: UserRolesEnum.Basic })
   public role: UserRolesEnum;
 
   @Column({ type: 'timestamp', nullable: true, default: null })
