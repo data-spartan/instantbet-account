@@ -22,7 +22,7 @@ export class User {
   @Column({ type: 'varchar', unique: true, nullable: true })
   public telephone: string;
 
-  @Exclude()
+  @Exclude({ toPlainOnly: true })
   @Column({ type: 'varchar' })
   public password!: string;
 

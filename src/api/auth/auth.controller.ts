@@ -16,8 +16,10 @@ import { AuthService } from './auth.service';
 import { User } from '../users/entities/user.entity';
 import { AuthedResponse } from './interfaces/auth.interface';
 import { Request } from 'express';
-
+import { Serialize } from 'src/common/interceptors/serialize.interceptor';
+import { UserDto } from '../users/dto';
 @Controller('auth')
+@Serialize(UserDto)
 export class AuthController {
   constructor(private readonly service: AuthService) {}
 
