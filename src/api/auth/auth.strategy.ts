@@ -17,11 +17,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
     });
-    console.log();
   }
   async validate(payload: any): Promise<User> | never {
     //after canActivate returns true validate attaches user to Request object
-    console.log(payload);
     const user = await this.helper.validateUser(payload);
     console.log('IN JWTSTRATEGY VALIDATE');
     if (!user) throw new UnauthorizedException();
