@@ -30,8 +30,8 @@ export class UsersService {
     }
   }
   //TODO ADD EXC FILTER FOR UNIQUE CONT VIOLATED
-  async updateProfile(id: string, attrs: Partial<User>) {
-    const user = await this.findOne(id);
+  async updateMyProfile(reqUser: User, attrs: Partial<User>) {
+    const user = await this.findOne(reqUser.id);
     if (!user) throw new NotFoundException('user not found');
     Object.assign(user, attrs);
     return this.repository.save(user);

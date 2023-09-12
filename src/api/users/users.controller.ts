@@ -60,4 +60,9 @@ export class UsersController {
   ) {
     return this.usersService.updateProfile(user.id, body);
   }
+
+  // @Patch('/:id')
+  // async updateMyProfile(@Param('id') id: string, @Body() body: UserUpdateDto) {
+  //   return this.usersService.updateMyProfile(id, body);
+  // }
 }

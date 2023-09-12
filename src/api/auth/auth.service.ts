@@ -134,6 +134,7 @@ export class AuthService implements OnModuleInit {
     await this.repository.update(user.id, { lastLoginAt: new Date() });
     const token = this.helper.generateToken(user);
 
+    // return this.entityToDto(user, token);
     return {
       token,
       firstName: user.firstName,
