@@ -58,7 +58,7 @@ export class UsersController {
     @Req() { user }: CustomRequest,
     @Body() body: UserUpdateDto,
   ) {
-    return this.usersService.updateProfile(user.id, body);
+    return this.usersService.updateMyProfile(user.id, body);
   }
 
   // @Patch('/:id')

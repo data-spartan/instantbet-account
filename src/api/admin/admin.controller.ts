@@ -61,7 +61,7 @@ export class AdminController {
     @Req() { user }: CustomRequest,
     @Body() body: UpdateAdminProfileDto,
   ) {
-    return this.usersService.updateProfile(user.id, body);
+    return this.usersService.updateMyProfile(user.id, body);
   }
 
   @Get('/me')
