@@ -26,7 +26,7 @@ import { User } from '../users/entities/user.entity';
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthHelper, JwtStrategy],
-  exports: [AuthHelper, PassportModule],
+  exports: [AuthService, AuthHelper, PassportModule],
   //export the PassportModule from AuthModule(its registered there).
   // The reason: in every module where you want to make use of AuthGuard(),
   // you will have have to import the AuthModule and register every time PassportModule.
