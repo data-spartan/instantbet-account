@@ -17,7 +17,7 @@ import { AuthedResponse } from './interfaces/auth.interface';
 import { LoginDto } from './dto/login.dto';
 import { plainToInstance } from 'class-transformer';
 import { UserDto } from '../users/dto';
-import { AuthRespDto } from './dto/authResp.dto';
+import { AuthRespDto } from './dto/auth-resp.dto';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -99,23 +99,23 @@ export class AuthService implements OnModuleInit {
 
     const token = this.helper.generateToken(user);
 
-    return await this.entityToDto(user, token);
-    // return {
-    //   token,
-    //   firstName: registerUser.firstName,
-    //   lastName: registerUser.lastName,
-    //   lastLoginAt: registerUser.lastLoginAt,
-    //   email: registerUser.email,
-    //   role: registerUser.role,
-    // };
+    // return await this.entityToDto(user, token);
+    return {
+      token,
+      firstName: registerUser.firstName,
+      lastName: registerUser.lastName,
+      lastLoginAt: registerUser.lastLoginAt,
+      email: registerUser.email,
+      role: registerUser.role,
+    };
   }
 
-  private entityToDto(entity: any, token: string): AuthRespDto {
-    entity.token = token;
-    return plainToInstance(AuthRespDto, entity, {
-      excludeExtraneousValues: true,
-    });
-  }
+  // private entityToDto(entity: any, token: string): AuthRespDto {
+  //   entity.token = token;
+  //   return plainToInstance(AuthRespDto, entity, {
+  //     excludeExtraneousValues: true,
+  //   });
+  // }
   public async login({
     email,
     password,
@@ -134,20 +134,19 @@ export class AuthService implements OnModuleInit {
     await this.repository.update(user.id, { lastLoginAt: new Date() });
     const token = this.helper.generateToken(user);
 
-    return this.entityToDto(user, token);
-    // return {
-    //   token,
-    //   firstName: user.firstName,
-    //   lastName: user.lastName,
-    //   lastLoginAt: user.lastLoginAt,
-    //   email: user.email,
-    //   role: user.role,
-    // };
+    // return this.entityToDto(user, token);
+    return {
+      token,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      lastLoginAt: user.lastLoginAt,
+      email: user.email,
+      role: user.role,
+    };
   }
 
   public async me(user: User): Promise<User> {
     const fetchedUser = await this.repository.findOneBy({ id: user.id });
-    // delete fetchedUser.password;
     return fetchedUser;
   }
 }

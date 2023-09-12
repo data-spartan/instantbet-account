@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -23,6 +23,13 @@ export class UsersService {
     } catch (e) {
       throw new Error(`Couldn't retrieve a user with that E-mail.`);
     }
+  }
+  //TODO ADD EXC FILTER FOR UNIQUE CONT VIOLATED
+  async updateMyProfile(reqUser: User, attrs: Partial<User>) {
+    const user = await this.findOne(reqUser.id);
+    if (!user) throw new NotFoundException('user not found');
+    Object.assign(user, attrs);
+    return this.repository.save(user);
   }
 
   public async remove(id: string): Promise<void> {
