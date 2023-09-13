@@ -16,10 +16,6 @@ export class UserUpdateDto {
   @IsOptional()
   public telephone: string;
 
-  //   @IsString()
-  //   @IsOptional()
-  //   public password!: string;
-
   @IsString()
   @IsOptional()
   public email!: string;

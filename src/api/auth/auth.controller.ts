@@ -18,6 +18,7 @@ import { AuthedResponse } from './interfaces/auth.interface';
 import { CustomRequest } from 'src/common/types';
 import { Serialize } from 'src/common/interceptors/serialize.interceptor';
 import { AuthRespDto } from './dto/auth-resp.dto';
+import { ChangePasswordDto } from '../users/dto';
 
 @Controller('auth')
 @Serialize(AuthRespDto)
@@ -33,6 +34,21 @@ export class AuthController {
   @Post('/login')
   private login(@Body() body: LoginDto): Promise<AuthedResponse | never> {
     return this.authService.login(body);
+  }
+
+  @Get('/me')
+  @UseGuards(JwtAuthGuard)
+  private async me(@Req() { user }: CustomRequest): Promise<User | never> {
+    return await this.authService.me(user.id);
+  }
+
+  @Patch('/change-password')
+  @UseGuards(JwtAuthGuard)
+  private changePassword(
+    @Req() { user }: CustomRequest,
+    @Body() body: ChangePasswordDto,
+  ) {
+    return this.authService.changePassword(body, user.id);
   }
 
   // @Get('/me')
