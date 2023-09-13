@@ -23,7 +23,7 @@ import { CustomRequest } from 'src/common/types';
 
 // @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRolesEnum.Basic)
+@Roles(UserRolesEnum.Basic, UserRolesEnum.Test)
 @Serialize(UserDto)
 @Controller('users')
 export class UsersController {
@@ -48,21 +48,16 @@ export class UsersController {
   //   return this.usersService.updateMyProfile(id, body);
   // }
 
-  @Get('/me')
-  private me(@Req() { user }: CustomRequest): Promise<User | never> {
-    return this.authService.me(user);
-  }
+  // @Get('/me')
+  // private async me(@Req() { user }: CustomRequest): Promise<User | never> {
+  //   return await this.authService.me(user);
+  // }
 
-  @Patch('/update-profile')
+  @Patch('/me/update-profile')
   async updateMyProfile(
     @Req() { user }: CustomRequest,
     @Body() body: UserUpdateDto,
   ) {
     return this.usersService.updateMyProfile(user.id, body);
   }
-
-  // @Patch('/:id')
-  // async updateMyProfile(@Param('id') id: string, @Body() body: UserUpdateDto) {
-  //   return this.usersService.updateMyProfile(id, body);
-  // }
 }

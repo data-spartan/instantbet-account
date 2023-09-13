@@ -16,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthedResponse } from './interfaces/auth.interface';
 import { LoginDto } from './dto/login.dto';
 import { plainToInstance } from 'class-transformer';
-import { UserDto } from '../users/dto';
+import { ChangePasswordDto, UserDto } from '../users/dto';
 import { AuthRespDto } from './dto/auth-resp.dto';
 
 @Injectable()
@@ -122,14 +122,20 @@ export class AuthService implements OnModuleInit {
   }: LoginDto): Promise<AuthedResponse> | never {
     const user: User = await this.repository.findOne({ where: { email } });
     if (!user) {
-      throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Invalid email or password',
+        HttpStatus.NOT_FOUND,
+      );
     }
     const isPasswordValid: boolean = await this.helper.isPasswordValid(
       password,
       user.password,
     );
     if (!isPasswordValid) {
-      throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+      throw new HttpException(
+        'Invalid email or password',
+        HttpStatus.NOT_FOUND,
+      );
     }
     await this.repository.update(user.id, { lastLoginAt: new Date() });
     const token = this.helper.generateToken(user);
@@ -145,8 +151,36 @@ export class AuthService implements OnModuleInit {
     };
   }
 
-  public async me(user: User): Promise<User> {
-    const fetchedUser = await this.repository.findOneBy({ id: user.id });
+  public async me(id: string): Promise<User> {
+    const fetchedUser = await this.repository.findOneBy({ id: id });
     return fetchedUser;
+  }
+
+  public async changePassword(
+    { currentPassword, newPassword }: ChangePasswordDto,
+    id: string,
+  ) {
+    const userExists: User = await this.repository.findOne({
+      where: { id: id },
+    });
+
+    if (!userExists) {
+      throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+    }
+
+    const isPasswordValid: boolean = await this.helper.isPasswordValid(
+      currentPassword,
+      userExists.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new HttpException('Invalid password', HttpStatus.NOT_FOUND);
+    }
+
+    const hashedPassword = await this.helper.encodePassword(newPassword);
+
+    this.repository.update(userExists.id, { password: hashedPassword });
+
+    return true;
   }
 }

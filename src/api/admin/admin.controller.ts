@@ -19,11 +19,10 @@ import { Roles } from 'src/common/decorators';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { Serialize } from 'src/common/interceptors/serialize.interceptor';
 import { UserDto } from '../users/dto/user.dto';
-import { UpdateAdminProfileDto } from './dto';
 import { CreateTestUserDto } from './dto/create-test-user.dto';
 import { CustomRequest } from 'src/common/types';
 import { AuthService } from '../auth/auth.service';
-import { AuthHelper } from '../auth/auth.helper';
+import { UserUpdateDto } from '../users/dto';
 
 // @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -31,10 +30,7 @@ import { AuthHelper } from '../auth/auth.helper';
 @Serialize(UserDto)
 @Controller('admin')
 export class AdminController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Get('/users')
   public async findAll(): Promise<User[]> {
@@ -56,16 +52,16 @@ export class AdminController {
     await this.usersService.remove(id);
   }
 
-  @Patch('/update-profile')
+  // @Get('/me')
+  // private async me(@Req() { user }: CustomRequest): Promise<User | never> {
+  //   return this.authService.me(user);
+  // }
+
+  @Patch('/me/update-profile')
   async updateAdminProfile(
     @Req() { user }: CustomRequest,
-    @Body() body: UpdateAdminProfileDto,
+    @Body() body: UserUpdateDto,
   ) {
     return this.usersService.updateMyProfile(user.id, body);
-  }
-
-  @Get('/me')
-  private me(@Req() { user }: CustomRequest): Promise<User | never> {
-    return this.authService.me(user);
   }
 }

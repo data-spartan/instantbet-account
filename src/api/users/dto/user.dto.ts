@@ -20,7 +20,7 @@ export class UserDto {
   @Expose()
   public telephone: string;
 
-  @Exclude()
+  @Exclude({ toPlainOnly: true })
   public password!: string;
 
   @Expose()
