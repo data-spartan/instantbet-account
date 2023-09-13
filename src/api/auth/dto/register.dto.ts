@@ -6,6 +6,7 @@ import {
   MinLength,
   IsOptional,
 } from 'class-validator';
+import { IsPasswordFormatValid } from 'src/common/validators/password-format.validator';
 
 export class RegisterDto {
   @Trim()
@@ -13,7 +14,7 @@ export class RegisterDto {
   public readonly email: string;
 
   @IsString()
-  @MinLength(8)
+  @IsPasswordFormatValid()
   public readonly password: string;
 
   @IsString()

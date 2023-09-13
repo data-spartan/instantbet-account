@@ -39,7 +39,7 @@ export class AuthController {
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   private async me(@Req() { user }: CustomRequest): Promise<User | never> {
-    return await this.authService.me(user.id);
+    return this.authService.me(user.id);
   }
 
   @Patch('/change-password')
