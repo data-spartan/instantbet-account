@@ -2,6 +2,7 @@
 import { Expose, Exclude } from 'class-transformer';
 import { UserRolesEnum } from '../roles/roles.enum';
 import { IsOptional } from 'class-validator';
+import { ECDH } from 'crypto';
 
 export class UserDto {
   @Expose()

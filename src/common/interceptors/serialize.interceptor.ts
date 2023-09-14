@@ -29,7 +29,7 @@ export class SerializeInterceptor implements NestInterceptor {
       //handler object represents the controller's method that is being intercepted.
       map((data: any) => {
         console.log('in interceptor when returning resp');
-        // run something before resp is sent
+        // do something with resp before is sent
         return plainToInstance(this.dto, data, {
           excludeExtraneousValues: true,
           //   enableImplicitConversion: true,

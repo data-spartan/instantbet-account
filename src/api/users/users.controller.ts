@@ -8,6 +8,7 @@ import {
   ClassSerializerInterceptor,
   Body,
   Req,
+  UseFilters,
 } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -20,12 +21,13 @@ import { UserDto } from './dto/user.dto';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
 import { CustomRequest } from 'src/common/types';
+import { HttpExceptionFilter } from 'src/common/exception-filters';
 
-// @UseInterceptors(ClassSerializerInterceptor)
+@Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Basic, UserRolesEnum.Test)
 @Serialize(UserDto)
-@Controller('users')
+@UseFilters(HttpExceptionFilter)
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
@@ -41,11 +43,6 @@ export class UsersController {
   // @Get('/:id')
   // public async findOne(@Param('id') id: string) {
   //   return this.usersService.findOne(id);
-  // }
-
-  // @Patch('/:id')
-  // async updateMyProfile(@Param('id') id: string, @Body() body: UserUpdateDto) {
-  //   return this.usersService.updateMyProfile(id, body);
   // }
 
   // @Get('/me')

@@ -17,7 +17,7 @@ import { AuthedResponse } from './interfaces/auth.interface';
 import { LoginDto } from './dto/login.dto';
 import { plainToInstance } from 'class-transformer';
 import { ChangePasswordDto, UserDto } from '../users/dto';
-import { AuthRespDto } from './dto/auth-resp.dto';
+import { AuthRespDto } from './dto/authResp.dto';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -82,7 +82,7 @@ export class AuthService implements OnModuleInit {
     let user: User = await this.repository.findOne({ where: { email } });
 
     if (user) {
-      throw new HttpException('Conflict', HttpStatus.CONFLICT);
+      throw new HttpException('User already registered', HttpStatus.CONFLICT);
     }
 
     user = new User();

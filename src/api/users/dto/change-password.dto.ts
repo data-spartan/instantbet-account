@@ -1,19 +1,17 @@
 import { IsDefined, IsString, MinLength } from 'class-validator';
-import { IsPasswordFormatValid } from 'src/common/validators/password-format.validator';
+import { IsPasswordFormatValid } from 'src/common/validators';
 
 export class ChangePasswordDto {
-  @IsString()
   @IsDefined()
+  @IsString()
   public readonly currentPassword: string;
 
-  @IsString()
   @IsDefined()
-  @MinLength(8)
+  @IsString()
   public readonly newPassword: string;
 
-  @IsString()
   @IsDefined()
-  // @Match(ChangePasswordDto, (cppd) => cppd.newPassword)
+  @IsString()
   @IsPasswordFormatValid()
   public readonly repeatNewPassword: string;
 }

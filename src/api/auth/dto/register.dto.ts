@@ -5,8 +5,9 @@ import {
   IsString,
   MinLength,
   IsOptional,
+  IsDefined,
 } from 'class-validator';
-import { IsPasswordFormatValid } from 'src/common/validators/password-format.validator';
+import { IsPasswordFormatValid } from 'src/common/validators';
 
 export class RegisterDto {
   @Trim()
@@ -17,9 +18,11 @@ export class RegisterDto {
   @IsPasswordFormatValid()
   public readonly password: string;
 
+  @IsDefined()
   @IsString()
   public readonly firstName: string;
 
+  @IsDefined()
   @IsString()
   public readonly lastName: string;
 
