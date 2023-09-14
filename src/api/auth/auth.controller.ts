@@ -9,6 +9,7 @@ import {
   Req,
   Get,
   Patch,
+  UseFilters,
 } from '@nestjs/common';
 import { RegisterDto, LoginDto } from './dto';
 import { JwtAuthGuard } from './guards/auth.guard';
@@ -17,11 +18,13 @@ import { User } from '../users/entities/user.entity';
 import { AuthedResponse } from './interfaces/auth.interface';
 import { CustomRequest } from 'src/common/types';
 import { Serialize } from 'src/common/interceptors/serialize.interceptor';
-import { AuthRespDto } from './dto/auth-resp.dto';
+import { AuthRespDto } from './dto/authResp.dto';
 import { ChangePasswordDto } from '../users/dto';
+import { HttpExceptionFilter } from 'src/common/exception-filters/';
 
 @Controller('auth')
 @Serialize(AuthRespDto)
+@UseFilters(HttpExceptionFilter)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

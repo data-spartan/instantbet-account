@@ -10,6 +10,7 @@ import {
   Req,
   Post,
   Delete,
+  UseFilters,
 } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -19,16 +20,18 @@ import { Roles } from 'src/common/decorators';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { Serialize } from 'src/common/interceptors/serialize.interceptor';
 import { UserDto } from '../users/dto/user.dto';
-import { CreateTestUserDto } from './dto/create-test-user.dto';
+import { CreateTestUserDto } from './dto/createTestUser.dto';
 import { CustomRequest } from 'src/common/types';
 import { AuthService } from '../auth/auth.service';
 import { UserUpdateDto } from '../users/dto';
+import { HttpExceptionFilter } from 'src/common/exception-filters';
 
 // @UseInterceptors(ClassSerializerInterceptor)
+@Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Administrator)
 @Serialize(UserDto)
-@Controller('admin')
+@UseFilters(HttpExceptionFilter)
 export class AdminController {
   constructor(private readonly usersService: UsersService) {}
 

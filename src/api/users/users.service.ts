@@ -1,4 +1,9 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -17,7 +22,9 @@ export class UsersService {
   }
 
   public async findOne(id: string): Promise<User> {
-    return this.repository.findOneBy({ id });
+    const user = await this.repository.findOneBy({ id });
+    if (!user) throw new HttpException('user not found', 404);
+    return user;
   }
 
   public async getByEmail(email: string): Promise<User> {
@@ -26,7 +33,7 @@ export class UsersService {
         where: { email: email },
       });
     } catch (e) {
-      throw new Error(`Couldn't retrieve a user with that E-mail.`);
+      throw new NotFoundException(`Couldn't retrieve a user with that E-mail.`);
     }
   }
   //TODO ADD EXC FILTER FOR UNIQUE CONT VIOLATED
