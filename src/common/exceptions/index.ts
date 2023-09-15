@@ -1,1 +1,1 @@
-export * from './customExceptionsMessages';
+export * from './customExceptions.message';

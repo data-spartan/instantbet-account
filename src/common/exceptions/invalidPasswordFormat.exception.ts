@@ -1,7 +1,7 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BadRequestException, HttpStatus } from '@nestjs/common';
 
-export class InvalidPasswordFormatException extends HttpException {
+export class InvalidPasswordFormatException extends BadRequestException {
   constructor(message: string, status = HttpStatus.BAD_REQUEST) {
-    super(message, status);
+    super(message, `${status}`);
   }
 }

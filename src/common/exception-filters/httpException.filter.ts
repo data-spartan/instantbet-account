@@ -5,6 +5,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { GlobalResponseError } from '../exceptions/errorResponse.formatter';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -15,11 +16,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const message = exception.message;
 
-    response.status(status).json({
-      statusCode: status,
-      timestamp: new Date().toISOString(),
-      path: request.url,
-      message: message,
-    });
+    response
+      .status(status)
+      .json(GlobalResponseError(status, message, request.path, request.method));
   }
 }
