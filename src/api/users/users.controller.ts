@@ -20,14 +20,17 @@ import { Serialize } from 'src/common/interceptors/serialize.interceptor';
 import { UserDto } from './dto/user.dto';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { CustomRequest } from 'src/common/types';
-import { HttpExceptionFilter } from 'src/common/exception-filters';
+import { CustomRequest } from 'src/common/interfaces';
+import {
+  HttpExceptionFilter,
+  TypeORMExceptionFilter,
+} from 'src/common/exception-filters';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Basic, UserRolesEnum.Test)
 @Serialize(UserDto)
-@UseFilters(HttpExceptionFilter)
+@UseFilters(HttpExceptionFilter, TypeORMExceptionFilter)
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,

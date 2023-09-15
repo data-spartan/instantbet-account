@@ -5,10 +5,13 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Unique,
 } from 'typeorm';
 import { UserRolesEnum } from '../roles/roles.enum';
 
 @Entity()
+@Unique('UQ_telephone_', ['telephone'])
+@Unique('UQ_email', ['email'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
@@ -19,14 +22,14 @@ export class User {
   @Column({ type: 'varchar' })
   public lastName: string;
 
-  @Column({ type: 'varchar', unique: true, nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   public telephone: string;
 
   @Exclude({ toPlainOnly: true })
   @Column({ type: 'varchar' })
   public password!: string;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'varchar' })
   public email!: string;
 
   @Column({ type: 'boolean', default: false })

@@ -5,7 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApiModule } from './api/api.module';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
-// import config from './config/configuration';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './common/exception-filters/allException.filter';
 
 @Module({
   imports: [
@@ -17,6 +18,12 @@ import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
     ApiModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: AllExceptionsFilter,
+    // },
+  ],
 })
 export class AppModule {}

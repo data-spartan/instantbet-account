@@ -21,7 +21,7 @@ import { JwtAuthGuard } from '../auth/guards/auth.guard';
 import { Serialize } from 'src/common/interceptors/serialize.interceptor';
 import { UserDto } from '../users/dto/user.dto';
 import { CreateTestUserDto } from './dto/createTestUser.dto';
-import { CustomRequest } from 'src/common/types';
+import { CustomRequest } from 'src/common/interfaces';
 import { AuthService } from '../auth/auth.service';
 import { UserUpdateDto } from '../users/dto';
 import { HttpExceptionFilter } from 'src/common/exception-filters';

@@ -16,7 +16,7 @@ import { JwtAuthGuard } from './guards/auth.guard';
 import { AuthService } from './auth.service';
 import { User } from '../users/entities/user.entity';
 import { AuthedResponse } from './interfaces/auth.interface';
-import { CustomRequest } from 'src/common/types';
+import { CustomRequest } from 'src/common/interfaces';
 import { Serialize } from 'src/common/interceptors/serialize.interceptor';
 import { AuthRespDto } from './dto/authResp.dto';
 import { ChangePasswordDto } from '../users/dto';
