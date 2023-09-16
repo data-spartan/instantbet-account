@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './auth.strategy';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
+import { LoggerService } from 'src/common/logger/logger.service';
 
 @Module({
   imports: [
@@ -25,7 +26,18 @@ import { User } from '../users/entities/user.entity';
     TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthHelper, JwtStrategy],
+  providers: [
+    AuthService,
+    AuthHelper,
+    JwtStrategy,
+
+    {
+      provide: LoggerService,
+      useFactory: () => {
+        return new LoggerService('auth');
+      },
+    },
+  ],
   exports: [AuthService, AuthHelper, PassportModule],
   //export the PassportModule from AuthModule(its registered there).
   // The reason: in every module where you want to make use of AuthGuard(),

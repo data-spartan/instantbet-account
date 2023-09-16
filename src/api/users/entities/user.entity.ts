@@ -9,6 +9,8 @@ import {
 } from 'typeorm';
 import { UserRolesEnum } from '../roles/roles.enum';
 
+//changed default UQ name to be able to catch UQ constraint error properly
+//in typeormException.filter and propagate adequate resp to the client
 @Entity()
 @Unique('UQ_telephone_', ['telephone'])
 @Unique('UQ_email', ['email'])

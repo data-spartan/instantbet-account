@@ -20,7 +20,7 @@ export class AuthHelper {
     this.jwt = jwt;
   }
   public async validateUser(decoded: any): Promise<User> {
-    return this.repository.findOneOrFail({ where: { id: decoded.sub } });
+    return this.repository.findOne({ where: { id: decoded.sub } });
   }
 
   public generateToken(user: User): string {

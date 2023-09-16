@@ -7,9 +7,14 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { GlobalResponseError } from '../exceptions/errorResponse.formatter';
+import { LoggerService } from '../logger/logger.service';
+
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+  constructor(
+    private readonly httpAdapterHost: HttpAdapterHost,
+    private readonly logger: LoggerService,
+  ) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     // In certain situations `httpAdapter` might not be available in the
@@ -18,19 +23,22 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
 
     let message = 'Internal Server Error';
-    let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+    const path = httpAdapter.getRequestUrl(ctx.getRequest());
+    const method = httpAdapter.getRequestMethod(ctx.getRequest());
 
     if (exception instanceof HttpException) {
       message = exception.message;
-      httpStatus = exception.getStatus();
+      status = exception.getStatus();
     }
-
-    const responseBody = GlobalResponseError(
-      httpStatus,
+    this.logger.error({
+      status,
       message,
-      httpAdapter.getRequestUrl(ctx.getRequest()),
-      httpAdapter.getRequestMethod(ctx.getRequest()),
-    );
+      path,
+      method,
+    });
+    const responseBody = GlobalResponseError(status, message, path, method);
     // const responseBody = {
     //   statusCode: httpStatus,
     //   message,
@@ -39,6 +47,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     //   method: httpAdapter.getRequestMethod(ctx.getRequest()),
     // };
 
-    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+    httpAdapter.reply(ctx.getResponse(), responseBody, status);
   }
 }

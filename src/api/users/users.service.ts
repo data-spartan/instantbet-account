@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateTestUserDto } from '../admin/dto';
 import { AuthHelper } from '../auth/auth.helper';
+import { LoggerService } from 'src/common/logger/logger.service';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +24,8 @@ export class UsersService {
 
   public async findOne(id: string): Promise<User> {
     const user = await this.repository.findOneBy({ id });
-    if (!user) throw new HttpException('user not found', 404);
+    if (!user) throw new HttpException(`user with id: ${id} not found`, 404);
+
     return user;
   }
 
@@ -33,13 +35,14 @@ export class UsersService {
         where: { email: email },
       });
     } catch (e) {
-      throw new NotFoundException(`Couldn't retrieve a user with that E-mail.`);
+      throw new NotFoundException(`user with email: ${email} not found`);
     }
   }
   //TODO ADD EXC FILTER FOR UNIQUE CONT VIOLATED
   async updateMyProfile(id: string, attrs: Partial<User>) {
     const user = await this.findOne(id);
-    if (!user) throw new NotFoundException('user not found');
+    if (!user) throw new HttpException(`user with id: ${id} not found`, 404);
+
     Object.assign(user, attrs);
     return this.repository.save(user);
   }
