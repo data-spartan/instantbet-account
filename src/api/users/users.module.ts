@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
 import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { LoggerService } from 'src/common/logger/logger.service';
+import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), AuthModule],
@@ -20,4 +21,8 @@ import { LoggerService } from 'src/common/logger/logger.service';
   ],
   exports: [UsersService],
 })
-export class UsersModule {}
+export class UsersModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes(UsersController);
+  }
+}

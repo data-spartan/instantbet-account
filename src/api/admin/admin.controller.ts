@@ -25,17 +25,14 @@ import { CreateTestUserDto } from './dto/createTestUser.dto';
 import { CustomRequest } from 'src/common/interfaces';
 import { AuthService } from '../auth/auth.service';
 import { UserUpdateDto } from '../users/dto';
-import {
-  AllExceptionsFilter,
-  HttpExceptionFilter,
-} from 'src/common/exception-filters';
-import { LoggerService } from 'src/common/logger/logger.service';
+import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Administrator)
 @Serialize(UserDto)
-@UseFilters(HttpExceptionFilter, AllExceptionsFilter)
+// @UseInterceptors(LoggingInterceptor)
+// @UseFilters(HttpExceptionFilter, AllExceptionsFilter)
 export class AdminController {
   constructor(private readonly usersService: UsersService) {
     // this.logger.setContext('NUTRA');
