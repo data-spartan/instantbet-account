@@ -21,6 +21,7 @@ import { Serialize } from 'src/common/interceptors/serialize.interceptor';
 import { AuthRespDto } from './dto/authResp.dto';
 import { ChangePasswordDto } from '../users/dto';
 import { HttpExceptionFilter } from 'src/common/exception-filters/';
+import { LoggerService } from 'src/common/logger/logger.service';
 
 @Controller('auth')
 @Serialize(AuthRespDto)
@@ -36,6 +37,7 @@ export class AuthController {
 
   @Post('/login')
   private login(@Body() body: LoginDto): Promise<AuthedResponse | never> {
+    // this.logger.log('STEFAN KRALJ');
     return this.authService.login(body);
   }
 

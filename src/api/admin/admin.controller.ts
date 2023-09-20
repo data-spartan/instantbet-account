@@ -11,6 +11,7 @@ import {
   Post,
   Delete,
   UseFilters,
+  Inject,
 } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -24,16 +25,21 @@ import { CreateTestUserDto } from './dto/createTestUser.dto';
 import { CustomRequest } from 'src/common/interfaces';
 import { AuthService } from '../auth/auth.service';
 import { UserUpdateDto } from '../users/dto';
-import { HttpExceptionFilter } from 'src/common/exception-filters';
+import {
+  AllExceptionsFilter,
+  HttpExceptionFilter,
+} from 'src/common/exception-filters';
+import { LoggerService } from 'src/common/logger/logger.service';
 
-// @UseInterceptors(ClassSerializerInterceptor)
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Administrator)
 @Serialize(UserDto)
-@UseFilters(HttpExceptionFilter)
+@UseFilters(HttpExceptionFilter, AllExceptionsFilter)
 export class AdminController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {
+    // this.logger.setContext('NUTRA');
+  }
 
   @Get('/users')
   public async findAll(): Promise<User[]> {
@@ -47,7 +53,7 @@ export class AdminController {
 
   @Post('/users')
   public async createTestUser(@Body() body: CreateTestUserDto) {
-    return await this.usersService.createTestUser(body);
+    return this.usersService.createTestUser(body);
   }
 
   @Delete('/users/:id')

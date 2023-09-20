@@ -13,17 +13,17 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
     //dont need to implement this if dont want to manipulate with user object
     //ofc it has impact only on writing operations, bcs in read oeprations
     // user object gets overwriten
-    console.log('IN HANDLE REQUEST');
+    // console.log('IN HANDLE REQUEST');
     return user;
   }
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
-    console.log('IN AUTH GUARD');
+    // console.log('IN AUTH GUARD');
     //bcs you extended JwtAuthGuard you need to call canActivate of base AuthGuard
     // which then calls validate of auth.strategy to create request.user property
     // then you can extract user from req
     await super.canActivate(context);
-    console.log('AFTER BASE CANACTIVATE');
+    // console.log('AFTER BASE CANACTIVATE');
     const { user }: Request = context.switchToHttp().getRequest();
     return user ? true : false;
   }
