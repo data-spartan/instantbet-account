@@ -6,47 +6,39 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { GlobalResponseError } from '../exceptions/errorResponse.formatter';
+import { GlobalResponseError } from './errorResponse.formatter';
 import { LoggerService } from '../logger/logger.service';
-
+import { checkErrorType } from './helpers';
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   constructor(
-    private readonly httpAdapterHost: HttpAdapterHost,
-    private readonly logger: LoggerService,
+    private readonly httpAdapterHost: HttpAdapterHost, // private readonly logger: LoggerService,
   ) {}
 
-  catch(exception: unknown, host: ArgumentsHost): void {
+  catch(exception: Error, host: ArgumentsHost): void {
     // In certain situations `httpAdapter` might not be available in the
     // constructor method, thus we should resolve it here.
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
 
-    let message = 'Internal Server Error';
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    // let message = 'Internal Server Error';
+    // let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    // let stack = '';
 
     const path = httpAdapter.getRequestUrl(ctx.getRequest());
     const method = httpAdapter.getRequestMethod(ctx.getRequest());
 
-    if (exception instanceof HttpException) {
-      message = exception.message;
-      status = exception.getStatus();
-    }
-    this.logger.error({
+    const { status, message, stack } = checkErrorType(exception);
+    const errRespBody = GlobalResponseError(
       status,
       message,
       path,
       method,
-    });
-    const responseBody = GlobalResponseError(status, message, path, method);
-    // const responseBody = {
-    //   statusCode: httpStatus,
-    //   message,
-    //   timestamp: new Date().toISOString(),
-    //   path: httpAdapter.getRequestUrl(ctx.getRequest()),
-    //   method: httpAdapter.getRequestMethod(ctx.getRequest()),
-    // };
+      stack,
+    );
 
-    httpAdapter.reply(ctx.getResponse(), responseBody, status);
+    const response = ctx.getResponse();
+    response.locals.errResp = errRespBody;
+    httpAdapter.reply(response, errRespBody, status);
   }
 }

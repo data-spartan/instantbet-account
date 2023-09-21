@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +9,7 @@ import { JwtStrategy } from './auth.strategy';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
 import { LoggerService } from 'src/common/logger/logger.service';
+import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
 
 @Module({
   imports: [
@@ -44,4 +45,8 @@ import { LoggerService } from 'src/common/logger/logger.service';
   // you will have have to import the AuthModule and register every time PassportModule.
   // but now only import AuthModule and you will have access to authguard
 })
-export class AuthModule {}
+export class AuthModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes(AuthController);
+  }
+}

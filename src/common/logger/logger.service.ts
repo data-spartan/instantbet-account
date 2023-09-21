@@ -43,8 +43,8 @@ export class LoggerService extends Logger {
     this.logger = createLogger(config);
   }
 
-  log(message: string) {
-    this.logger.info(message, this.context);
+  log(message: any) {
+    this.logger.info(message);
   }
   error(message: any) {
     this.logger.error(message);

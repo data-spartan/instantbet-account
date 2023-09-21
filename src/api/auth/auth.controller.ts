@@ -22,10 +22,11 @@ import { AuthRespDto } from './dto/authResp.dto';
 import { ChangePasswordDto } from '../users/dto';
 import { HttpExceptionFilter } from 'src/common/exception-filters/';
 import { LoggerService } from 'src/common/logger/logger.service';
+import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 
 @Controller('auth')
 @Serialize(AuthRespDto)
-@UseFilters(HttpExceptionFilter)
+// @UseInterceptors(LoggingInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

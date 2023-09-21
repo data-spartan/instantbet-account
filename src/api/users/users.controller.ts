@@ -25,12 +25,14 @@ import {
   HttpExceptionFilter,
   TypeORMExceptionFilter,
 } from 'src/common/exception-filters';
+import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Basic, UserRolesEnum.Test)
 @Serialize(UserDto)
-@UseFilters(HttpExceptionFilter, TypeORMExceptionFilter)
+// @UseInterceptors(LoggingInterceptor)
+// @UseFilters(HttpExceptionFilter, TypeORMExceptionFilter)
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
