@@ -44,8 +44,10 @@ export class UsersService {
     if (!user) throw new HttpException(`user with id: ${id} not found`, 404);
 
     Object.assign(user, attrs);
-    return this.repository.save(user);
+    this.repository.save(user);
+    return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
   }
+
   public async createTestUser(body: CreateTestUserDto): Promise<User> {
     body.password = await this.authHelper.encodePassword(body.password);
     return this.repository.save(body);

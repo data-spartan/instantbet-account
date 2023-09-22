@@ -8,14 +8,14 @@ export class LoggerMiddleware implements NestMiddleware {
 
   use(request: Request, response: Response, next: NextFunction): void {
     const { method, path } = request;
-    const userAgent = request.get('user-agent') || '';
+    const ingoingTimestamp = Date.now();
 
     response.on('finish', () => {
-      const { statusCode } = response;
-      const contentLength = response.get('content-length');
-
       if (!response.locals.errResp) {
-        this.logger.log({ method, path });
+        const { statusCode, message } = response.locals.loggingData;
+        const processingTime = Date.now() - ingoingTimestamp;
+
+        this.logger.log({ statusCode, message, path, method, processingTime });
       } else {
         this.logger.error(response.locals.errResp);
       }

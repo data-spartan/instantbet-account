@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { LoggerService } from '../logger/logger.service';
 import { tap, map, finalize } from 'rxjs/operators';
-import { GlobalResponseError } from '../exception-filters/errorResponse.formatter';
+import { GlobalResponseError } from '../helpers/errorResponse.formatter';
 import { HttpAdapterHost } from '@nestjs/core';
 
 @Injectable()

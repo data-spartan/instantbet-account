@@ -6,6 +6,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { LoggerService } from 'src/common/logger/logger.service';
 import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), AuthModule],
@@ -13,9 +14,10 @@ import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
   providers: [
     UsersService,
     {
+      inject: [ConfigService], // Inject the LoggerConfig dependency
       provide: LoggerService,
-      useFactory: () => {
-        return new LoggerService('users');
+      useFactory: (configService: ConfigService) => {
+        return new LoggerService('users', configService);
       },
     },
   ],

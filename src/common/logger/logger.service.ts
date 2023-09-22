@@ -1,45 +1,35 @@
 // custom-logger.service.ts
-import { Injectable, Logger, Scope } from '@nestjs/common';
+import { Injectable, Scope, Logger, Inject } from '@nestjs/common';
 import { transports, createLogger, format, LoggerOptions } from 'winston';
 // import DailyRotateFile from 'winston-daily-rotate-file';
 
 import * as winston from 'winston';
-import { utilities as nestWinstonModuleUtilities } from 'nest-winston';
+import { LoggerConfig } from './logger.config';
+import { ConfigService } from '@nestjs/config';
 
-/**
- * @description Configuration for Winston logger
- */
-export class LoggerConfig {
-  private readonly options: LoggerOptions;
-
-  constructor(context: string) {
-    this.options = {
-      format: format.combine(format.timestamp(), format.json()),
-      exitOnError: false,
-      transports: [
-        new winston.transports.File({
-          filename: `${context}.log`,
-          level: 'info',
-          dirname: `src/logs/${context}`,
-          maxsize: 100000000000000000,
-          maxFiles: 10,
-          //   zippedArchive: true,
-        }),
-      ],
-    };
-  }
-
-  public getConfig(): winston.LoggerOptions {
-    return this.options;
-  }
-}
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerService extends Logger {
   private logger;
+  private BASE_DIR;
+  private LOGS_DIR;
+  private logLevel;
+  // constructor(private readonly configService: ConfigService) {}
 
-  constructor(context: string) {
+  constructor(
+    context: string,
+    private readonly configService: ConfigService,
+    logLevel: string = configService.get<string>('DEFAULT_LOG_LEVEL'),
+  ) {
     super();
-    const config: any = new LoggerConfig(context).getConfig();
+    this.BASE_DIR = this.configService.get<string>('APP_BASE_DIR');
+    this.LOGS_DIR = this.configService.get<string>('LOG_DIR');
+    this.logLevel = logLevel;
+    const config: any = new LoggerConfig(
+      this.BASE_DIR,
+      this.LOGS_DIR,
+      context,
+      this.logLevel,
+    ).getConfig();
     this.logger = createLogger(config);
   }
 
