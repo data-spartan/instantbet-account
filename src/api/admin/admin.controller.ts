@@ -49,7 +49,7 @@ export class AdminController {
   @Get('/users/:id')
   public async findOne(@Param('id') id: string) {
     const result = await this.usersService.findOne(id);
-    return ResponseSuccess(`users retrieved succesfully`, result);
+    return ResponseSuccess(`user ${id} retrieved succesfully`, result);
   }
 
   @Post('/users')
@@ -65,7 +65,7 @@ export class AdminController {
   @Delete('/users/:id')
   public async removeUser(@Param('id') id: string) {
     await this.usersService.remove(id);
-    return ResponseSuccess(`user deleted succesfully`);
+    return ResponseSuccess(`user ${id} deleted succesfully`);
   }
 
   // @Get('/me')

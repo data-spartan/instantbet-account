@@ -38,7 +38,7 @@ export class UsersService {
       throw new NotFoundException(`user with email: ${email} not found`);
     }
   }
-  //TODO ADD EXC FILTER FOR UNIQUE CONT VIOLATED
+
   async updateMyProfile(id: string, attrs: Partial<User>) {
     const user = await this.findOne(id);
     if (!user) throw new HttpException(`user with id: ${id} not found`, 404);

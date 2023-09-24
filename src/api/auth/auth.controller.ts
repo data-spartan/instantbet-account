@@ -36,21 +36,18 @@ export class AuthController {
   @Post('/register')
   // @UseInterceptors(ClassSerializerInterceptor)
   private async register(@Body() body: RegisterDto) {
-    const result = await this.authService.register(body);
+    const { token, id } = await this.authService.register(body);
     return ResponseSuccess(
-      `user ${'PLACEHOLDER'} registered succesfully`,
-      result,
+      `user ${id} registered succesfully`,
+      token,
       HttpStatus.CREATED,
     );
   }
 
   @Post('/login')
   private async login(@Body() body: LoginDto) {
-    const result = await this.authService.login(body);
-    return ResponseSuccess(
-      `user ${'PLACEHOLDER'} loged in succesfully`,
-      result,
-    );
+    const { token, id } = await this.authService.login(body);
+    return ResponseSuccess(`user ${id} loged in succesfully`, token);
   }
 
   @Get('/me')
@@ -71,7 +68,7 @@ export class AuthController {
   ) {
     const result = await this.authService.changePassword(body, user.id);
     return ResponseSuccess(
-      `user ${'PLACEHOLDER'} changed password succesfully`,
+      `user ${user.id} changed password succesfully`,
       result,
     );
   }
