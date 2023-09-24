@@ -33,9 +33,10 @@ import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
     JwtStrategy,
 
     {
+      inject: [ConfigService], // Inject the LoggerConfig dependency
       provide: LoggerService,
-      useFactory: () => {
-        return new LoggerService('auth');
+      useFactory: (configService: ConfigService) => {
+        return new LoggerService('auth', configService);
       },
     },
   ],

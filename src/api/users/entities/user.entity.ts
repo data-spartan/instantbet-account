@@ -28,7 +28,7 @@ export class User {
   public telephone: string;
 
   @Exclude({ toPlainOnly: true })
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', select: false })
   public password!: string;
 
   @Column({ type: 'varchar' })

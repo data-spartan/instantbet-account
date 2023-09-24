@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { GlobalResponseError } from './errorResponse.formatter';
+import { GlobalResponseError } from '../helpers';
 import { TypeORMError, QueryFailedError } from 'typeorm';
 import { LoggerService } from '../logger/logger.service';
 import { checkTypeORMErrorType } from './helpers';
@@ -35,8 +35,9 @@ export class TypeORMExceptionFilter implements ExceptionFilter {
     );
 
     response.locals.errResp = errRespBody;
-    //bcs of the way exceptio filter works, middleware() cant use ...json(errRespBody), so logging.middleware doeesnt
-    // cant capture this errRespBody, so need to assign it explictily to response.locale to be
+    //bcs middlewares are executed jsut before the actual response is sent back to the client ,
+    //  middleware cant directly access response body e.g.
+    //  ...json(errRespBody), so need to assign it explictily to response.locals to be
     //availbe in logging middleware
 
     response.status(status).json(errRespBody);

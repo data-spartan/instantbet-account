@@ -8,21 +8,20 @@ import { LoggerService } from 'src/common/logger/logger.service';
 import {} from 'src/common/exception-filters';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
+import { ConfigService } from '@nestjs/config';
+import { LoggerConfig } from 'src/common/logger/logger.config';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), AuthModule, UsersModule],
   controllers: [AdminController],
   providers: [
     {
+      inject: [ConfigService], // Inject the LoggerConfig dependency
       provide: LoggerService,
-      useFactory: () => {
-        return new LoggerService('admin');
+      useFactory: (configService: ConfigService) => {
+        return new LoggerService('admin', configService);
       },
     },
-    // {
-    //   provide: 'INTER', // Provide a unique token for your interceptor
-    //   useClass: LoggingInterceptor, // Use your custom interceptor class
-    // },
   ],
 })
 export class AdminModule {

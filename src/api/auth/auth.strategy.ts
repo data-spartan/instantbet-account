@@ -19,12 +19,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
   async validate(payload: any): Promise<User> | never {
-    //after canActivate returns true this validate method attaches user to Request object
+    //after canActivate in authGuard returns true it trigger jwtstrategy to verify token signature
+    //if true, then proceeds to validate
     //payload is token decoded object
     const user = await this.helper.validateUser(payload);
     // console.log('IN JWTSTRATEGY VALIDATE');
     if (!user) throw new UnauthorizedException();
-    //actualy this return user attaches user to request.user
+    //this validate method attaches user to Request object when return user
     return user;
   }
 }

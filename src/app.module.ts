@@ -1,16 +1,19 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApiModule } from './api/api.module';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import {
-  HttpExceptionFilter,
   AllExceptionsFilter,
   TypeORMExceptionFilter,
 } from './common/exception-filters';
+import { ResponseMessageInterceptor } from './common/interceptors/responseMessage.interceptor';
+import { DirectoryCreationService } from './shared/dirCreation/dirCreation';
+import { LoggerService } from './common/logger/logger.service';
+import { LoggerMiddleware } from './common/middlewares/logging.middleware';
 
 @Module({
   imports: [
@@ -23,6 +26,14 @@ import {
   ],
   controllers: [AppController],
   providers: [
+    {
+      inject: [ConfigService], // Inject the LoggerConfig dependency
+      provide: LoggerService,
+      useFactory: (configService: ConfigService) => {
+        return new LoggerService('sys', configService);
+      },
+    },
+    DirectoryCreationService,
     //using this construct if want you can inject filters wherever you want
     // using  app.useGlobalFilters you cant inject
     {
@@ -36,6 +47,10 @@ import {
     {
       provide: APP_FILTER,
       useClass: TypeORMExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseMessageInterceptor,
     },
     AppService,
     // {

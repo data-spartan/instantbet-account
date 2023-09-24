@@ -12,6 +12,7 @@ import {
   Delete,
   UseFilters,
   Inject,
+  HttpStatus,
 } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -26,11 +27,12 @@ import { CustomRequest } from 'src/common/interfaces';
 import { AuthService } from '../auth/auth.service';
 import { UserUpdateDto } from '../users/dto';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
+import { ResponseSuccess } from 'src/common/helpers';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Administrator)
-@Serialize(UserDto)
+// @Serialize(UserDto)
 // @UseInterceptors(LoggingInterceptor)
 // @UseFilters(HttpExceptionFilter, AllExceptionsFilter)
 export class AdminController {
@@ -39,23 +41,31 @@ export class AdminController {
   }
 
   @Get('/users')
-  public async findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  public async findAll() {
+    const result = await this.usersService.findAll();
+    return ResponseSuccess(`users retrieved succesfully`, result);
   }
 
   @Get('/users/:id')
   public async findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+    const result = await this.usersService.findOne(id);
+    return ResponseSuccess(`users retrieved succesfully`, result);
   }
 
   @Post('/users')
   public async createTestUser(@Body() body: CreateTestUserDto) {
-    return this.usersService.createTestUser(body);
+    const result = await this.usersService.createTestUser(body);
+    return ResponseSuccess(
+      `test user created succesfully`,
+      result,
+      HttpStatus.CREATED,
+    );
   }
 
   @Delete('/users/:id')
   public async removeUser(@Param('id') id: string) {
     await this.usersService.remove(id);
+    return ResponseSuccess(`user deleted succesfully`);
   }
 
   // @Get('/me')
@@ -68,6 +78,13 @@ export class AdminController {
     @Req() { user }: CustomRequest,
     @Body() body: UserUpdateDto,
   ) {
-    return this.usersService.updateMyProfile(user.id, body);
+    const result = await this.usersService.updateMyProfile(user.id, body);
+    // return ResponseSuccess(
+    //   `${Object.keys(body).join(',')} updated succesfully`,
+    // );
+
+    return ResponseSuccess(
+      `user ${result.id} updated ${result.props} succesfully`,
+    );
   }
 }

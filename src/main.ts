@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { LoggerMiddleware } from './common/middlewares/logging.middleware';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
@@ -11,6 +12,7 @@ async function bootstrap() {
   });
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('APP_PORT');
+
   app.set('trust proxy', 1);
   app.use(
     helmet({

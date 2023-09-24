@@ -80,8 +80,10 @@ export class AuthService implements OnModuleInit {
     email,
     password,
   }: RegisterDto): Promise<AuthedResponse | never> {
-    let user: User = await this.repository.findOne({ where: { email } });
-
+    let user: User = await this.repository.findOne({
+      select: { id: true },
+      where: { email },
+    });
     if (user) {
       throw new HttpException('User already registered', HttpStatus.CONFLICT);
     }
@@ -103,25 +105,22 @@ export class AuthService implements OnModuleInit {
     // return await this.entityToDto(user, token);
     return {
       token,
-      firstName: registerUser.firstName,
-      lastName: registerUser.lastName,
-      lastLoginAt: registerUser.lastLoginAt,
-      email: registerUser.email,
-      role: registerUser.role,
+      // firstName: registerUser.firstName,
+      // lastName: registerUser.lastName,
+      // lastLoginAt: registerUser.lastLoginAt,
+      // email: registerUser.email,
+      // role: registerUser.role,
     };
   }
 
-  // private entityToDto(entity: any, token: string): AuthRespDto {
-  //   entity.token = token;
-  //   return plainToInstance(AuthRespDto, entity, {
-  //     excludeExtraneousValues: true,
-  //   });
-  // }
   public async login({
     email,
     password,
   }: LoginDto): Promise<AuthedResponse> | never {
-    const user: User = await this.repository.findOne({ where: { email } });
+    const user: User = await this.repository.findOne({
+      select: { id: true, password: true },
+      where: { email },
+    });
     if (!user) {
       throw new HttpException(
         'Invalid email or password',
@@ -144,16 +143,15 @@ export class AuthService implements OnModuleInit {
     // return this.entityToDto(user, token);
     return {
       token,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      lastLoginAt: user.lastLoginAt,
-      email: user.email,
-      role: user.role,
     };
   }
 
   public async me(id: string): Promise<User> {
-    const fetchedUser = await this.repository.findOneBy({ id: id });
+    const fetchedUser = await this.repository.findOne({
+      // select: { , password: false },
+      where: { id },
+    });
+    console.log(fetchedUser);
     return fetchedUser;
   }
 
@@ -162,7 +160,8 @@ export class AuthService implements OnModuleInit {
     id: string,
   ) {
     const userExists: User = await this.repository.findOne({
-      where: { id: id },
+      select: { id: true, password: true },
+      where: { id },
     });
 
     if (!userExists) {

@@ -21,16 +21,14 @@ import { UserDto } from './dto/user.dto';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
 import { CustomRequest } from 'src/common/interfaces';
-import {
-  HttpExceptionFilter,
-  TypeORMExceptionFilter,
-} from 'src/common/exception-filters';
+import { TypeORMExceptionFilter } from 'src/common/exception-filters';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
+import { ResponseSuccess } from 'src/common/helpers';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Basic, UserRolesEnum.Test)
-@Serialize(UserDto)
+// @Serialize(UserDto)
 // @UseInterceptors(LoggingInterceptor)
 // @UseFilters(HttpExceptionFilter, TypeORMExceptionFilter)
 export class UsersController {
@@ -39,27 +37,14 @@ export class UsersController {
     private readonly authService: AuthService,
   ) {}
 
-  // @Get()
-  // @Roles(UserRolesEnum.Administrator)
-  // public async findAll(): Promise<User[]> {
-  //   return this.usersService.findAll();
-  // }
-
-  // @Get('/:id')
-  // public async findOne(@Param('id') id: string) {
-  //   return this.usersService.findOne(id);
-  // }
-
-  // @Get('/me')
-  // private async me(@Req() { user }: CustomRequest): Promise<User | never> {
-  //   return await this.authService.me(user);
-  // }
-
   @Patch('/me/update-profile')
   async updateMyProfile(
     @Req() { user }: CustomRequest,
     @Body() body: UserUpdateDto,
   ) {
-    return this.usersService.updateMyProfile(user.id, body);
+    const result = await this.usersService.updateMyProfile(user.id, body);
+    return ResponseSuccess(
+      `user ${result.id} updated ${result.props} succesfully`,
+    );
   }
 }

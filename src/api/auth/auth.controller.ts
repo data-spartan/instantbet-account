@@ -10,6 +10,8 @@ import {
   Get,
   Patch,
   UseFilters,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
 import { RegisterDto, LoginDto } from './dto';
 import { JwtAuthGuard } from './guards/auth.guard';
@@ -20,46 +22,57 @@ import { CustomRequest } from 'src/common/interfaces';
 import { Serialize } from 'src/common/interceptors/serialize.interceptor';
 import { AuthRespDto } from './dto/authResp.dto';
 import { ChangePasswordDto } from '../users/dto';
-import { HttpExceptionFilter } from 'src/common/exception-filters/';
 import { LoggerService } from 'src/common/logger/logger.service';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
+import { Response } from 'express';
+import { ResponseSuccess } from 'src/common/helpers/successResponse.formater';
 
 @Controller('auth')
-@Serialize(AuthRespDto)
+// @Serialize(AuthRespDto)
 // @UseInterceptors(LoggingInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/register')
   // @UseInterceptors(ClassSerializerInterceptor)
-  private register(@Body() body: RegisterDto): Promise<AuthedResponse> | never {
-    return this.authService.register(body);
+  private async register(@Body() body: RegisterDto) {
+    const result = await this.authService.register(body);
+    return ResponseSuccess(
+      `user ${'PLACEHOLDER'} registered succesfully`,
+      result,
+      HttpStatus.CREATED,
+    );
   }
 
   @Post('/login')
-  private login(@Body() body: LoginDto): Promise<AuthedResponse | never> {
-    // this.logger.log('STEFAN KRALJ');
-    return this.authService.login(body);
+  private async login(@Body() body: LoginDto) {
+    const result = await this.authService.login(body);
+    return ResponseSuccess(
+      `user ${'PLACEHOLDER'} loged in succesfully`,
+      result,
+    );
   }
 
   @Get('/me')
   @UseGuards(JwtAuthGuard)
-  private async me(@Req() { user }: CustomRequest): Promise<User | never> {
-    return this.authService.me(user.id);
+  private async me(@Req() { user }: CustomRequest) {
+    const result = await this.authService.me(user.id);
+    return ResponseSuccess(
+      `user ${result.id} profile retrieved succesfully`,
+      result,
+    );
   }
 
   @Patch('/change-password')
   @UseGuards(JwtAuthGuard)
-  private changePassword(
+  private async changePassword(
     @Req() { user }: CustomRequest,
     @Body() body: ChangePasswordDto,
   ) {
-    return this.authService.changePassword(body, user.id);
+    const result = await this.authService.changePassword(body, user.id);
+    return ResponseSuccess(
+      `user ${'PLACEHOLDER'} changed password succesfully`,
+      result,
+    );
   }
-
-  // @Get('/me')
-  // @UseGuards(JwtAuthGuard)
-  // private me(@Req() { user }: CustomRequest): Promise<User | never> {
-  //   return this.authService.me(user);
-  // }
 }

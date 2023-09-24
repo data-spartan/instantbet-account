@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import { GlobalResponseError } from './errorResponse.formatter';
+import { GlobalResponseError } from '../helpers';
 import { LoggerService } from '../logger/logger.service';
 import { checkErrorType } from './helpers';
 @Catch()
