@@ -20,11 +20,14 @@ export class AuthHelper {
     this.jwt = jwt;
   }
   public async validateUser(decoded: any): Promise<User> {
-    return this.repository.findOne({ where: { id: decoded.sub } });
+    return this.repository.findOne({
+      select: { id: true, role: true },
+      where: { id: decoded.sub },
+    });
   }
 
   public generateToken(user: User): string {
-    return this.jwt.sign({ sub: user.id, email: user.email });
+    return this.jwt.sign({ sub: user.id });
   }
 
   public async encodePassword(password: string): Promise<string> {
