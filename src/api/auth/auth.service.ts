@@ -19,6 +19,9 @@ import { plainToInstance } from 'class-transformer';
 import { ChangePasswordDto, UserDto } from '../users/dto';
 import { AuthRespDto } from './dto/authResp.dto';
 import { LoggerService } from 'src/common/logger/logger.service';
+import { ITokenType } from './interfaces/token.interface';
+import * as argon2 from 'argon2';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -26,6 +29,7 @@ export class AuthService implements OnModuleInit {
     @InjectRepository(User) private readonly repository: Repository<User>,
     private readonly helper: AuthHelper,
     private readonly config: ConfigService,
+    private readonly logger: LoggerService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -44,11 +48,9 @@ export class AuthService implements OnModuleInit {
       where: { email: superAdminEmail },
     });
     if (admin) {
-      console.warn(`### ADMIN ###`);
-      console.warn(
-        `User already exists: ${admin.email}, was created: ${admin.createdAt}.`,
+      this.logger.warn(
+        `Admin User already exists: ${admin.email}, was created: ${admin.createdAt}.`,
       );
-      console.warn(`### END ADMIN ###`);
       throw new HttpException('Conflict', HttpStatus.CONFLICT);
     }
     admin = new User();
@@ -61,25 +63,16 @@ export class AuthService implements OnModuleInit {
     const registerAdmin = await this.repository.save(admin);
 
     if (!registerAdmin) {
-      console.warn(`### ADMIN ###`);
-      console.warn(`Administrator creation failed.`);
-      console.warn(`### END ADMIN ###`);
+      this.logger.warn(`Administrator creation failed.`);
       throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);
     } else {
-      console.warn(`### ADMIN ###`);
-      console.warn(
+      this.logger.warn(
         `Administrator creation success. Admin e-mail: ${admin.email}`,
       );
-      console.warn(`### END ADMIN ###`);
     }
   }
 
-  public async register({
-    firstName,
-    lastName,
-    email,
-    password,
-  }: RegisterDto): Promise<AuthedResponse | never> {
+  public async register({ firstName, lastName, email, password }: RegisterDto) {
     let user: User = await this.repository.findOne({
       select: { id: true },
       where: { email },
@@ -100,7 +93,7 @@ export class AuthService implements OnModuleInit {
       throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);
     }
 
-    const token = this.helper.generateToken(user);
+    const token = await this.helper.handleLogin(user);
 
     return {
       token,
@@ -108,10 +101,7 @@ export class AuthService implements OnModuleInit {
     };
   }
 
-  public async login({
-    email,
-    password,
-  }: LoginDto): Promise<AuthedResponse> | never {
+  public async login({ email, password }: LoginDto) {
     const user: User = await this.repository.findOne({
       select: { id: true, password: true },
       where: { email },
@@ -132,8 +122,9 @@ export class AuthService implements OnModuleInit {
         HttpStatus.NOT_FOUND,
       );
     }
-    await this.repository.update(user.id, { lastLoginAt: new Date() });
-    const token = this.helper.generateToken(user);
+    // await this.repository.update(user.id, { lastLoginAt: new Date() });
+    // const token = this.helper.generateTokens(user);
+    const token = await this.helper.handleLogin(user);
 
     return {
       token,
@@ -143,7 +134,6 @@ export class AuthService implements OnModuleInit {
 
   public async me(id: string): Promise<User> {
     const fetchedUser = await this.repository.findOne({
-      // select: { , password: false },
       where: { id },
     });
     return fetchedUser;
