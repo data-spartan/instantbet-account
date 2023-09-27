@@ -39,4 +39,7 @@ export class LoggerService extends Logger {
   error(message: any) {
     this.logger.error(message);
   }
+  warn(message: any) {
+    this.logger.warn(message);
+  }
 }

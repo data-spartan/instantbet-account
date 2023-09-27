@@ -40,6 +40,12 @@ export class User {
   @Column('enum', { enum: UserRolesEnum, default: UserRolesEnum.Basic })
   public role: UserRolesEnum;
 
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  public refreshToken?: string;
+
   @Column({ type: 'timestamp', nullable: true, default: null })
   public lastLoginAt: Date | null;
 

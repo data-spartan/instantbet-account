@@ -26,6 +26,8 @@ import { LoggerService } from 'src/common/logger/logger.service';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { Response } from 'express';
 import { ResponseSuccess } from 'src/common/helpers/successResponse.formater';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { use } from 'passport';
 
 @Controller('auth')
 // @Serialize(AuthRespDto)
@@ -71,5 +73,14 @@ export class AuthController {
       `user ${user.id} changed password succesfully`,
       result,
     );
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Get('/refresh')
+  async refresh(@Req() { user }: CustomRequest) {
+    //request.res.setHeader('Set-Cookie', accessToken); next-auth creates cookie no need here
+    const result = user;
+    console.log(user);
+    return ResponseSuccess(`token refreshed succesfully`, result);
   }
 }

@@ -5,11 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
 import { AuthHelper } from './auth.helper';
 import { AuthService } from './auth.service';
-import { JwtStrategy } from './auth.strategy';
+import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
 import { LoggerService } from 'src/common/logger/logger.service';
 import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
+import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { JwtAuthGuard } from './guards/auth.guard';
+import { JwtRefreshTokenStrategy } from './strategies/refreshToken.strategy';
 
 @Module({
   imports: [
@@ -30,7 +33,8 @@ import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
   providers: [
     AuthService,
     AuthHelper,
-    JwtStrategy,
+    AccessTokenStrategy,
+    JwtRefreshTokenStrategy,
 
     {
       inject: [ConfigService], // Inject the LoggerConfig dependency
