@@ -20,18 +20,29 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: configService.get('APP_JWT_REFRESH_SECRET'),
       passReqToCallback: true,
+      ignoreExpiration: false,
     });
   }
 
   async validate(request: Request, payload: ITokenType) {
     //payload -> decoded sent refresh token
     const refreshToken = request.header('Authorization').split(' ')[1];
-    // const tokenId = request.header('Token-Id');
-    // console.log(refreshToken);
-    return this.authHelper.getUserIfRefreshTokenMatches(
+    const tokenId = request.header('Token-Id');
+    const user = await this.authHelper.getUserIfRefreshTokenMatches(
       refreshToken,
-      // tokenId,
+      tokenId,
       payload,
     );
+    const cookie = `Refresh=${
+      user.refreshToken
+    }; HttpOnly; Path=/; Max-Age=${this.configService.get(
+      'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+    )}`;
+    request.res.set({
+      'Token-Id': user.tokenId,
+      'Set-Cookie': [{ cookie, refreshToken: user.refreshToken }],
+    });
+
+    return user;
   }
 }

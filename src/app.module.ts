@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApiModule } from './api/api.module';
-import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
+import { TypeOrmConfigService } from './shared/typeorm/typeorm.config';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import {
   AllExceptionsFilter,
@@ -14,6 +14,7 @@ import { ResponseMessageInterceptor } from './common/interceptors/responseMessag
 import { DirectoryCreationService } from './shared/dirCreation/dirCreation';
 import { LoggerService } from './common/logger/logger.service';
 import { LoggerMiddleware } from './common/middlewares/logging.middleware';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -59,4 +60,6 @@ import { LoggerMiddleware } from './common/middlewares/logging.middleware';
     // },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private dataSource: DataSource) {}
+}

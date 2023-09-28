@@ -13,10 +13,9 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       usernameField: 'sub',
-
       secretOrKey: config.get('APP_JWT_SECRET'),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: true, //bcs i impmeneted leeway logic
+      ignoreExpiration: false,
     });
   }
   async validate(payload: any): Promise<User> | never {

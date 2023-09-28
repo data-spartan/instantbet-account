@@ -1,3 +1,3 @@
-import { User } from './users/index.entity';
+import { User, RefreshToken } from './users/index.entity';
 
-export const entities = [User];
+export const entities = [User, RefreshToken];
