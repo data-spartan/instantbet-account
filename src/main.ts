@@ -19,7 +19,16 @@ async function bootstrap() {
       crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   );
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      disableErrorMessages: false,
+      transform: true,
+      // transformOptions: {
+      //   enableImplicitConversion: true, // This enables automatic type conversion
+      // },
+      whitelist: true,
+    }),
+  );
 
   await app.listen(port);
   console.log(`[API] is running on: ${await app.getUrl()}`);

@@ -18,6 +18,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       port: Number(this.config.get<string>(TypeORMConfigEnum.DATABASE_PORT)),
       username: this.config.get<string>(TypeORMConfigEnum.DATABASE_USERNAME),
       password: this.config.get<string>(TypeORMConfigEnum.DATABASE_PASSWORD),
+      schema: process.env.NODE_ENV !== 'test' ? 'public' : 'test',
       logging: false,
       synchronize: true,
       entities: entities,

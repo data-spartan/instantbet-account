@@ -7,9 +7,10 @@ import { UsersService } from './users.service';
 import { LoggerService } from 'src/common/logger/logger.service';
 import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
 import { ConfigService } from '@nestjs/config';
+import { RefreshToken } from './entities/token.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), AuthModule],
+  imports: [TypeOrmModule.forFeature([User, RefreshToken]), AuthModule],
   controllers: [UsersController],
   providers: [
     UsersService,

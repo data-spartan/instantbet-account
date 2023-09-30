@@ -13,12 +13,12 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       usernameField: 'sub',
-
       secretOrKey: config.get('APP_JWT_SECRET'),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: true, //bcs i impmeneted leeway logic
+      ignoreExpiration: false,
     });
   }
+
   async validate(payload: any): Promise<User> | never {
     //after canActivate in authGuard returns true it trigger jwtstrategy to verify token signature
     //if true, then proceeds to validate

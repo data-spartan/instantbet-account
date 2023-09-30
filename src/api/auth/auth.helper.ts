@@ -5,22 +5,29 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import * as argon2 from 'argon2';
 import { ITokenType } from './interfaces/token.interface';
 import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
+import { RefreshToken } from '../users/index.entity';
+import { refreshTokenTransaction } from 'src/common/typeorm-queries';
 
 @Injectable()
 export class AuthHelper {
+  // private connection;
   constructor(
-    @InjectRepository(User) private readonly repository: Repository<User>,
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
+    @InjectRepository(RefreshToken)
+    private readonly tokenRepo: Repository<RefreshToken>,
     private readonly jwt: JwtService,
     private readonly configService: ConfigService,
+    private readonly dataSource: DataSource,
   ) {
     this.jwt = jwt;
+    // this.connection = this.tokenRepo.manager.connection;
   }
 
   public async hashData(data: string) {
@@ -32,8 +39,8 @@ export class AuthHelper {
   }
 
   public async validateUser(decoded: any): Promise<User> {
-    return this.repository.findOne({
-      select: { id: true, role: true, refreshToken: true },
+    return this.userRepo.findOne({
+      select: { id: true, role: true },
       where: { id: decoded.sub },
     });
   }
@@ -42,7 +49,7 @@ export class AuthHelper {
     const payload = { sub: userId };
     const accessToken = await this.jwt.signAsync(payload, {
       secret: this.configService.get('APP_JWT_SECRET'),
-      expiresIn: '60s',
+      expiresIn: this.configService.get('APP_JWT_EXPIRES'),
     });
     return {
       accessToken,
@@ -53,7 +60,7 @@ export class AuthHelper {
     const payload = { sub: userId };
     const refreshToken = await this.jwt.signAsync(payload, {
       secret: this.configService.get('APP_JWT_REFRESH_SECRET'),
-      expiresIn: '1d',
+      expiresIn: this.configService.get('APP_REFRESH_JWT_EXPIRES'),
     });
     return {
       refreshToken,
@@ -61,22 +68,24 @@ export class AuthHelper {
   }
 
   async handleLogin(user: User) {
-    // const { refreshToken } = await this.getJwtRefreshToken(user.id);
-    // const { accessToken } = await this.getJwtAccessToken(user.id);
-
     const [accessToken, refreshToken] = await Promise.all([
       this.getJwtAccessToken(user.id),
       this.getJwtRefreshToken(user.id),
     ]);
     try {
-      const hash = await this.hashData(refreshToken.refreshToken);
-      await this.repository.update(user.id, {
-        refreshToken: hash,
-        lastLoginAt: new Date(),
-      });
+      const hashedRefreshToken = await this.hashData(refreshToken.refreshToken);
+
+      const insertResult = await refreshTokenTransaction(
+        this.dataSource,
+        RefreshToken,
+        hashedRefreshToken,
+        { user: user.id },
+        user.id,
+      );
 
       return {
         accessToken: accessToken.accessToken,
+        tokenId: insertResult.identifiers[0].id,
         refreshToken: refreshToken.refreshToken,
         // tokenId: token.id,
         // accessTokenExpires: getAccessExpiry(),
@@ -89,30 +98,35 @@ export class AuthHelper {
     }
   }
 
-  public async generateTokens(payload: ITokenType) {
-    const { accessToken } = await this.getJwtAccessToken(payload.sub);
+  public async generateTokens(payload: ITokenType, tokenId: string) {
+    const [accessToken, newRefreshToken] = await Promise.all([
+      this.getJwtAccessToken(payload.sub),
+      this.getJwtRefreshToken(payload.sub),
+    ]);
 
-    const { refreshToken: newRefreshToken } = await this.getJwtRefreshToken(
+    const hashedRefreshToken = await this.hashData(
+      newRefreshToken.refreshToken,
+    );
+
+    const insertResult = await refreshTokenTransaction(
+      this.dataSource,
+      RefreshToken,
+      hashedRefreshToken,
+      { id: tokenId },
       payload.sub,
     );
 
-    const hashedRefreshedToken = await this.hashData(newRefreshToken);
-    this.repository.update(payload.sub, { refreshToken: hashedRefreshedToken });
-
     return {
       sub: payload.sub,
-      accessToken,
-      refreshToken: newRefreshToken,
+      accessToken: accessToken.accessToken,
+      tokenId: insertResult.identifiers[0].id,
+      refreshToken: newRefreshToken.refreshToken,
       // accessTokenExpires: 10000, //getAccessExpiry(),
       // user: {
       //   id: payload.sub,
       // },
     };
   }
-
-  // public generateToken(user: User): string {
-  //   return this.jwt.sign({ sub: user.id });
-  // }
 
   public async encodePassword(password: string): Promise<string> {
     const hashedPassword: string = await this.hashData(password);
@@ -129,42 +143,40 @@ export class AuthHelper {
 
   public async getUserIfRefreshTokenMatches(
     refreshToken: string,
-    // tokenId: string,
+    tokenId: string,
     payload: ITokenType,
   ) {
-    const user = await this.validateUser(payload);
+    const foundToken = await this.tokenRepo.findOne({ where: { id: tokenId } });
 
     const isMatch = await this.verifyData(
-      user.refreshToken ?? '',
+      foundToken.refreshToken ?? '',
       refreshToken,
     );
-
     const issuedAt = dayjs.unix(payload.iat);
     const diff = dayjs().diff(issuedAt, 'seconds');
-    console.log(diff);
-    if (user.refreshToken == null) {
+    if (foundToken == null) {
       //refresh token is valid but the id is not in database
       //TODO:inform the user with the payload sub
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
     if (isMatch) {
-      return await this.generateTokens(payload);
+      return await this.generateTokens(payload, tokenId);
     } else {
-      //less than 30s leeway allows refresh for network concurrency
-      if (diff < 30 * 1 * 1) {
+      //less than 20s leeway allows refresh for network concurrency
+      if (diff < 20 * 1 * 1) {
         console.log('leeway');
-        return await this.generateTokens(payload);
+        return await this.generateTokens(payload, tokenId);
       }
 
       //refresh token is valid but not in db
-      //possible re-use!!! delete all refresh tokens(sessions) belonging to the sub
-      if (payload.sub !== user.id) {
-        //the sub of the token isn't the id of the token in db
-        // log out all session of this payalod id, reFreshToken has been compromised
-        await this.repository.update(payload.sub, { refreshToken: '' });
-        throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-      }
+      // //possible re-use!!! delete all refresh tokens(sessions) belonging to the sub
+      // if (payload.sub !== foundToken.user) {
+      //   //the sub of the token isn't the id of the token in db
+      //   // log out all session of this payalod id, reFreshToken has been compromised
+      //   await this.tokenRepo.delete({ user: payload.sub });
+      //   throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+      // }
 
       throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
     }

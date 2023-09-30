@@ -13,6 +13,8 @@ import {
   UseFilters,
   Inject,
   HttpStatus,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
@@ -28,7 +30,7 @@ import { AuthService } from '../auth/auth.service';
 import { UserUpdateDto } from '../users/dto';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { ResponseSuccess } from 'src/common/helpers';
-
+import { UsersPaginationDto } from 'src/common/dto';
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Administrator)
@@ -41,8 +43,15 @@ export class AdminController {
   }
 
   @Get('/users')
-  public async findAll() {
-    const result = await this.usersService.findAll();
+  public async findAll(@Query() query: UsersPaginationDto) {
+    console.log(query);
+    const { timestamp, limit, cursor, direction } = query;
+    const result = await this.usersService.findAll(
+      limit,
+      cursor,
+      timestamp,
+      direction,
+    );
     return ResponseSuccess(`users retrieved succesfully`, result);
   }
 

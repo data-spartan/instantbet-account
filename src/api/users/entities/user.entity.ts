@@ -6,14 +6,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Unique,
+  OneToMany,
+  JoinColumn,
+  Index,
 } from 'typeorm';
 import { UserRolesEnum } from '../roles/roles.enum';
+import { RefreshToken } from './token.entity';
 
 //changed default UQ name to be able to catch UQ constraint error properly
 //in typeormException.filter and propagate adequate resp to the client
-@Entity()
+@Entity('users')
 @Unique('UQ_telephone_', ['telephone'])
 @Unique('UQ_email', ['email'])
+@Index('idx_createdat_id', ['createdAt', 'id']) //need to create index for cursor pagination
 export class User {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
@@ -27,7 +32,7 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   public telephone: string;
 
-  @Exclude({ toPlainOnly: true })
+  // @Exclude({ toPlainOnly: true })
   @Column({ type: 'varchar', select: false })
   public password!: string;
 
@@ -40,11 +45,11 @@ export class User {
   @Column('enum', { enum: UserRolesEnum, default: UserRolesEnum.Basic })
   public role: UserRolesEnum;
 
-  @Column({
+  // @Column({ array: true, nullable: true })
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     nullable: true,
   })
-  @Exclude()
-  public refreshToken?: string;
+  public refreshToken?: RefreshToken[];
 
   @Column({ type: 'timestamp', nullable: true, default: null })
   public lastLoginAt: Date | null;
