@@ -22,18 +22,21 @@ import { LoggerService } from 'src/common/logger/logger.service';
 import { ITokenType } from './interfaces/token.interface';
 import * as argon2 from 'argon2';
 import * as dayjs from 'dayjs';
+import { RefreshToken } from '../users/index.entity';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
   constructor(
-    @InjectRepository(User) private readonly repository: Repository<User>,
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
+    @InjectRepository(RefreshToken)
+    private readonly tokenRepo: Repository<RefreshToken>,
     private readonly helper: AuthHelper,
     private readonly config: ConfigService,
     private readonly logger: LoggerService,
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const admin: User = await this.repository.findOne({
+    const admin: User = await this.userRepo.findOne({
       where: { role: UserRolesEnum.Administrator },
     });
     if (!admin) {
@@ -44,7 +47,7 @@ export class AuthService implements OnModuleInit {
   private async createAdministrator(): Promise<void> {
     const superAdminEmail = this.config.get('APP_SUPER_ADMIN_EMAIL');
     const superAdminPassword = this.config.get('APP_SUPER_ADMIN_PASSWORD');
-    let admin: User = await this.repository.findOne({
+    let admin: User = await this.userRepo.findOne({
       where: { email: superAdminEmail },
     });
     if (admin) {
@@ -60,7 +63,7 @@ export class AuthService implements OnModuleInit {
     admin.role = UserRolesEnum.Administrator;
     admin.password = await this.helper.encodePassword(superAdminPassword);
 
-    const registerAdmin = await this.repository.save(admin);
+    const registerAdmin = await this.userRepo.save(admin);
 
     if (!registerAdmin) {
       this.logger.warn(`Administrator creation failed.`);
@@ -73,7 +76,7 @@ export class AuthService implements OnModuleInit {
   }
 
   public async register({ firstName, lastName, email, password }: RegisterDto) {
-    let user: User = await this.repository.findOne({
+    let user: User = await this.userRepo.findOne({
       select: { id: true },
       where: { email },
     });
@@ -87,7 +90,7 @@ export class AuthService implements OnModuleInit {
     user.email = email;
     user.password = await this.helper.encodePassword(password);
 
-    const registerUser = await this.repository.save(user);
+    const registerUser = await this.userRepo.save(user);
 
     if (!registerUser) {
       throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);
@@ -102,7 +105,7 @@ export class AuthService implements OnModuleInit {
   }
 
   public async login({ email, password }: LoginDto) {
-    const user: User = await this.repository.findOne({
+    const user: User = await this.userRepo.findOne({
       select: { id: true, password: true },
       where: { email },
     });
@@ -133,17 +136,27 @@ export class AuthService implements OnModuleInit {
   }
 
   public async me(id: string): Promise<User> {
-    const fetchedUser = await this.repository.findOne({
+    const fetchedUser = await this.userRepo.findOne({
       where: { id },
     });
     return fetchedUser;
+  }
+
+  async signOut(tokenId: string) {
+    try {
+      await this.tokenRepo.delete({
+        id: tokenId,
+      });
+    } catch (error) {
+      throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+    }
   }
 
   public async changePassword(
     { currentPassword, newPassword }: ChangePasswordDto,
     id: string,
   ) {
-    const userExists: User = await this.repository.findOne({
+    const userExists: User = await this.userRepo.findOne({
       select: { id: true, password: true },
       where: { id },
     });
@@ -163,7 +176,7 @@ export class AuthService implements OnModuleInit {
 
     const hashedPassword = await this.helper.encodePassword(newPassword);
 
-    this.repository.update(userExists.id, { password: hashedPassword });
+    this.userRepo.update(userExists.id, { password: hashedPassword });
 
     return true;
   }

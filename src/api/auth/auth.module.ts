@@ -13,6 +13,7 @@ import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { JwtRefreshTokenStrategy } from './strategies/refreshToken.strategy';
+import { RefreshToken } from '../users/index.entity';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { JwtRefreshTokenStrategy } from './strategies/refreshToken.strategy';
         signOptions: { expiresIn: config.get('APP_JWT_EXPIRES') },
       }),
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, RefreshToken]),
   ],
   controllers: [AuthController],
   providers: [

@@ -24,7 +24,7 @@ import { AuthRespDto } from './dto/authResp.dto';
 import { ChangePasswordDto } from '../users/dto';
 import { LoggerService } from 'src/common/logger/logger.service';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ResponseSuccess } from 'src/common/helpers/successResponse.formater';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { use } from 'passport';
@@ -37,8 +37,9 @@ export class AuthController {
 
   @Post('/register')
   // @UseInterceptors(ClassSerializerInterceptor)
-  private async register(@Body() body: RegisterDto) {
+  private async register(@Body() body: RegisterDto, @Req() req: Request) {
     const { token, id } = await this.authService.register(body);
+    req.res.setHeader('Token-Id', token.tokenId);
     return ResponseSuccess(
       `user ${id} registered succesfully`,
       token,
@@ -47,13 +48,14 @@ export class AuthController {
   }
 
   @Post('/login')
-  private async login(@Body() body: LoginDto) {
+  private async login(@Body() body: LoginDto, @Req() req: Request) {
     const { token, id } = await this.authService.login(body);
+    req.res.setHeader('Token-Id', token.tokenId);
     return ResponseSuccess(`user ${id} loged in succesfully`, token);
   }
 
-  @Get('/me')
   @UseGuards(JwtAuthGuard)
+  @Get('/me')
   private async me(@Req() { user }: CustomRequest) {
     const result = await this.authService.me(user.id);
     return ResponseSuccess(
@@ -62,8 +64,8 @@ export class AuthController {
     );
   }
 
-  @Patch('/change-password')
   @UseGuards(JwtAuthGuard)
+  @Patch('/change-password')
   private async changePassword(
     @Req() { user }: CustomRequest,
     @Body() body: ChangePasswordDto,
@@ -75,12 +77,19 @@ export class AuthController {
     );
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('/sign-out')
+  async signOut(@Req() request: CustomRequest) {
+    const tokenId = request.header('Token-Id');
+    await this.authService.signOut(tokenId);
+    return ResponseSuccess(`user ${request.user.id} succesfully`);
+  }
+
   @UseGuards(JwtRefreshGuard)
   @Get('/refresh')
   async refresh(@Req() { user }: CustomRequest) {
     //request.res.setHeader('Set-Cookie', accessToken); next-auth creates cookie no need here
     const result = user;
-    console.log(user);
     return ResponseSuccess(`token refreshed succesfully`, result);
   }
 }
