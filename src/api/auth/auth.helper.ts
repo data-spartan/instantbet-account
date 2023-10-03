@@ -163,8 +163,8 @@ export class AuthHelper {
     if (isMatch) {
       return await this.generateTokens(payload, tokenId);
     } else {
-      //less than 30s leeway allows refresh for network concurrency
-      if (diff < 30 * 1 * 1) {
+      //less than 20s leeway allows refresh for network concurrency
+      if (diff < 20 * 1 * 1) {
         console.log('leeway');
         return await this.generateTokens(payload, tokenId);
       }

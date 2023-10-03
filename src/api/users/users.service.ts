@@ -5,21 +5,36 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateTestUserDto } from '../admin/dto';
 import { AuthHelper } from '../auth/auth.helper';
 import { LoggerService } from 'src/common/logger/logger.service';
+import { allUsersPagination } from 'src/common/typeorm-queries';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private repository: Repository<User>,
     private authHelper: AuthHelper,
+    private readonly dataSource: DataSource,
   ) {}
 
-  public async findAll(): Promise<User[]> {
-    return this.repository.find();
+  public async findAll(
+    limit: number,
+    cursor: string,
+    timestamp: Date,
+    direction: string,
+  ): Promise<User[]> {
+    // return this.repository.find();
+    return allUsersPagination(
+      this.dataSource,
+      User,
+      timestamp,
+      cursor,
+      limit,
+      direction,
+    );
   }
 
   public async findOne(id: string): Promise<User> {

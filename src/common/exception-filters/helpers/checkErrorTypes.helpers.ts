@@ -12,7 +12,8 @@ export const checkErrorType = (
   let stack = '';
 
   if (error instanceof HttpException) {
-    message = error.message;
+    message = error['response']['message'] || error.message;
+    //using ['response']['message'] bcs validation error msgs cant be accessed otherwise with error.message
     status = error.getStatus();
   } else {
     //assign stack only if error is not catched, bcs we need it to determine whats wrong

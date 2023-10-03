@@ -18,6 +18,5 @@ export const refreshTokenTransaction = async (
       return insertResult;
     },
   );
-
   return insertResult;
 };

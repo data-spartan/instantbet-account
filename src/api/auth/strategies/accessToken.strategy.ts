@@ -18,6 +18,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
     });
   }
+
   async validate(payload: any): Promise<User> | never {
     //after canActivate in authGuard returns true it trigger jwtstrategy to verify token signature
     //if true, then proceeds to validate
