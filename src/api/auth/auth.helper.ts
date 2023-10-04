@@ -4,7 +4,7 @@ import {
   HttpStatus,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
@@ -14,7 +14,7 @@ import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from '../users/index.entity';
 import { refreshTokenTransaction } from 'src/common/typeorm-queries/refreshToken.transactions';
-
+import * as fs from 'fs';
 @Injectable()
 export class AuthHelper {
   // private connection;
@@ -48,7 +48,11 @@ export class AuthHelper {
   async getJwtAccessToken(userId: string) {
     const payload = { sub: userId };
     const accessToken = await this.jwt.signAsync(payload, {
-      secret: this.configService.get('APP_JWT_SECRET'),
+      privateKey: fs
+        .readFileSync(
+          this.configService.get<string>('JWT_PRIVATE_SECRET_ACCESS'),
+        )
+        .toString(),
       expiresIn: this.configService.get('APP_JWT_EXPIRES'),
     });
     return {
@@ -59,7 +63,11 @@ export class AuthHelper {
   public async getJwtRefreshToken(userId: string) {
     const payload = { sub: userId };
     const refreshToken = await this.jwt.signAsync(payload, {
-      secret: this.configService.get('APP_JWT_REFRESH_SECRET'),
+      privateKey: fs
+        .readFileSync(
+          this.configService.get<string>('JWT_PRIVATE_SECRET_REFRESH'),
+        )
+        .toString(),
       expiresIn: this.configService.get('APP_REFRESH_JWT_EXPIRES'),
     });
     return {
