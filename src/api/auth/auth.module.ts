@@ -1,5 +1,5 @@
 import { Module, MiddlewareConsumer } from '@nestjs/common';
-import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
@@ -18,8 +18,9 @@ import * as fs from 'fs';
 
 @Module({
   imports: [
-    // The PassportModule.register({ … })only needed if you want to use
-    // the AuthGuard syntax with an implied default strategy: @UseGuards(AuthGuard)
+    // The PassportModule.register({ … })is needed if you want to use
+    // the AuthGuard contruct from passport with an implied
+    // strategy(jwt,jwt-refresh...) across whole app
 
     PassportModule.register({ defaultStrategy: 'jwt', property: 'user' }),
     // JwtModule.registerAsync({
@@ -30,28 +31,24 @@ import * as fs from 'fs';
     //   }),
     // }),
     JwtModule.registerAsync({
-      imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        const options: JwtModuleOptions = {
-          privateKey: fs
-            .readFileSync(
-              configService.get<string>('JWT_PRIVATE_SECRET_ACCESS'),
-              'utf-8',
-            )
-            .toString(),
-          publicKey: fs
-            .readFileSync(
-              configService.get<string>('JWT_PUBLIC_SECRET_ACCESS', 'utf-8'),
-            )
-            .toString(),
-          signOptions: {
-            expiresIn: configService.get<string>('APP_JWT_EXPIRES'),
-            algorithm: 'ES256',
-          },
-        };
-        return options;
-      },
+      useFactory: async (configService: ConfigService) => ({
+        privateKey: fs
+          .readFileSync(
+            configService.get<string>('JWT_PRIVATE_SECRET_ACCESS'),
+            'utf-8',
+          )
+          .toString(),
+        publicKey: fs
+          .readFileSync(
+            configService.get<string>('JWT_PUBLIC_SECRET_ACCESS', 'utf-8'),
+          )
+          .toString(),
+        signOptions: {
+          expiresIn: configService.get<string>('APP_JWT_EXPIRES'),
+          algorithm: 'ES256',
+        },
+      }),
     }),
     TypeOrmModule.forFeature([User, RefreshToken]),
   ],
