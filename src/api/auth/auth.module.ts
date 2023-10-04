@@ -15,6 +15,7 @@ import { JwtAuthGuard } from './guards/auth.guard';
 import { JwtRefreshTokenStrategy } from './strategies/refreshToken.strategy';
 import { RefreshToken } from '../users/index.entity';
 import * as fs from 'fs';
+import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import * as fs from 'fs';
     AuthHelper,
     AccessTokenStrategy,
     JwtRefreshTokenStrategy,
+    RefreshPrivateSecretService,
 
     {
       inject: [ConfigService], // Inject the LoggerConfig dependency

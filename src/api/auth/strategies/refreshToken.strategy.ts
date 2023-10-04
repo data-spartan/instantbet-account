@@ -22,6 +22,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
         .toString(),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
+      passReqToCallback: true,
     });
   }
 
