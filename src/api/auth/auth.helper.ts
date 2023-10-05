@@ -4,7 +4,7 @@ import {
   HttpStatus,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
@@ -14,6 +14,8 @@ import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from '../users/index.entity';
 import { refreshTokenTransaction } from 'src/common/typeorm-queries/refreshToken.transactions';
+import * as fs from 'fs';
+import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 
 @Injectable()
 export class AuthHelper {
@@ -25,6 +27,7 @@ export class AuthHelper {
     private readonly jwt: JwtService,
     private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
+    private readonly refreshKeysToken: RefreshPrivateSecretService,
   ) {
     this.jwt = jwt;
     // this.connection = this.tokenRepo.manager.connection;
@@ -47,10 +50,7 @@ export class AuthHelper {
 
   async getJwtAccessToken(userId: string) {
     const payload = { sub: userId };
-    const accessToken = await this.jwt.signAsync(payload, {
-      secret: this.configService.get('APP_JWT_SECRET'),
-      expiresIn: this.configService.get('APP_JWT_EXPIRES'),
-    });
+    const accessToken = await this.jwt.signAsync(payload);
     return {
       accessToken,
     };
@@ -58,10 +58,10 @@ export class AuthHelper {
 
   public async getJwtRefreshToken(userId: string) {
     const payload = { sub: userId };
-    const refreshToken = await this.jwt.signAsync(payload, {
-      secret: this.configService.get('APP_JWT_REFRESH_SECRET'),
-      expiresIn: this.configService.get('APP_REFRESH_JWT_EXPIRES'),
-    });
+    const refreshToken = await this.jwt.signAsync(
+      payload,
+      await this.refreshKeysToken.returnRefreshKey(),
+    );
     return {
       refreshToken,
     };
