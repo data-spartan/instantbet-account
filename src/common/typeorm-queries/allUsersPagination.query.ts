@@ -3,18 +3,20 @@ import { DataSource, Entity } from 'typeorm';
 import { User } from 'src/api/users/index.entity';
 
 export const allUsersPagination = async (
+  //in cursor pag with uuid, date/timestamp is in fact cursor and uuid is here to compare which date is greater/smaller when dates are equal
+  //bcs uuid is hash, compare is random
   dataSource: DataSource,
   entity: any,
-  timestamp: Date,
-  cursor: string,
+  cursor: Date,
+  userId: string,
   limit: number,
   direction: string,
 ): Promise<User[]> => {
   //CURSOR PAGINATION
   const sign = direction === 'Next' ? `<` : `>`; //next is clicked sign < is evaluated bcs we need older records
-  //if Next page is clicked, FE needs to save last record(oldest) user CreatedAt, id, direction(Next)
+  //if Next page is clicked, FE needs to send last record(oldest) in  user array; Send CreatedAt, id, direction(Next) from previous array
   //to able to to show older records than CreatedAt
-  //when Previous is clicked oposite is done.
+  //when Previous is clicked first record in array is sent.
   const columns = `"id","firstName", "lastName", "telephone","email","verifiedEmail","role","createdAt","updatedAt","lastLoginAt"`;
   const query = `
     SELECT ${columns}
@@ -26,6 +28,6 @@ export const allUsersPagination = async (
   //WHERE ... row constructor -> first checks created_at < x, unless these values are equal, in which case it compares id and y`.
   const repo = dataSource.manager.getRepository(entity);
   const table = repo.metadata.tableName;
-  const users = await repo.query(query, [timestamp, cursor, limit]);
+  const users = await repo.query(query, [cursor, userId, limit]);
   return users;
 };

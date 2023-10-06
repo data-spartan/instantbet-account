@@ -16,7 +16,7 @@ export class RefreshPrivateSecretService {
       expiresIn: this.configService.get('APP_REFRESH_JWT_EXPIRES'),
     };
   }
-  public async returnRefreshKey() {
+  public refreshTokenPrivateKeyConfig() {
     return this.refreshJwtOptions;
   }
 }

@@ -14,7 +14,6 @@ import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from '../users/index.entity';
 import { refreshTokenTransaction } from 'src/common/typeorm-queries/refreshToken.transactions';
-import * as fs from 'fs';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 
 @Injectable()
@@ -60,7 +59,7 @@ export class AuthHelper {
     const payload = { sub: userId };
     const refreshToken = await this.jwt.signAsync(
       payload,
-      await this.refreshKeysToken.returnRefreshKey(),
+      this.refreshKeysToken.refreshTokenPrivateKeyConfig(),
     );
     return {
       refreshToken,
