@@ -3,11 +3,17 @@ import { Injectable } from '@nestjs/common';
 // import { SendEmail } from './mail.interface'
 
 @Injectable()
-export class MailService {
+export class MailSender {
   constructor(private readonly mailerService: MailerService) {}
 
   public async sendEmail<T>({ to, subject, template, context }) {
     try {
+      console.log({
+        to,
+        subject,
+        template,
+        context,
+      });
       await this.mailerService.sendMail({
         to,
         subject,

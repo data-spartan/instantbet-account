@@ -23,6 +23,8 @@ import { ITokenType } from './interfaces/token.interface';
 import * as argon2 from 'argon2';
 import * as dayjs from 'dayjs';
 import { RefreshToken } from '../users/index.entity';
+import { MailService } from 'src/mailer/mail.service';
+import { ForgotPasswordDto } from './dto';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -33,6 +35,7 @@ export class AuthService implements OnModuleInit {
     private readonly helper: AuthHelper,
     private readonly config: ConfigService,
     private readonly logger: LoggerService,
+    private readonly mailService: MailService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -106,7 +109,13 @@ export class AuthService implements OnModuleInit {
 
   public async login({ email, password }: LoginDto) {
     const user: User = await this.userRepo.findOne({
-      select: { id: true, password: true },
+      select: {
+        id: true,
+        password: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
       where: { email },
     });
     if (!user) {
@@ -125,9 +134,20 @@ export class AuthService implements OnModuleInit {
         HttpStatus.NOT_FOUND,
       );
     }
+
     // await this.repository.update(user.id, { lastLoginAt: new Date() });
     // const token = this.helper.generateTokens(user);
     const token = await this.helper.handleLogin(user);
+    try {
+      await this.mailService.sendVerificationEmail(
+        user.email,
+        user.firstName,
+        user.lastName,
+        token.accessToken,
+      );
+    } catch (e) {
+      console.log(e);
+    }
 
     return {
       token,
@@ -179,5 +199,30 @@ export class AuthService implements OnModuleInit {
     this.userRepo.update(userExists.id, { password: hashedPassword });
 
     return true;
+  }
+
+  public async forgotPassword({ email }: ForgotPasswordDto): Promise<boolean> {
+    try {
+      const user: User = await this.userRepo.findOneOrFail({
+        where: { email },
+      });
+      if (!user) {
+        throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+      }
+      const token = v4();
+      // await this.inMemoryStorageService.setForgetPasswordToken(user.id, token);
+      await this.mailService.sendChangePasswordEmail(
+        user.email,
+        user.firstName,
+        user.lastName,
+        token,
+      );
+      return true;
+    } catch (e) {
+      throw new HttpException(
+        'Something went wrong.',
+        HttpStatus.EXPECTATION_FAILED,
+      );
+    }
   }
 }

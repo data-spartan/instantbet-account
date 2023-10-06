@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { MailService } from './mailSender.service';
+import { MailService } from './mail.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailerConfigService } from './config/mailer.config';
+import { MailSender } from './mailSender.service';
 
 @Module({
   imports: [
@@ -9,7 +10,7 @@ import { MailerConfigService } from './config/mailer.config';
       useClass: MailerConfigService,
     }),
   ],
-  providers: [MailService],
+  providers: [MailService, MailSender],
   exports: [MailService],
 })
 export class MailModule {}

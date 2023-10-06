@@ -1,4 +1,4 @@
 export enum EmailTemplatesEnum {
-  VerificationEmail = 'verify-email',
-  ChangePasswordEmail = 'change-password-email',
+  VerificationEmail = './confirmation',
+  ChangePasswordEmail = './change-password-email',
 }

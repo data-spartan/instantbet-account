@@ -1,6 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MailService } from './mailSender.service';
+import { MailSender } from './mailSender.service';
 import { EmailTemplatesEnum } from './enums';
 import {
   ChangePasswordEmailContext,
@@ -8,9 +8,9 @@ import {
 } from './interfaces';
 
 @Injectable()
-export class MessagingService {
+export class MailService {
   constructor(
-    private readonly mailService: MailService,
+    private readonly mailSender: MailSender,
     private readonly configService: ConfigService,
   ) {}
 
@@ -23,7 +23,7 @@ export class MessagingService {
   }
 
   private generateVerificationLink(token: string) {
-    return `${this.getAppUrl()}/verify-email/${token}`;
+    return `https:///verify-email/${token}`;
   }
 
   private generateChangePasswordLink(token: string) {
@@ -37,7 +37,7 @@ export class MessagingService {
     token: string,
   ) {
     const verifyLink = this.generateVerificationLink(token);
-    await this.mailService.sendEmail<VerificationEmailContext>({
+    await this.mailSender.sendEmail<VerificationEmailContext>({
       to,
       subject: 'Verify E-mail Address @ InstantBet',
       template: EmailTemplatesEnum.VerificationEmail,
@@ -56,7 +56,7 @@ export class MessagingService {
     token: string,
   ) {
     const changePasswordLink = this.generateChangePasswordLink(token);
-    await this.mailService.sendEmail<ChangePasswordEmailContext>({
+    await this.mailSender.sendEmail<ChangePasswordEmailContext>({
       to,
       subject: 'Change Your Password @ InstantBet',
       template: EmailTemplatesEnum.VerificationEmail,
