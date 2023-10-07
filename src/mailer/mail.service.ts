@@ -15,15 +15,17 @@ export class MailService {
   ) {}
 
   private getAppUrl() {
-    return this.configService.get<boolean>('APP_IN_PRODUCTION')
-      ? `${this.configService.get<boolean>('DOMAIN')}`
+    return process.env.NODE_ENV === 'production'
+      ? `${this.configService.get<boolean>(
+          'APP_PRODUCTION_DOMAIN',
+        )}:${this.configService.get<boolean>('APP_PORT')}`
       : `${this.configService.get<boolean>(
           'APP_DEV_DOMAIN',
         )}:${this.configService.get<boolean>('APP_DEV_FRONTEND_PORT')}`;
   }
 
   private generateVerificationLink(token: string) {
-    return `https:///verify-email/${token}`;
+    return `${this.getAppUrl()}/verify-email/${token}`;
   }
 
   private generateChangePasswordLink(token: string) {
