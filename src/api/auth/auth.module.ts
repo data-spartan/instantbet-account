@@ -17,6 +17,8 @@ import { RefreshToken } from '../users/index.entity';
 import * as fs from 'fs';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 import { MailModule } from 'src/mailer/mail.module';
+import { EmailTokenStrategy } from './strategies/emailToken.strategy';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -61,6 +63,7 @@ import { MailModule } from 'src/mailer/mail.module';
     AuthHelper,
     AccessTokenStrategy,
     JwtRefreshTokenStrategy,
+    EmailTokenStrategy,
     RefreshPrivateSecretService,
 
     {

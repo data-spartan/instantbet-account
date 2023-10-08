@@ -54,15 +54,6 @@ export class UsersService {
     }
   }
 
-  public async confirmEmail(email: string) {
-    return this.userRepo.update(
-      { email },
-      {
-        verifiedEmail: true,
-      },
-    );
-  }
-
   async updateMyProfile(id: string, attrs: Partial<User>) {
     const user = await this.findOne(id);
     if (!user) throw new HttpException(`user with id: ${id} not found`, 404);

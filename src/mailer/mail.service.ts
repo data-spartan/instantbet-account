@@ -34,8 +34,8 @@ export class MailService {
 
   public async sendVerificationEmail(
     email: string,
-    firstName: string,
-    lastName: string,
+    // firstName: string,
+    // lastName: string,
     emailToken: string,
   ) {
     // const { emailToken } = await this.authHelper.getJwtEmailToken(email);
@@ -45,8 +45,9 @@ export class MailService {
       subject: 'Verify E-mail Address @ InstantBet',
       template: EmailTemplatesEnum.VerificationEmail,
       context: {
-        firstName,
-        lastName,
+        email,
+        // firstName,
+        // lastName,
         verifyLink,
       },
     });

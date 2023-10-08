@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
@@ -42,9 +43,28 @@ export class AuthHelper {
 
   public async validateUser(decoded: any): Promise<User> {
     return this.userRepo.findOne({
-      select: { id: true, role: true },
+      select: { id: true, email: true, role: true },
       where: { id: decoded.sub },
     });
+  }
+
+  public async confirmEmail(email: string) {
+    return this.userRepo.update(
+      { email },
+      {
+        verifiedEmail: true,
+      },
+    );
+  }
+
+  public async validateUserByEmail(email: string): Promise<User> {
+    try {
+      return await this.userRepo.findOneOrFail({
+        where: { email: email },
+      });
+    } catch (e) {
+      throw new NotFoundException(`user with email: ${email} not found`);
+    }
   }
 
   async getJwtAccessToken(userId: string) {

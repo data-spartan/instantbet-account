@@ -19,7 +19,6 @@ export class LoggerService extends Logger {
     super();
 
     const configParams = new LoggerGetParams(configService);
-    console.log(configParams.getConfigParams());
     const { BASE_DIR, LOGS_DIR, LOGS_MAXSIZE, LOGS_MAXFILES, LOGS_LEVEL } =
       configParams.getConfigParams();
     const config: any = new LoggerConfig(

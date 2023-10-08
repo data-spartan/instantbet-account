@@ -103,8 +103,8 @@ export class AuthService implements OnModuleInit {
     const { emailToken } = await this.helper.getJwtEmailToken(user.email);
     await this.mailService.sendVerificationEmail(
       user.email,
-      user.firstName,
-      user.lastName,
+      // user.firstName,
+      // user.lastName,
       emailToken,
     );
 
@@ -151,19 +151,14 @@ export class AuthService implements OnModuleInit {
   }
 
   public async resendVerificationEmail(user: User) {
-    // const user = await this.userRepo.findOne({
-    //   select: { email: true, verifiedEmail: true },
-    //   where: { id },
-    // });
-
     if (user.verifiedEmail) {
       throw new BadRequestException('Email already confirmed');
     }
     const { emailToken } = await this.helper.getJwtEmailToken(user.email);
     await this.mailService.sendVerificationEmail(
       user.email,
-      user.firstName,
-      user.lastName,
+      // user.firstName,
+      // user.lastName,
       emailToken,
     );
   }

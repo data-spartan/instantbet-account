@@ -60,6 +60,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   private async me(@Req() { user }: CustomRequest) {
+    console.log(user);
     const result = await this.authService.me(user.id);
     return ResponseSuccess(
       `user ${result.id} profile retrieved succesfully`,
@@ -108,5 +109,6 @@ export class AuthController {
   @Post('resend-confirmation-link')
   async resendConfirmationLink(@Req() { user }: CustomRequest) {
     await this.authService.resendVerificationEmail(user);
+    return ResponseSuccess(`Resended user ${user.id}`);
   }
 }

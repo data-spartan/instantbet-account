@@ -12,9 +12,12 @@ import * as fs from 'fs';
 import { UsersService } from 'src/api/users/users.service';
 
 @Injectable()
-export class EmailTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class EmailTokenStrategy extends PassportStrategy(
+  Strategy,
+  'passport-local',
+) {
   constructor(
-    private readonly usersService: UsersService,
+    private readonly authHelper: AuthHelper,
     private readonly config: ConfigService,
   ) {
     super({
@@ -28,10 +31,10 @@ export class EmailTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: any): Promise<User> | never {
-    const user = await this.usersService.findByEmail(payload.email);
-    if (!user.email) throw new BadRequestException('Email already confirmed');
-    await this.usersService.confirmEmail(user.email);
-
+    const user = await this.authHelper.validateUserByEmail(payload.email);
+    if (user.verifiedEmail)
+      throw new BadRequestException('Email already confirmed');
+    this.authHelper.confirmEmail(user.email);
     return user;
   }
 }
