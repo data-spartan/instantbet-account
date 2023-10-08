@@ -18,7 +18,7 @@ export class MailService {
     return process.env.NODE_ENV === 'production'
       ? `${this.configService.get<boolean>(
           'APP_PRODUCTION_DOMAIN',
-        )}:${this.configService.get<boolean>('APP_PORT')}`
+        )}:${this.configService.get<boolean>('APP_PRODUCTION_FRONTEND_PORT')}`
       : `${this.configService.get<boolean>(
           'APP_DEV_DOMAIN',
         )}:${this.configService.get<boolean>('APP_DEV_FRONTEND_PORT')}`;

@@ -100,7 +100,7 @@ export class AuthController {
   @UseGuards(EmailJwtAuthGuard)
   //when user clicks on confirm email, request is sent to FE.
   // FE need to send token from URL, to this route. Guard decodes, verifies it ad updates confiremd email flag
-  @Post('email-confirmation')
+  @Post('verify-email')
   async emailConfirmation(@Req() { user }: CustomRequest) {
     return ResponseSuccess(`user ${user.id} verified e-mail succesfully!`);
   }
@@ -109,6 +109,6 @@ export class AuthController {
   @Post('resend-confirmation-link')
   async resendConfirmationLink(@Req() { user }: CustomRequest) {
     await this.authService.resendVerificationEmail(user);
-    return ResponseSuccess(`Resended user ${user.id}`);
+    return ResponseSuccess(`Resended confirmation link for user ${user.id}`);
   }
 }

@@ -10,6 +10,7 @@ import { User } from '../../users/entities/user.entity';
 import { AuthHelper } from '../auth.helper';
 import * as fs from 'fs';
 import { UsersService } from 'src/api/users/users.service';
+import { Request } from 'express';
 
 @Injectable()
 export class EmailTokenStrategy extends PassportStrategy(
@@ -27,6 +28,7 @@ export class EmailTokenStrategy extends PassportStrategy(
         .toString(),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
+      // passReqToCallback: true,
     });
   }
 
@@ -34,6 +36,7 @@ export class EmailTokenStrategy extends PassportStrategy(
     const user = await this.authHelper.validateUserByEmail(payload.email);
     if (user.verifiedEmail)
       throw new BadRequestException('Email already confirmed');
+
     this.authHelper.confirmEmail(user.email);
     return user;
   }

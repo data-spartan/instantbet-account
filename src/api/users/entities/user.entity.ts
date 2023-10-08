@@ -45,6 +45,11 @@ export class User {
   @Column('enum', { enum: UserRolesEnum, default: UserRolesEnum.Basic })
   public role: UserRolesEnum;
 
+  //sending a new confirmation link doesn’t invalidate the previous sent non-verified links.to achieve that,
+  //  we could store most recent confirmation token in the database and check it before confirming.
+  @Column({ type: 'varchar', nullable: true, default: null })
+  verifyEmailToken?: string;
+
   // @Column({ array: true, nullable: true })
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     nullable: true,

@@ -33,7 +33,7 @@ export class AuthService implements OnModuleInit {
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     @InjectRepository(RefreshToken)
     private readonly tokenRepo: Repository<RefreshToken>,
-    private readonly helper: AuthHelper,
+    private readonly authHelper: AuthHelper,
     private readonly config: ConfigService,
     private readonly logger: LoggerService,
     private readonly mailService: MailService,
@@ -65,7 +65,7 @@ export class AuthService implements OnModuleInit {
     admin.lastName = 'Admin';
     admin.email = superAdminEmail;
     admin.role = UserRolesEnum.Administrator;
-    admin.password = await this.helper.encodePassword(superAdminPassword);
+    admin.password = await this.authHelper.encodePassword(superAdminPassword);
 
     const registerAdmin = await this.userRepo.save(admin);
 
@@ -76,6 +76,7 @@ export class AuthService implements OnModuleInit {
       this.logger.warn(
         `Administrator creation success. Admin e-mail: ${admin.email}`,
       );
+      this.authHelper.confirmEmail(admin.email);
     }
   }
 
@@ -92,7 +93,10 @@ export class AuthService implements OnModuleInit {
     user.firstName = firstName;
     user.lastName = lastName;
     user.email = email;
-    user.password = await this.helper.encodePassword(password);
+    user.password = await this.authHelper.encodePassword(password);
+
+    const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
+    user.verifyEmailToken = emailToken;
 
     const registerUser = await this.userRepo.save(user);
 
@@ -100,7 +104,6 @@ export class AuthService implements OnModuleInit {
       throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);
     }
 
-    const { emailToken } = await this.helper.getJwtEmailToken(user.email);
     await this.mailService.sendVerificationEmail(
       user.email,
       // user.firstName,
@@ -131,7 +134,7 @@ export class AuthService implements OnModuleInit {
         HttpStatus.NOT_FOUND,
       );
     }
-    const isPasswordValid: boolean = await this.helper.isPasswordValid(
+    const isPasswordValid: boolean = await this.authHelper.isPasswordValid(
       password,
       user.password,
     );
@@ -142,7 +145,7 @@ export class AuthService implements OnModuleInit {
       );
     }
 
-    const token = await this.helper.handleLogin(user);
+    const token = await this.authHelper.handleLogin(user);
 
     return {
       token,
@@ -154,7 +157,7 @@ export class AuthService implements OnModuleInit {
     if (user.verifiedEmail) {
       throw new BadRequestException('Email already confirmed');
     }
-    const { emailToken } = await this.helper.getJwtEmailToken(user.email);
+    const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
     await this.mailService.sendVerificationEmail(
       user.email,
       // user.firstName,
@@ -193,7 +196,7 @@ export class AuthService implements OnModuleInit {
       throw new HttpException('No user found', HttpStatus.NOT_FOUND);
     }
 
-    const isPasswordValid: boolean = await this.helper.isPasswordValid(
+    const isPasswordValid: boolean = await this.authHelper.isPasswordValid(
       currentPassword,
       userExists.password,
     );
@@ -202,7 +205,7 @@ export class AuthService implements OnModuleInit {
       throw new HttpException('Invalid password', HttpStatus.NOT_FOUND);
     }
 
-    const hashedPassword = await this.helper.encodePassword(newPassword);
+    const hashedPassword = await this.authHelper.encodePassword(newPassword);
 
     this.userRepo.update(userExists.id, { password: hashedPassword });
 
