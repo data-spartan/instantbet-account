@@ -99,10 +99,16 @@ export class AuthService implements OnModuleInit {
       throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);
     }
 
-    const token = await this.helper.handleLogin(user);
+    const { emailToken } = await this.helper.getJwtEmailToken(user.email);
+    await this.mailService.sendVerificationEmail(
+      user.email,
+      user.firstName,
+      user.lastName,
+      emailToken,
+    );
 
     return {
-      token,
+      // token,
       id: user.id,
     };
   }
@@ -135,19 +141,7 @@ export class AuthService implements OnModuleInit {
       );
     }
 
-    // await this.repository.update(user.id, { lastLoginAt: new Date() });
-    // const token = this.helper.generateTokens(user);
     const token = await this.helper.handleLogin(user);
-    try {
-      await this.mailService.sendVerificationEmail(
-        user.email,
-        user.firstName,
-        user.lastName,
-        token.accessToken,
-      );
-    } catch (e) {
-      console.log(e);
-    }
 
     return {
       token,

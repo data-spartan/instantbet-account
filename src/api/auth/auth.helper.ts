@@ -55,6 +55,14 @@ export class AuthHelper {
     };
   }
 
+  async getJwtEmailToken(email: string) {
+    const payload = { email };
+    const emailToken = await this.jwt.signAsync(payload);
+    return {
+      emailToken,
+    };
+  }
+
   public async getJwtRefreshToken(userId: string) {
     const payload = { sub: userId };
     const refreshToken = await this.jwt.signAsync(
@@ -73,7 +81,7 @@ export class AuthHelper {
     ]);
     try {
       const hashedRefreshToken = await this.hashData(refreshToken.refreshToken);
-
+      //insertResult is database response object
       const insertResult = await refreshTokenTransaction(
         this.dataSource,
         RefreshToken,

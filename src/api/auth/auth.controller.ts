@@ -28,6 +28,9 @@ import { Request, Response } from 'express';
 import { ResponseSuccess } from 'src/common/helpers/successResponse.formater';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { use } from 'passport';
+import { ConfirmEmailDto } from 'src/mailer/dto/confirmEmail.dto';
+import { EmailJwtAuthGuard } from './guards/emailJwt.guard';
+import { UsersService } from '../users/users.service';
 
 @Controller('auth')
 // @Serialize(AuthRespDto)
@@ -38,11 +41,11 @@ export class AuthController {
   @Post('/register')
   // @UseInterceptors(ClassSerializerInterceptor)
   private async register(@Body() body: RegisterDto, @Req() req: Request) {
-    const { token, id } = await this.authService.register(body);
-    req.res.setHeader('Token-Id', token.tokenId);
+    const { id } = await this.authService.register(body);
+    // req.res.setHeader('Token-Id', token.tokenId);
     return ResponseSuccess(
-      `user ${id} registered succesfully`,
-      token,
+      `Verification e-mail is sent to user ${id}`,
+      null,
       HttpStatus.CREATED,
     );
   }
@@ -91,5 +94,11 @@ export class AuthController {
     //request.res.setHeader('Set-Cookie', accessToken); next-auth creates cookie no need here
     const result = user;
     return ResponseSuccess(`token refreshed succesfully`, result);
+  }
+
+  @UseGuards(EmailJwtAuthGuard)
+  @Post('confirm-email-verification')
+  async emailVerification(@Req() { user }: CustomRequest) {
+    return ResponseSuccess(`user ${user.id} verified e-mail succesfully`);
   }
 }

@@ -14,7 +14,7 @@ export class LoggerService extends Logger {
 
   constructor(
     context: string,
-    private readonly configService: ConfigService, // logLevel: string = configService.get<string>('DEFAULT_LOG_LEVEL'),
+    private readonly configService: ConfigService,
   ) {
     super();
 
