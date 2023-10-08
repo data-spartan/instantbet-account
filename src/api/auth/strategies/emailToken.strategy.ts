@@ -12,17 +12,13 @@ import * as fs from 'fs';
 import { UsersService } from 'src/api/users/users.service';
 
 @Injectable()
-export class EmailTokenStrategy extends PassportStrategy(
-  Strategy,
-  'jwt-email',
-) {
+export class EmailTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly usersService: UsersService,
     private readonly config: ConfigService,
   ) {
     super({
       usernameField: 'email',
-      // secretOrKey: config.get('APP_JWT_SECRET'),
       secretOrKey: fs
         .readFileSync(config.get<string>('JWT_PUBLIC_SECRET_ACCESS'))
         .toString(),

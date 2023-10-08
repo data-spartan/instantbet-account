@@ -33,14 +33,15 @@ export class MailService {
   }
 
   public async sendVerificationEmail(
-    to: string,
+    email: string,
     firstName: string,
     lastName: string,
-    token: string,
+    emailToken: string,
   ) {
-    const verifyLink = this.generateVerificationLink(token);
+    // const { emailToken } = await this.authHelper.getJwtEmailToken(email);
+    const verifyLink = this.generateVerificationLink(emailToken);
     await this.mailSender.sendEmail<VerificationEmailContext>({
-      to,
+      to: email,
       subject: 'Verify E-mail Address @ InstantBet',
       template: EmailTemplatesEnum.VerificationEmail,
       context: {
