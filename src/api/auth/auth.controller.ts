@@ -26,7 +26,7 @@ import { LoggerService } from 'src/common/logger/logger.service';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { Request, Response } from 'express';
 import { ResponseSuccess } from 'src/common/helpers/successResponse.formater';
-import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
+import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
 import { use } from 'passport';
 import { ConfirmEmailDto } from 'src/mailer/dto/confirmEmail.dto';
 import { EmailJwtAuthGuard } from './guards/emailJwt.guard';
