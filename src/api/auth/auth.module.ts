@@ -16,6 +16,9 @@ import { JwtRefreshTokenStrategy } from './strategies/refreshToken.strategy';
 import { RefreshToken } from '../users/index.entity';
 import * as fs from 'fs';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
+import { MailModule } from 'src/mailer/mail.module';
+import { EmailTokenStrategy } from './strategies/emailToken.strategy';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -52,6 +55,7 @@ import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
       }),
     }),
     TypeOrmModule.forFeature([User, RefreshToken]),
+    MailModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -59,6 +63,7 @@ import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
     AuthHelper,
     AccessTokenStrategy,
     JwtRefreshTokenStrategy,
+    EmailTokenStrategy,
     RefreshPrivateSecretService,
 
     {

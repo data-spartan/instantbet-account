@@ -28,7 +28,7 @@ import { DataSource } from 'typeorm';
   controllers: [AppController],
   providers: [
     {
-      inject: [ConfigService], // Inject the LoggerConfig dependency
+      inject: [ConfigService],
       provide: LoggerService,
       useFactory: (configService: ConfigService) => {
         return new LoggerService('sys', configService);

@@ -15,7 +15,7 @@ import { allUsersPagination } from 'src/common/typeorm-queries';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private repository: Repository<User>,
+    @InjectRepository(User) private userRepo: Repository<User>,
     private authHelper: AuthHelper,
     private readonly dataSource: DataSource,
   ) {}
@@ -38,15 +38,15 @@ export class UsersService {
   }
 
   public async findOne(id: string): Promise<User> {
-    const user = await this.repository.findOneBy({ id });
+    const user = await this.userRepo.findOneBy({ id });
     if (!user) throw new HttpException(`user with id: ${id} not found`, 404);
 
     return user;
   }
 
-  public async getByEmail(email: string): Promise<User> {
+  public async findByEmail(email: string): Promise<User> {
     try {
-      return await this.repository.findOneOrFail({
+      return await this.userRepo.findOneOrFail({
         where: { email: email },
       });
     } catch (e) {
@@ -59,16 +59,17 @@ export class UsersService {
     if (!user) throw new HttpException(`user with id: ${id} not found`, 404);
 
     Object.assign(user, attrs);
-    this.repository.save(user);
+    this.userRepo.save(user);
     return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
   }
 
+  //admin could create testing user
   public async createTestUser(body: CreateTestUserDto): Promise<User> {
     body.password = await this.authHelper.encodePassword(body.password);
-    return this.repository.save(body);
+    return this.userRepo.save(body);
   }
 
   public async remove(id: string): Promise<void> {
-    await this.repository.delete(id);
+    await this.userRepo.delete(id);
   }
 }

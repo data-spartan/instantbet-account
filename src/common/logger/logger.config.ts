@@ -8,12 +8,16 @@ export class LoggerConfig {
   private dir;
   private context;
   private level;
+  private logsSize;
+  private logsMaxFiles;
 
   constructor(
     baseDir: string,
     logsDir: string,
-    context: string,
     level: string,
+    logsSize: number,
+    logsMaxFiles: number,
+    context: string,
   ) {
     this.dir = join(baseDir, logsDir);
     this.context = context;
@@ -27,8 +31,8 @@ export class LoggerConfig {
         filename: `${context}.log`,
         level: this.level,
         dirname: `${this.dir}/${context}`,
-        maxsize: 100000000,
-        maxFiles: 10,
+        maxsize: this.logsSize,
+        maxFiles: this.logsMaxFiles,
       }),
     ],
   });

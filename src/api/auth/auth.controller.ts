@@ -28,6 +28,9 @@ import { Request, Response } from 'express';
 import { ResponseSuccess } from 'src/common/helpers/successResponse.formater';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { use } from 'passport';
+import { ConfirmEmailDto } from 'src/mailer/dto/confirmEmail.dto';
+import { EmailJwtAuthGuard } from './guards/emailJwt.guard';
+import { UsersService } from '../users/users.service';
 
 @Controller('auth')
 // @Serialize(AuthRespDto)
@@ -38,11 +41,11 @@ export class AuthController {
   @Post('/register')
   // @UseInterceptors(ClassSerializerInterceptor)
   private async register(@Body() body: RegisterDto, @Req() req: Request) {
-    const { token, id } = await this.authService.register(body);
-    req.res.setHeader('Token-Id', token.tokenId);
+    const { id } = await this.authService.register(body);
+    // req.res.setHeader('Token-Id', token.tokenId);
     return ResponseSuccess(
-      `user ${id} registered succesfully`,
-      token,
+      `Verification e-mail is sent to user ${id}`,
+      null,
       HttpStatus.CREATED,
     );
   }
@@ -57,6 +60,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   private async me(@Req() { user }: CustomRequest) {
+    console.log(user);
     const result = await this.authService.me(user.id);
     return ResponseSuccess(
       `user ${result.id} profile retrieved succesfully`,
@@ -81,15 +85,29 @@ export class AuthController {
   @Post('/sign-out')
   async signOut(@Req() request: CustomRequest) {
     const tokenId = request.header('Token-Id');
-    await this.authService.signOut(tokenId);
+    await this.authService.signOut(tokenId); //invalidate current refresh token
     return ResponseSuccess(`user ${request.user.id} succesfully`);
   }
 
   @UseGuards(JwtRefreshGuard)
   @Get('/refresh')
   async refresh(@Req() { user }: CustomRequest) {
-    //request.res.setHeader('Set-Cookie', accessToken); next-auth creates cookie no need here
     const result = user;
     return ResponseSuccess(`token refreshed succesfully`, result);
+  }
+
+  @UseGuards(EmailJwtAuthGuard)
+  //when user clicks on confirm email, request is sent to FE.
+  // FE need to send token from URL, to this route. Guard decodes, verifies it ad updates confiremd email flag
+  @Post('verify-email')
+  async emailConfirmation(@Req() { user }: CustomRequest) {
+    return ResponseSuccess(`user ${user.id} verified e-mail succesfully!`);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('resend-confirmation-link')
+  async resendConfirmationLink(@Req() { user }: CustomRequest) {
+    await this.authService.resendVerificationEmail(user);
+    return ResponseSuccess(`Resended confirmation link for user ${user.id}`);
   }
 }

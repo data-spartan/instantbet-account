@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Inject,
@@ -23,6 +24,8 @@ import { ITokenType } from './interfaces/token.interface';
 import * as argon2 from 'argon2';
 import * as dayjs from 'dayjs';
 import { RefreshToken } from '../users/index.entity';
+import { MailService } from 'src/mailer/mail.service';
+import { ForgotPasswordDto } from './dto';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -30,9 +33,10 @@ export class AuthService implements OnModuleInit {
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     @InjectRepository(RefreshToken)
     private readonly tokenRepo: Repository<RefreshToken>,
-    private readonly helper: AuthHelper,
+    private readonly authHelper: AuthHelper,
     private readonly config: ConfigService,
     private readonly logger: LoggerService,
+    private readonly mailService: MailService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -61,7 +65,7 @@ export class AuthService implements OnModuleInit {
     admin.lastName = 'Admin';
     admin.email = superAdminEmail;
     admin.role = UserRolesEnum.Administrator;
-    admin.password = await this.helper.encodePassword(superAdminPassword);
+    admin.password = await this.authHelper.encodePassword(superAdminPassword);
 
     const registerAdmin = await this.userRepo.save(admin);
 
@@ -72,6 +76,7 @@ export class AuthService implements OnModuleInit {
       this.logger.warn(
         `Administrator creation success. Admin e-mail: ${admin.email}`,
       );
+      this.authHelper.confirmEmail(admin.email, null);
     }
   }
 
@@ -88,7 +93,10 @@ export class AuthService implements OnModuleInit {
     user.firstName = firstName;
     user.lastName = lastName;
     user.email = email;
-    user.password = await this.helper.encodePassword(password);
+    user.password = await this.authHelper.encodePassword(password);
+
+    const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
+    user.verifyEmailToken = emailToken;
 
     const registerUser = await this.userRepo.save(user);
 
@@ -96,17 +104,28 @@ export class AuthService implements OnModuleInit {
       throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);
     }
 
-    const token = await this.helper.handleLogin(user);
+    await this.mailService.sendVerificationEmail(
+      user.email,
+      // user.firstName,
+      // user.lastName,
+      emailToken,
+    );
 
     return {
-      token,
+      // token,
       id: user.id,
     };
   }
 
   public async login({ email, password }: LoginDto) {
     const user: User = await this.userRepo.findOne({
-      select: { id: true, password: true },
+      select: {
+        id: true,
+        password: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+      },
       where: { email },
     });
     if (!user) {
@@ -115,7 +134,7 @@ export class AuthService implements OnModuleInit {
         HttpStatus.NOT_FOUND,
       );
     }
-    const isPasswordValid: boolean = await this.helper.isPasswordValid(
+    const isPasswordValid: boolean = await this.authHelper.isPasswordValid(
       password,
       user.password,
     );
@@ -125,14 +144,27 @@ export class AuthService implements OnModuleInit {
         HttpStatus.NOT_FOUND,
       );
     }
-    // await this.repository.update(user.id, { lastLoginAt: new Date() });
-    // const token = this.helper.generateTokens(user);
-    const token = await this.helper.handleLogin(user);
 
+    const token = await this.authHelper.handleLogin(user);
+    await this.userRepo.update(user.id, { lastLoginAt: new Date() });
     return {
       token,
       id: user.id,
     };
+  }
+
+  public async resendVerificationEmail(user: User) {
+    if (user.verifiedEmail) {
+      throw new BadRequestException('Email already confirmed');
+    }
+    const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
+    await this.mailService.sendVerificationEmail(
+      user.email,
+      // user.firstName,
+      // user.lastName,
+      emailToken,
+    );
+    this.userRepo.update(user.id, { verifyEmailToken: emailToken });
   }
 
   public async me(id: string): Promise<User> {
@@ -165,7 +197,7 @@ export class AuthService implements OnModuleInit {
       throw new HttpException('No user found', HttpStatus.NOT_FOUND);
     }
 
-    const isPasswordValid: boolean = await this.helper.isPasswordValid(
+    const isPasswordValid: boolean = await this.authHelper.isPasswordValid(
       currentPassword,
       userExists.password,
     );
@@ -174,10 +206,35 @@ export class AuthService implements OnModuleInit {
       throw new HttpException('Invalid password', HttpStatus.NOT_FOUND);
     }
 
-    const hashedPassword = await this.helper.encodePassword(newPassword);
+    const hashedPassword = await this.authHelper.encodePassword(newPassword);
 
     this.userRepo.update(userExists.id, { password: hashedPassword });
 
     return true;
+  }
+
+  public async forgotPassword({ email }: ForgotPasswordDto): Promise<boolean> {
+    try {
+      const user: User = await this.userRepo.findOneOrFail({
+        where: { email },
+      });
+      if (!user) {
+        throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+      }
+      const token = v4();
+      // await this.inMemoryStorageService.setForgetPasswordToken(user.id, token);
+      await this.mailService.sendChangePasswordEmail(
+        user.email,
+        user.firstName,
+        user.lastName,
+        token,
+      );
+      return true;
+    } catch (e) {
+      throw new HttpException(
+        'Something went wrong.',
+        HttpStatus.EXPECTATION_FAILED,
+      );
+    }
   }
 }

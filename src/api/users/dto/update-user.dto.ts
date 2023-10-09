@@ -4,6 +4,7 @@ import { UserRolesEnum } from '../roles/roles.enum';
 import { IsOptional, IsString } from 'class-validator';
 
 export class UserUpdateDto {
+  //crucial not to include password valdiation, bcs only in change-password could change passwd
   @IsString()
   @IsOptional()
   public firstName: string;

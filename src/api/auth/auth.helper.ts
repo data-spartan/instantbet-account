@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   UnauthorizedException,
+  NotFoundException,
 } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
@@ -14,7 +15,6 @@ import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from '../users/index.entity';
 import { refreshTokenTransaction } from 'src/common/typeorm-queries/refreshToken.transactions';
-import * as fs from 'fs';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 
 @Injectable()
@@ -43,9 +43,29 @@ export class AuthHelper {
 
   public async validateUser(decoded: any): Promise<User> {
     return this.userRepo.findOne({
-      select: { id: true, role: true },
+      select: { id: true, email: true, role: true },
       where: { id: decoded.sub },
     });
+  }
+
+  public async confirmEmail(email: string, invalidateToken: null) {
+    return this.userRepo.update(
+      { email },
+      {
+        verifiedEmail: true,
+        verifyEmailToken: invalidateToken,
+      },
+    );
+  }
+
+  public async validateUserByEmail(email: string): Promise<User> {
+    try {
+      return await this.userRepo.findOneOrFail({
+        where: { email: email },
+      });
+    } catch (e) {
+      throw new NotFoundException(`user with email: ${email} not found`);
+    }
   }
 
   async getJwtAccessToken(userId: string) {
@@ -56,11 +76,19 @@ export class AuthHelper {
     };
   }
 
+  async getJwtEmailToken(email: string) {
+    const payload = { email };
+    const emailToken = await this.jwt.signAsync(payload);
+    return {
+      emailToken,
+    };
+  }
+
   public async getJwtRefreshToken(userId: string) {
     const payload = { sub: userId };
     const refreshToken = await this.jwt.signAsync(
       payload,
-      await this.refreshKeysToken.returnRefreshKey(),
+      this.refreshKeysToken.refreshTokenPrivateKeyConfig(),
     );
     return {
       refreshToken,
@@ -74,7 +102,7 @@ export class AuthHelper {
     ]);
     try {
       const hashedRefreshToken = await this.hashData(refreshToken.refreshToken);
-
+      //insertResult is database response object
       const insertResult = await refreshTokenTransaction(
         this.dataSource,
         RefreshToken,

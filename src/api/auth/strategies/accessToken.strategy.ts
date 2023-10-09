@@ -7,7 +7,7 @@ import { AuthHelper } from '../auth.helper';
 import * as fs from 'fs';
 
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(Strategy) {
+export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly helper: AuthHelper,
     private readonly config: ConfigService,
