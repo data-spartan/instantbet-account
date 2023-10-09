@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 // import { SendEmail } from './mail.interface'
 
 @Injectable()
@@ -21,7 +21,11 @@ export class MailSender {
         context,
       });
     } catch (e) {
-      console.warn('Error while sending email', e);
+      throw new HttpException(
+        'Error while sending email',
+        HttpStatus.BAD_REQUEST,
+        { cause: e.stack },
+      );
     }
   }
 }

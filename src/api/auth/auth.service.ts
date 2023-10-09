@@ -76,7 +76,7 @@ export class AuthService implements OnModuleInit {
       this.logger.warn(
         `Administrator creation success. Admin e-mail: ${admin.email}`,
       );
-      this.authHelper.confirmEmail(admin.email);
+      this.authHelper.confirmEmail(admin.email, null);
     }
   }
 
@@ -146,7 +146,7 @@ export class AuthService implements OnModuleInit {
     }
 
     const token = await this.authHelper.handleLogin(user);
-
+    await this.userRepo.update(user.id, { lastLoginAt: new Date() });
     return {
       token,
       id: user.id,
@@ -164,6 +164,7 @@ export class AuthService implements OnModuleInit {
       // user.lastName,
       emailToken,
     );
+    this.userRepo.update(user.id, { verifyEmailToken: emailToken });
   }
 
   public async me(id: string): Promise<User> {

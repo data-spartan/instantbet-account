@@ -48,11 +48,12 @@ export class AuthHelper {
     });
   }
 
-  public async confirmEmail(email: string) {
+  public async confirmEmail(email: string, invalidateToken: null) {
     return this.userRepo.update(
       { email },
       {
         verifiedEmail: true,
+        verifyEmailToken: invalidateToken,
       },
     );
   }

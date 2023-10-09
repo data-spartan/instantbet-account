@@ -28,16 +28,25 @@ export class EmailTokenStrategy extends PassportStrategy(
         .toString(),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      // passReqToCallback: true,
+      passReqToCallback: true,
     });
   }
 
-  async validate(payload: any): Promise<User> | never {
+  async validate(request: Request, payload: any): Promise<User> | never {
+    const emailToken = request.header('Authorization').split(' ')[1];
     const user = await this.authHelper.validateUserByEmail(payload.email);
+
     if (user.verifiedEmail)
       throw new BadRequestException('Email already confirmed');
 
-    this.authHelper.confirmEmail(user.email);
+    if (user.verifyEmailToken !== emailToken)
+      //it can happen that user clics on resend verifyemail even if link is not expired,
+      // need to ensure that only last sent link is used
+      throw new BadRequestException(
+        'Reused some of the previous confirmation links',
+      );
+
+    this.authHelper.confirmEmail(user.email, null);
     return user;
   }
 }

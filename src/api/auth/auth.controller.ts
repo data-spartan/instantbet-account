@@ -85,14 +85,13 @@ export class AuthController {
   @Post('/sign-out')
   async signOut(@Req() request: CustomRequest) {
     const tokenId = request.header('Token-Id');
-    await this.authService.signOut(tokenId);
+    await this.authService.signOut(tokenId); //invalidate current refresh token
     return ResponseSuccess(`user ${request.user.id} succesfully`);
   }
 
   @UseGuards(JwtRefreshGuard)
   @Get('/refresh')
   async refresh(@Req() { user }: CustomRequest) {
-    //request.res.setHeader('Set-Cookie', accessToken); next-auth creates cookie no need here
     const result = user;
     return ResponseSuccess(`token refreshed succesfully`, result);
   }

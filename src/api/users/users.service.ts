@@ -63,6 +63,7 @@ export class UsersService {
     return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
   }
 
+  //admin could create testing user
   public async createTestUser(body: CreateTestUserDto): Promise<User> {
     body.password = await this.authHelper.encodePassword(body.password);
     return this.userRepo.save(body);
