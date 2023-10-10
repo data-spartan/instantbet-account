@@ -37,6 +37,7 @@ import { ConfirmEmailDto } from 'src/mailer/dto/confirmEmail.dto';
 import { EmailJwtAuthGuard } from './guards/emailJwt.guard';
 import { UsersService } from '../users/users.service';
 import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
+import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
 
 @Controller('auth')
 // @Serialize(AuthRespDto)
@@ -66,13 +67,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   private async me(@Req() { user }: CustomRequest) {
-    const result = await this.authService.me(user.id);
     return ResponseSuccess(
-      `user ${result.id} profile retrieved succesfully`,
-      result,
+      `user ${user.id} profile retrieved succesfully`,
+      user,
     );
   }
-
+  @UseGuards(EmailConfirmationGuard)
   @UseGuards(JwtAuthGuard)
   @Patch('/change-password')
   private async changePassword(

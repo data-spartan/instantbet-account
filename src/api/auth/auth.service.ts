@@ -217,24 +217,6 @@ export class AuthService implements OnModuleInit {
   }
 
   public async forgotChangePassword(newPassword: string, id: string) {
-    // const userExists: User = await this.userRepo.findOne({
-    //   select: { id: true, password: true },
-    //   where: { id },
-    // });
-
-    // if (!userExists) {
-    //   throw new HttpException('No user found', HttpStatus.NOT_FOUND);
-    // }
-
-    // const isPasswordValid: boolean = await this.authHelper.isPasswordValid(
-    //   currentPassword,
-    //   userExists.password,
-    // );
-
-    // if (!isPasswordValid) {
-    //   throw new HttpException('Invalid password', HttpStatus.NOT_FOUND);
-    // }
-
     const hashedPassword = await this.authHelper.encodePassword(newPassword);
 
     await this.userRepo.update(id, {

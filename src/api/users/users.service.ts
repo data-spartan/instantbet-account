@@ -54,9 +54,9 @@ export class UsersService {
     }
   }
 
-  async updateMyProfile(id: string, attrs: Partial<User>) {
-    const user = await this.findOne(id);
-    if (!user) throw new HttpException(`user with id: ${id} not found`, 404);
+  async updateMyProfile(user: User, attrs: Partial<User>) {
+    if (!user)
+      throw new HttpException(`user with id: ${user.id} not found`, 404);
 
     Object.assign(user, attrs);
     this.userRepo.save(user);

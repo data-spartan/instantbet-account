@@ -87,7 +87,7 @@ export class AdminController {
     @Req() { user }: CustomRequest,
     @Body() body: UserUpdateDto,
   ) {
-    const result = await this.usersService.updateMyProfile(user.id, body);
+    const result = await this.usersService.updateMyProfile(user, body);
     // return ResponseSuccess(
     //   `${Object.keys(body).join(',')} updated succesfully`,
     // );
