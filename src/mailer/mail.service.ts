@@ -28,16 +28,11 @@ export class MailService {
     return `${this.getAppUrl()}/verify-email/${token}`;
   }
 
-  private generateChangePasswordLink(token: string) {
+  private generateForgotPasswordLink(token: string) {
     return `${this.getAppUrl()}/change-password/${token}`;
   }
 
-  public async sendVerificationEmail(
-    email: string,
-    // firstName: string,
-    // lastName: string,
-    emailToken: string,
-  ) {
+  public async sendVerificationEmail(email: string, emailToken: string) {
     // const { emailToken } = await this.authHelper.getJwtEmailToken(email);
     const verifyLink = this.generateVerificationLink(emailToken);
     await this.mailSender.sendEmail<VerificationEmailContext>({
@@ -46,27 +41,19 @@ export class MailService {
       template: EmailTemplatesEnum.VerificationEmail,
       context: {
         email,
-        // firstName,
-        // lastName,
         verifyLink,
       },
     });
   }
 
-  public async sendChangePasswordEmail(
-    to: string,
-    firstName: string,
-    lastName: string,
-    token: string,
-  ) {
-    const changePasswordLink = this.generateChangePasswordLink(token);
+  public async sendForgotPasswordEmail(email: string, emailToken: string) {
+    const changePasswordLink = this.generateForgotPasswordLink(emailToken);
     await this.mailSender.sendEmail<ChangePasswordEmailContext>({
-      to,
+      to: email,
       subject: 'Change Your Password @ InstantBet',
-      template: EmailTemplatesEnum.VerificationEmail,
+      template: EmailTemplatesEnum.ForgotPasswordEmail,
       context: {
-        firstName,
-        lastName,
+        email,
         changePasswordLink,
       },
     });

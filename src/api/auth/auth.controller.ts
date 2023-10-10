@@ -13,7 +13,12 @@ import {
   Res,
   HttpStatus,
 } from '@nestjs/common';
-import { RegisterDto, LoginDto } from './dto';
+import {
+  RegisterDto,
+  LoginDto,
+  ForgotPasswordEmailDto,
+  ForgotPasswordDto,
+} from './dto';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { AuthService } from './auth.service';
 import { User } from '../users/entities/user.entity';
@@ -31,6 +36,7 @@ import { use } from 'passport';
 import { ConfirmEmailDto } from 'src/mailer/dto/confirmEmail.dto';
 import { EmailJwtAuthGuard } from './guards/emailJwt.guard';
 import { UsersService } from '../users/users.service';
+import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
 
 @Controller('auth')
 // @Serialize(AuthRespDto)
@@ -60,7 +66,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('/me')
   private async me(@Req() { user }: CustomRequest) {
-    console.log(user);
     const result = await this.authService.me(user.id);
     return ResponseSuccess(
       `user ${result.id} profile retrieved succesfully`,
@@ -74,11 +79,8 @@ export class AuthController {
     @Req() { user }: CustomRequest,
     @Body() body: ChangePasswordDto,
   ) {
-    const result = await this.authService.changePassword(body, user.id);
-    return ResponseSuccess(
-      `user ${user.id} changed password succesfully`,
-      result,
-    );
+    await this.authService.changePassword(body, user.id);
+    return ResponseSuccess(`user ${user.id} changed password succesfully`);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -96,6 +98,24 @@ export class AuthController {
     return ResponseSuccess(`token refreshed succesfully`, result);
   }
 
+  @Post('/forgot-password')
+  private async forgotPassword(@Body() body: ForgotPasswordEmailDto) {
+    await this.authService.forgotPassword(body);
+    return ResponseSuccess(`Forgot password mail link sent to ${body.email}`);
+  }
+
+  @Patch('/confirm-forgot-password')
+  @UseGuards(ForgotPasswordJwtAuthGuard)
+  private verifyForgotPassword(
+    @Body() { newPassword }: ForgotPasswordDto,
+    @Req() { user }: CustomRequest,
+  ) {
+    this.authService.forgotChangePassword(newPassword, user.id);
+    return ResponseSuccess(
+      `Succesfully confirmed forgot password action ${user.email}`,
+    );
+  }
+
   @UseGuards(EmailJwtAuthGuard)
   //when user clicks on confirm email, request is sent to FE.
   // FE need to send token from URL, to this route. Guard decodes, verifies it ad updates confiremd email flag
@@ -108,6 +128,8 @@ export class AuthController {
   @Post('resend-confirmation-link')
   async resendConfirmationLink(@Req() { user }: CustomRequest) {
     await this.authService.resendVerificationEmail(user);
-    return ResponseSuccess(`Resended confirmation link for user ${user.id}`);
+    return ResponseSuccess(
+      `Resended mail confirmation link for user ${user.id}`,
+    );
   }
 }

@@ -30,12 +30,16 @@ export class IsPasswordFormatValidConstraint
     //at least one lowercase letter, one uppercase letter, one digit, and one special character, lenght 8-12
     const IsFormatValid = passwordRegex.test(value);
     //in register its only importnatn if password have valid format
-    if (validationArguments.targetName === 'RegisterDto') {
-      return IsFormatValid;
-    }
-    if (validationArguments.targetName === 'ChangePasswordDto') {
-      return IsFormatValid;
-    }
+    // if (validationArguments.targetName === 'RegisterDto') {
+    //   return IsFormatValid;
+    // }
+    // if (validationArguments.targetName === 'ChangePasswordDto') {
+    //   return IsFormatValid;
+    // }
+    // if (validationArguments.targetName === 'ForgotPasswordDto') {
+    //   return IsFormatValid;
+    // }
+    return IsFormatValid;
   }
 
   defaultMessage(args: ValidationArguments): string {

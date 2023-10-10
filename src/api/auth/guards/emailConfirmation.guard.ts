@@ -8,7 +8,7 @@ import { CustomRequest } from 'src/common/interfaces';
 
 @Injectable()
 export class EmailConfirmationGuard implements CanActivate {
-  // route decorators resolve from bottom to top,
+  // decorators resolve from bottom to top,
   // you need first jwtauthguard to populate request object with user
   canActivate(context: ExecutionContext) {
     const request: CustomRequest = context.switchToHttp().getRequest();

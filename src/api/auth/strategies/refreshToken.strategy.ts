@@ -10,7 +10,7 @@ import * as fs from 'fs';
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(
   Strategy,
-  'jwt-refresh-token',
+  'jwt.refresh-token',
 ) {
   constructor(
     private readonly configService: ConfigService,

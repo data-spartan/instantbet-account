@@ -19,6 +19,7 @@ import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 import { MailModule } from 'src/mailer/mail.module';
 import { EmailTokenStrategy } from './strategies/emailToken.strategy';
 import { UsersModule } from '../users/users.module';
+import { ForgotPasswordStrategy } from './strategies/forgotPasswordToken.strategy';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { UsersModule } from '../users/users.module';
     AccessTokenStrategy,
     JwtRefreshTokenStrategy,
     EmailTokenStrategy,
+    ForgotPasswordStrategy,
     RefreshPrivateSecretService,
 
     {

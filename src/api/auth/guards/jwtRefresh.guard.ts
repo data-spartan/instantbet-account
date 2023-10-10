@@ -9,7 +9,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { jwtGuardException } from 'src/common/exceptions';
 
 @Injectable()
-export class JwtRefreshGuard extends AuthGuard('jwt-refresh-token') {
+export class JwtRefreshGuard extends AuthGuard('jwt.refresh-token') {
   constructor() {
     super();
   }

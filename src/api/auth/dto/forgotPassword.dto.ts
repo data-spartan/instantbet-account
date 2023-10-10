@@ -1,9 +1,7 @@
-import { Trim } from 'class-sanitizer';
-import { IsDefined, IsEmail } from 'class-validator';
+import { IsDefined, IsString, MinLength } from 'class-validator';
+import { IsPasswordFormatValid } from 'src/common/validators';
 
 export class ForgotPasswordDto {
-  @Trim()
-  @IsEmail()
-  @IsDefined()
-  public readonly email: string;
+  @IsPasswordFormatValid()
+  public readonly newPassword: string;
 }
