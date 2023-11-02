@@ -20,6 +20,7 @@ import { MailModule } from 'src/mailer/mail.module';
 import { EmailTokenStrategy } from './strategies/emailToken.strategy';
 import { UsersModule } from '../users/users.module';
 import { ForgotPasswordStrategy } from './strategies/forgotPasswordToken.strategy';
+import { readFileSync } from './helpers/readFile.helpers';
 
 @Module({
   imports: [
@@ -28,27 +29,16 @@ import { ForgotPasswordStrategy } from './strategies/forgotPasswordToken.strateg
     // strategy(jwt,jwt-refresh...) across whole app
 
     PassportModule.register({ defaultStrategy: 'jwt', property: 'user' }),
-    // JwtModule.registerAsync({
-    //   inject: [ConfigService],
-    //   useFactory: (config: ConfigService) => ({
-    //     secret: config.get('APP_JWT_KEY'),
-    //     signOptions: { expiresIn: config.get('APP_JWT_EXPIRES') },
-    //   }),
-    // }),
+
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        privateKey: fs
-          .readFileSync(
-            configService.get<string>('JWT_PRIVATE_SECRET_ACCESS'),
-            'utf-8',
-          )
-          .toString(),
-        publicKey: fs
-          .readFileSync(
-            configService.get<string>('JWT_PUBLIC_SECRET_ACCESS', 'utf-8'),
-          )
-          .toString(),
+        privateKey: readFileSync(
+          configService.get<string>('JWT_PRIVATE_SECRET_ACCESS'), //behind scenes JwtModule registers priv/pub key. its user fro signing and verifying tokens
+        ).toString(),
+        publicKey: readFileSync(
+          configService.get<string>('JWT_PUBLIC_SECRET_ACCESS', 'utf-8'),
+        ).toString(),
         signOptions: {
           expiresIn: configService.get<string>('APP_JWT_EXPIRES'),
           algorithm: 'ES256',

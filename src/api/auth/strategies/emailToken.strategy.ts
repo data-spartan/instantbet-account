@@ -11,6 +11,7 @@ import { AuthHelper } from '../auth.helper';
 import * as fs from 'fs';
 import { UsersService } from 'src/api/users/users.service';
 import { Request } from 'express';
+import { readFileSync } from '../helpers/readFile.helpers';
 
 @Injectable()
 export class EmailTokenStrategy extends PassportStrategy(
@@ -19,13 +20,13 @@ export class EmailTokenStrategy extends PassportStrategy(
 ) {
   constructor(
     private readonly authHelper: AuthHelper,
-    private readonly config: ConfigService,
+    private readonly configService: ConfigService,
   ) {
     super({
       usernameField: 'email',
-      secretOrKey: fs
-        .readFileSync(config.get<string>('JWT_PUBLIC_SECRET_ACCESS'))
-        .toString(),
+      secretOrKey: readFileSync(
+        configService.get<string>('JWT_PUBLIC_SECRET_ACCESS'),
+      ).toString(),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       passReqToCallback: true,

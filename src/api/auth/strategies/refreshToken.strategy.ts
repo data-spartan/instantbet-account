@@ -7,6 +7,7 @@ import { ITokenType } from '../interfaces/token.interface';
 import { AuthService } from '../auth.service';
 import { AuthHelper } from '../auth.helper';
 import * as fs from 'fs';
+import { readFileSync } from '../helpers/readFile.helpers';
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(
   Strategy,
@@ -17,9 +18,9 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
     private authHelper: AuthHelper,
   ) {
     super({
-      secretOrKey: fs
-        .readFileSync(configService.get<string>('JWT_PUBLIC_SECRET_REFRESH'))
-        .toString(),
+      secretOrKey: readFileSync(
+        configService.get<string>('JWT_PUBLIC_SECRET_REFRESH'),
+      ).toString(),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       passReqToCallback: true,
