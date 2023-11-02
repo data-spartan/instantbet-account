@@ -8,7 +8,7 @@ import {
 import { ChangePasswordDto } from 'src/api/users/dto';
 import {
   exceptionInvalidPasswordFormat,
-  exceptionNewRepeatPasswordsNoMatch,
+  // exceptionNewRepeatPasswordsNoMatch,
 } from '../exceptions';
 import { passwordRegex } from 'src/constants';
 import { InvalidPasswordFormatException } from '../exceptions/invalidPasswordFormat.exception';
@@ -17,46 +17,38 @@ import { InvalidPasswordFormatException } from '../exceptions/invalidPasswordFor
 export class IsPasswordFormatValidConstraint
   implements ValidatorConstraintInterface
 {
+  private currentPassword: string;
   private newPassword: string;
-  private repeatNewPassword: string;
   validate(
     value: any,
     validationArguments?: ValidationArguments,
   ): boolean | Promise<boolean> {
-    const { newPassword, repeatNewPassword } =
+    const { newPassword, currentPassword } =
       validationArguments.object as ChangePasswordDto;
     this.newPassword = newPassword;
-    this.repeatNewPassword = repeatNewPassword;
+    this.currentPassword = currentPassword;
     //at least one lowercase letter, one uppercase letter, one digit, and one special character, lenght 8-12
     const IsFormatValid = passwordRegex.test(value);
     //in register its only importnatn if password have valid format
-    if (validationArguments.targetName === 'RegisterDto') {
-      return IsFormatValid;
-    }
-    //chanignig password need to check if repeatedpassword has valid format
-    if (validationArguments.targetName === 'ChangePasswordDto') {
-      return IsFormatValid && this.newPassword === this.repeatNewPassword;
-    }
+    // if (validationArguments.targetName === 'RegisterDto') {
+    //   return IsFormatValid;
+    // }
+    // if (validationArguments.targetName === 'ChangePasswordDto') {
+    //   return IsFormatValid;
+    // }
+    // if (validationArguments.targetName === 'ForgotPasswordDto') {
+    //   return IsFormatValid;
+    // }
+    return IsFormatValid;
   }
 
   defaultMessage(args: ValidationArguments): string {
     if (args.targetName === 'ChangePasswordDto') {
-      if (this.newPassword === this.repeatNewPassword) {
-        //if these 2 are same, problem is with pass format, othervise problem is with their equality
-        // throw new BadRequestException(
-        //   exceptionInvalidPasswordFormat(args.property),
-        // );
-        throw new InvalidPasswordFormatException(
-          exceptionInvalidPasswordFormat(args.property),
-        );
-      }
-      // return exceptionNewRepeatPasswordsNoMatch(args.property);
       throw new InvalidPasswordFormatException(
-        exceptionNewRepeatPasswordsNoMatch(args.property),
+        exceptionInvalidPasswordFormat(args.property),
       );
     }
     //this relates to RegisterDto invalid format
-    // return exceptionInvalidPasswordFormat(args.property);
     throw new InvalidPasswordFormatException(
       exceptionInvalidPasswordFormat(args.property),
     );

@@ -5,19 +5,20 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from '../../users/entities/user.entity';
 import { AuthHelper } from '../auth.helper';
 import * as fs from 'fs';
+import { readFileSync } from '../helpers/readFile.helpers';
 
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly helper: AuthHelper,
-    private readonly config: ConfigService,
+    private readonly configService: ConfigService,
   ) {
     super({
       usernameField: 'sub',
       // secretOrKey: config.get('APP_JWT_SECRET'),
-      secretOrKey: fs
-        .readFileSync(config.get<string>('JWT_PUBLIC_SECRET_ACCESS'))
-        .toString(),
+      secretOrKey: readFileSync(
+        configService.get<string>('JWT_PUBLIC_SECRET_ACCESS'),
+      ).toString(),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
     });

@@ -24,9 +24,10 @@ import { CustomRequest } from 'src/common/interfaces';
 import { TypeORMExceptionFilter } from 'src/common/exception-filters';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { ResponseSuccess } from 'src/common/helpers';
+import { EmailConfirmationGuard } from '../auth/guards/emailConfirmation.guard';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard, EmailConfirmationGuard)
 @Roles(UserRolesEnum.Basic, UserRolesEnum.Test)
 // @Serialize(UserDto)
 // @UseInterceptors(LoggingInterceptor)
@@ -42,7 +43,7 @@ export class UsersController {
     @Req() { user }: CustomRequest,
     @Body() body: UserUpdateDto,
   ) {
-    const result = await this.usersService.updateMyProfile(user.id, body);
+    const result = await this.usersService.updateMyProfile(user, body);
     return ResponseSuccess(
       `user ${result.id} updated ${result.props} succesfully`,
     );

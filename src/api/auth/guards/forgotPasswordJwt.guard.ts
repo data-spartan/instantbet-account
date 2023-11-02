@@ -10,8 +10,8 @@ import { Request } from 'express';
 import { jwtGuardException } from 'src/common/exceptions';
 
 @Injectable() //when req comes to guard, it call accessToken strategy
-export class EmailJwtAuthGuard
-  extends AuthGuard('jwt.verify-email')
+export class ForgotPasswordJwtAuthGuard
+  extends AuthGuard('jwt.forgot-password')
   implements IAuthGuard
 {
   constructor() {

@@ -9,7 +9,8 @@ import { User } from 'src/api/users/entities/user.entity';
 import { Request } from 'express';
 import { jwtGuardException } from 'src/common/exceptions';
 
-@Injectable() //when req comes to guard, it call accessToken strategy
+@Injectable() //when req comes to guard,first goes through canAcivate
+//,then it calls accessToken strategy
 export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
   constructor() {
     super();

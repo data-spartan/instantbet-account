@@ -25,7 +25,7 @@ import * as argon2 from 'argon2';
 import * as dayjs from 'dayjs';
 import { RefreshToken } from '../users/index.entity';
 import { MailService } from 'src/mailer/mail.service';
-import { ForgotPasswordDto } from './dto';
+import { ForgotPasswordEmailDto } from './dto';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -125,6 +125,7 @@ export class AuthService implements OnModuleInit {
         firstName: true,
         lastName: true,
         email: true,
+        verifiedEmail: true,
       },
       where: { email },
     });
@@ -144,6 +145,8 @@ export class AuthService implements OnModuleInit {
         HttpStatus.NOT_FOUND,
       );
     }
+    // if (!user.verifiedEmail)
+    //   throw new HttpException('Confirm your email first', HttpStatus.FORBIDDEN);
 
     const token = await this.authHelper.handleLogin(user);
     await this.userRepo.update(user.id, { lastLoginAt: new Date() });
@@ -213,28 +216,28 @@ export class AuthService implements OnModuleInit {
     return true;
   }
 
-  public async forgotPassword({ email }: ForgotPasswordDto): Promise<boolean> {
-    try {
-      const user: User = await this.userRepo.findOneOrFail({
-        where: { email },
-      });
-      if (!user) {
-        throw new HttpException('No user found', HttpStatus.NOT_FOUND);
-      }
-      const token = v4();
-      // await this.inMemoryStorageService.setForgetPasswordToken(user.id, token);
-      await this.mailService.sendChangePasswordEmail(
-        user.email,
-        user.firstName,
-        user.lastName,
-        token,
-      );
-      return true;
-    } catch (e) {
-      throw new HttpException(
-        'Something went wrong.',
-        HttpStatus.EXPECTATION_FAILED,
-      );
-    }
+  public async forgotChangePassword(newPassword: string, id: string) {
+    const hashedPassword = await this.authHelper.encodePassword(newPassword);
+
+    await this.userRepo.update(id, {
+      password: hashedPassword,
+      verifyEmailToken: null,
+    });
+
+    return true;
+  }
+
+  public async forgotPassword({
+    email,
+  }: ForgotPasswordEmailDto): Promise<boolean> {
+    const user: User = await this.userRepo.findOne({
+      where: { email },
+    });
+    if (!user) throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+
+    const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
+    await this.mailService.sendForgotPasswordEmail(user.email, emailToken);
+    this.userRepo.update(user.id, { verifyEmailToken: emailToken });
+    return true;
   }
 }

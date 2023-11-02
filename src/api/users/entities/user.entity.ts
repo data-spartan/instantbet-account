@@ -47,7 +47,7 @@ export class User {
 
   //sending a new confirmation link doesn’t invalidate the previous sent non-verified links.to achieve that,
   //  we could store most recent confirmation token in the database and check it before confirming.
-  @Column({ type: 'varchar', nullable: true, default: null })
+  @Column({ type: 'varchar', nullable: true, default: null, select: false })
   verifyEmailToken?: string;
 
   // @Column({ array: true, nullable: true })
@@ -56,12 +56,12 @@ export class User {
   })
   public refreshToken?: RefreshToken[];
 
-  @Column({ type: 'timestamp', nullable: true, default: null })
+  @Column({ type: 'timestamp', nullable: true, default: null, select: false })
   public lastLoginAt: Date | null;
 
   @CreateDateColumn()
   public createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ select: false })
   public updatedAt: Date;
 }

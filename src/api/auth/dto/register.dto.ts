@@ -12,11 +12,11 @@ import { IsPasswordFormatValid } from 'src/common/validators';
 export class RegisterDto {
   @Trim()
   @IsEmail()
-  public readonly email: string;
+  public readonly email!: string;
 
   @IsString()
   @IsPasswordFormatValid()
-  public readonly password: string;
+  public readonly password!: string;
 
   @IsDefined()
   @IsString()
@@ -26,7 +26,6 @@ export class RegisterDto {
   @IsString()
   public readonly lastName: string;
 
-  @IsOptional()
   @IsMobilePhone('sr-RS')
-  public readonly telephone: string;
+  public readonly telephone!: string;
 }

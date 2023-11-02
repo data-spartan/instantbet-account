@@ -14,9 +14,9 @@ import { Request } from 'express';
 import { readFileSync } from '../helpers/readFile.helpers';
 
 @Injectable()
-export class EmailTokenStrategy extends PassportStrategy(
+export class ForgotPasswordStrategy extends PassportStrategy(
   Strategy,
-  'jwt.verify-email',
+  'jwt.forgot-password',
 ) {
   constructor(
     private readonly authHelper: AuthHelper,
@@ -36,17 +36,14 @@ export class EmailTokenStrategy extends PassportStrategy(
   async validate(request: Request, payload: any): Promise<User> | never {
     const emailToken = request.header('Authorization').split(' ')[1];
     const user = await this.authHelper.validateUserByEmail(payload.email);
-    if (user.verifiedEmail)
-      throw new BadRequestException('Email already confirmed');
-
     if (user.verifyEmailToken !== emailToken)
       //it can happen that user clics on resend verifyemail even if link is not expired,
       // need to ensure that only last sent link is used
       throw new BadRequestException(
-        'Reused some of the previous confirmation links',
+        'Reused some of the previous forgot password links',
       );
 
-    this.authHelper.confirmEmail(user.email, null);
+    // this.authHelper.confirmEmail(user.email, null);
     return user;
   }
 }
