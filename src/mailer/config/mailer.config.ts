@@ -9,11 +9,7 @@ import { MailerConfigEnum } from '../enums/mailerConfig.enum';
 export class MailerConfigService implements MailerOptionsFactory {
   constructor(private readonly configService: ConfigService) {}
 
-  onModuleInit() {
-    console.warn(`### Mailer Service Module ###`);
-    console.warn(`Mailer Module Initiated.`);
-    console.warn(`### Mailer Service Module END ###`);
-  }
+  onModuleInit() {}
 
   createMailerOptions(): MailerOptions | Promise<MailerOptions> {
     return {

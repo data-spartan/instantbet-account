@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -27,13 +27,14 @@ import { DataSource } from 'typeorm';
   ],
   controllers: [AppController],
   providers: [
-    {
-      inject: [ConfigService],
-      provide: LoggerService,
-      useFactory: (configService: ConfigService) => {
-        return new LoggerService('sys', configService);
-      },
-    },
+    Logger,
+    // {
+    //   inject: [ConfigService],
+    //   provide: LoggerService,
+    //   useFactory: (configService: ConfigService) => {
+    //     return new LoggerService('sys', configService);
+    //   },
+    // },
     DirectoryCreationService,
     //using this construct if want you can inject filters wherever you want
     // using  app.useGlobalFilters you cant inject
