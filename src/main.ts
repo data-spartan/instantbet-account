@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { LoggerMiddleware } from './common/middlewares/logging.middleware';
 import { WinstonModule } from 'nest-winston';
 import { instance } from './common/logger/logger.app';
 

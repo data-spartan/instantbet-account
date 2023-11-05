@@ -6,10 +6,10 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { GlobalResponseError } from '../helpers';
+
 import { TypeORMError, QueryFailedError } from 'typeorm';
-import { LoggerService } from '../logger/logger.service';
 import { checkTypeORMErrorType } from './helpers';
+import { GlobalResponseError } from 'src/common/response-formatter';
 @Catch(TypeORMError)
 export class TypeORMExceptionFilter implements ExceptionFilter {
   // constructor(private readonly logger: LoggerService) {}

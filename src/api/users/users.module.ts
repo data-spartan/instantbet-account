@@ -5,9 +5,9 @@ import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { LoggerService } from 'src/common/logger/logger.service';
-import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from './entities/token.entity';
+import { LoggerMiddleware } from 'src/middlewares/logging.middleware';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, RefreshToken]), AuthModule],

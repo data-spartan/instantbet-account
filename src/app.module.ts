@@ -4,17 +4,16 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApiModule } from './api/api.module';
-import { TypeOrmConfigService } from './shared/typeorm/typeorm.config';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import {
   AllExceptionsFilter,
   TypeORMExceptionFilter,
-} from './common/exception-filters';
-import { ResponseMessageInterceptor } from './common/interceptors/responseMessage.interceptor';
+} from './exception-filters';
 import { DirectoryCreationService } from './shared/dirCreation/dirCreation';
 import { LoggerService } from './common/logger/logger.service';
-import { LoggerMiddleware } from './common/middlewares/logging.middleware';
 import { DataSource } from 'typeorm';
+import { ResponseMessageInterceptor } from './interceptors/responseMessage.interceptor';
+import { TypeOrmConfigService } from './config/typeorm/typeorm.config';
 
 @Module({
   imports: [

@@ -14,8 +14,8 @@ import { ITokenType } from './interfaces/token.interface';
 import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from '../users/index.entity';
-import { refreshTokenTransaction } from 'src/common/typeorm-queries/refreshToken.transactions';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
+import { refreshTokenTransaction } from 'src/database/postgres/transactions_/refreshToken.transactions';
 
 @Injectable()
 export class AuthHelper {

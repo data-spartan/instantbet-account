@@ -10,7 +10,7 @@ import { User } from './entities/user.entity';
 import { CreateTestUserDto } from '../admin/dto';
 import { AuthHelper } from '../auth/auth.helper';
 import { LoggerService } from 'src/common/logger/logger.service';
-import { allUsersPagination } from 'src/common/typeorm-queries';
+import { allUsersPagination } from 'src/database/postgres/queries/allUsersPagination.query';
 
 @Injectable()
 export class UsersService {

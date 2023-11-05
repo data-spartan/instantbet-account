@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { User } from 'src/api/users/index.entity';
 import { AuthGuard } from '@nestjs/passport';
-import { jwtGuardException } from 'src/common/exceptions';
+import { jwtGuardException } from 'src/exception-filters/exceptions';
 
 @Injectable()
 export class JwtRefreshGuard extends AuthGuard('jwt.refresh-token') {

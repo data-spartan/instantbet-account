@@ -6,12 +6,12 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { ChangePasswordDto } from 'src/api/users/dto';
-import {
-  exceptionInvalidPasswordFormat,
-  // exceptionNewRepeatPasswordsNoMatch,
-} from '../exceptions';
+
 import { passwordRegex } from 'src/constants';
-import { InvalidPasswordFormatException } from '../exceptions/invalidPasswordFormat.exception';
+import { InvalidPasswordFormatException } from 'src/exception-filters/exceptions/invalidPasswordFormat.exception';
+
+const exceptionInvalidPasswordFormat = (label: string) =>
+  `${label} must contain at least 8 characters (max 12), one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&)`;
 
 @ValidatorConstraint({ async: true })
 export class IsPasswordFormatValidConstraint

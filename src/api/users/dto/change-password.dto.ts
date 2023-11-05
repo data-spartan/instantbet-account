@@ -1,5 +1,5 @@
 import { IsDefined, IsString, MinLength } from 'class-validator';
-import { IsPasswordFormatValid } from 'src/common/validators';
+import { IsPasswordFormatValid } from 'src/api/auth/validators';
 
 export class ChangePasswordDto {
   @IsPasswordFormatValid()
