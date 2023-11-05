@@ -10,7 +10,7 @@ import {
   TypeORMExceptionFilter,
 } from './exception-filters';
 import { DirectoryCreationService } from './shared/dirCreation/dirCreation';
-import { LoggerService } from './common/logger/logger.service';
+import { LoggerService } from './logger/logger.service';
 import { DataSource } from 'typeorm';
 import { ResponseMessageInterceptor } from './interceptors/responseMessage.interceptor';
 import { TypeOrmConfigService } from './config/typeorm/typeorm.config';
@@ -54,10 +54,6 @@ import { TypeOrmConfigService } from './config/typeorm/typeorm.config';
       useClass: ResponseMessageInterceptor,
     },
     AppService,
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: AllExceptionsFilter,
-    // },
   ],
 })
 export class AppModule {

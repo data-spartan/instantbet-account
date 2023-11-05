@@ -9,8 +9,8 @@ import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateTestUserDto } from '../admin/dto';
 import { AuthHelper } from '../auth/auth.helper';
-import { LoggerService } from 'src/common/logger/logger.service';
-import { allUsersPagination } from 'src/database/postgres/queries/allUsersPagination.query';
+import { LoggerService } from 'src/logger/logger.service';
+import { PostgresTypeOrmQueries } from 'src/database/postgres/queries/postgresTypeorm.query';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +18,7 @@ export class UsersService {
     @InjectRepository(User) private userRepo: Repository<User>,
     private authHelper: AuthHelper,
     private readonly dataSource: DataSource,
+    private readonly postgresQueries: PostgresTypeOrmQueries,
   ) {}
 
   public async findAll(
@@ -27,7 +28,7 @@ export class UsersService {
     direction: string,
   ): Promise<User[]> {
     // return this.repository.find();
-    return allUsersPagination(
+    return this.postgresQueries.allUsersPagination(
       this.dataSource,
       User,
       timestamp,

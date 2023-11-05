@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
-import { LoggerService } from 'src/common/logger/logger.service';
+import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class DirectoryCreationService implements OnModuleInit {

@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { WinstonModule } from 'nest-winston';
-import { instance } from './common/logger/logger.app';
+import { instance } from './logger/logger.app';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
@@ -14,7 +14,6 @@ async function bootstrap() {
     }),
     cors: true,
   });
-  console.log(instance);
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('APP_PORT');
 

@@ -26,7 +26,7 @@ import { AuthedResponse } from './interfaces/auth.interface';
 import { CustomRequest } from 'src/common/interfaces';
 import { AuthRespDto } from './dto/authResp.dto';
 import { ChangePasswordDto } from '../users/dto';
-import { LoggerService } from 'src/common/logger/logger.service';
+import { LoggerService } from 'src/logger/logger.service';
 import { Request, Response } from 'express';
 import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
 import { use } from 'passport';

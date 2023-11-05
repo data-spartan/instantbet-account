@@ -19,7 +19,7 @@ import { LoginDto } from './dto/login.dto';
 import { plainToInstance } from 'class-transformer';
 import { ChangePasswordDto, UserDto } from '../users/dto';
 import { AuthRespDto } from './dto/authResp.dto';
-import { LoggerService } from 'src/common/logger/logger.service';
+import { LoggerService } from 'src/logger/logger.service';
 import { ITokenType } from './interfaces/token.interface';
 import * as argon2 from 'argon2';
 import * as dayjs from 'dayjs';

@@ -15,7 +15,7 @@ import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from '../users/index.entity';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
-import { refreshTokenTransaction } from 'src/database/postgres/transactions_/refreshToken.transactions';
+import { PostgresTypeOrmTransactions } from 'src/database/postgres/transactions_/refreshToken.transactions';
 
 @Injectable()
 export class AuthHelper {
@@ -28,6 +28,7 @@ export class AuthHelper {
     private readonly configService: ConfigService,
     private readonly dataSource: DataSource,
     private readonly refreshKeysToken: RefreshPrivateSecretService,
+    private readonly postgresTransactions: PostgresTypeOrmTransactions,
   ) {
     this.jwt = jwt;
     // this.connection = this.tokenRepo.manager.connection;
@@ -106,13 +107,14 @@ export class AuthHelper {
     try {
       const hashedRefreshToken = await this.hashData(refreshToken.refreshToken);
       //insertResult is database response object
-      const insertResult = await refreshTokenTransaction(
-        this.dataSource,
-        RefreshToken,
-        hashedRefreshToken,
-        { user: user.id },
-        user.id,
-      );
+      const insertResult =
+        await this.postgresTransactions.refreshTokenTransaction(
+          this.dataSource,
+          RefreshToken,
+          hashedRefreshToken,
+          { user: user.id },
+          user.id,
+        );
 
       return {
         accessToken: accessToken.accessToken,
@@ -139,13 +141,14 @@ export class AuthHelper {
       newRefreshToken.refreshToken,
     );
 
-    const insertResult = await refreshTokenTransaction(
-      this.dataSource,
-      RefreshToken,
-      hashedRefreshToken,
-      { id: tokenId },
-      payload.sub,
-    );
+    const insertResult =
+      await this.postgresTransactions.refreshTokenTransaction(
+        this.dataSource,
+        RefreshToken,
+        hashedRefreshToken,
+        { id: tokenId },
+        payload.sub,
+      );
 
     return {
       sub: payload.sub,

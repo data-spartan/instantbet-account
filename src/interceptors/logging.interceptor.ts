@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { tap, map, finalize } from 'rxjs/operators';
 import { HttpAdapterHost } from '@nestjs/core';
-import { LoggerService } from 'src/common/logger/logger.service';
+import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
