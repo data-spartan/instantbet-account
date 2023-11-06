@@ -4,10 +4,14 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { LoggerMiddleware } from './common/middlewares/logging.middleware';
+import { WinstonModule } from 'nest-winston';
+import { instance } from './logger/logger.app';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger({
+      instance: instance,
+    }),
     cors: true,
   });
   const config: ConfigService = app.get(ConfigService);
@@ -30,7 +34,8 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(port);
-  console.log(`[API] is running on: ${await app.getUrl()}`);
+  await app.listen(port, () => {
+    instance.info(`App is listening on port: ${port}`);
+  });
 }
 bootstrap();

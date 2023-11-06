@@ -8,8 +8,7 @@ import { AuthService } from './auth.service';
 import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
-import { LoggerService } from 'src/common/logger/logger.service';
-import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
+import { LoggerService } from 'src/logger/logger.service';
 import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { JwtRefreshTokenStrategy } from './strategies/refreshToken.strategy';
@@ -21,6 +20,8 @@ import { EmailTokenStrategy } from './strategies/emailToken.strategy';
 import { UsersModule } from '../users/users.module';
 import { ForgotPasswordStrategy } from './strategies/forgotPasswordToken.strategy';
 import { readFileSync } from './helpers/readFile.helpers';
+import { LoggerMiddleware } from 'src/middlewares/logging.middleware';
+import { DatabaseModule } from 'src/database/database.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { readFileSync } from './helpers/readFile.helpers';
     }),
     TypeOrmModule.forFeature([User, RefreshToken]),
     MailModule,
+    DatabaseModule,
   ],
   controllers: [AuthController],
   providers: [

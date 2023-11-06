@@ -4,12 +4,11 @@ import { AuthModule } from '../auth/auth.module';
 import { User } from '../users/entities/user.entity';
 import { AdminController } from './admin.controller';
 import { UsersModule } from '../users/users.module';
-import { LoggerService } from 'src/common/logger/logger.service';
-import {} from 'src/common/exception-filters';
-import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
-import { LoggerMiddleware } from 'src/common/middlewares/logging.middleware';
+import { LoggerService } from 'src/logger/logger.service';
+
 import { ConfigService } from '@nestjs/config';
-import { LoggerConfig } from 'src/common/logger/logger.config';
+import { LoggerConfig } from 'src/logger/logger.config';
+import { LoggerMiddleware } from 'src/middlewares/logging.middleware';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), AuthModule, UsersModule],

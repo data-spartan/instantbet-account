@@ -21,5 +21,6 @@
       "src/*": ["src/*"],
       "tests/*": ["src/shared/tests/*"]
     }
-  }
+  },
+  "watchOptions": { "excludeFiles": ["src/logs"] }
 }

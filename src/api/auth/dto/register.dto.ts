@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsDefined,
 } from 'class-validator';
-import { IsPasswordFormatValid } from 'src/common/validators';
+import { IsPasswordFormatValid } from '../validators';
 
 export class RegisterDto {
   @Trim()

@@ -19,18 +19,17 @@ import {
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { UserRolesEnum } from '../users/roles/roles.enum';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { Roles } from 'src/common/decorators';
 import { JwtAuthGuard } from '../auth/guards/auth.guard';
-import { Serialize } from 'src/common/interceptors/serialize.interceptor';
 import { UserDto } from '../users/dto/user.dto';
 import { CreateTestUserDto } from './dto/createTestUser.dto';
 import { CustomRequest } from 'src/common/interfaces';
 import { AuthService } from '../auth/auth.service';
 import { UserUpdateDto } from '../users/dto';
-import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
-import { ResponseSuccess } from 'src/common/helpers';
-import { UsersPaginationDto } from 'src/common/dto';
+import { UsersPaginationDto } from '../users/dto/usersPagination.dto';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { ResponseSuccess } from 'src/common/response-formatter';
+import { Roles } from '../auth/decorators/roles.decorator';
+
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Administrator)
@@ -44,7 +43,7 @@ export class AdminController {
 
   @Get('/users')
   public async findAll(@Query() query: UsersPaginationDto) {
-    console.log(query);
+    //http://localhost:5000/admin/users?timestamp=2023-10-02 14:11:29.400&limit=2&cursor=c5369eed-fb5d-467a-a151-b6e77bee5783&direction=Next
     const { timestamp, limit, cursor, direction } = query;
     const result = await this.usersService.findAll(
       limit,

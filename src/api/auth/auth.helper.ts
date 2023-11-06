@@ -14,8 +14,8 @@ import { ITokenType } from './interfaces/token.interface';
 import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from '../users/index.entity';
-import { refreshTokenTransaction } from 'src/common/typeorm-queries/refreshToken.transactions';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
+import { PostgresTypeOrmTransactions } from 'src/database/postgres/transactions_/refreshToken.transactions';
 
 @Injectable()
 export class AuthHelper {
@@ -26,11 +26,10 @@ export class AuthHelper {
     private readonly tokenRepo: Repository<RefreshToken>,
     private readonly jwt: JwtService,
     private readonly configService: ConfigService,
-    private readonly dataSource: DataSource,
     private readonly refreshKeysToken: RefreshPrivateSecretService,
+    private readonly postgresTransactions: PostgresTypeOrmTransactions,
   ) {
     this.jwt = jwt;
-    // this.connection = this.tokenRepo.manager.connection;
   }
 
   public async hashData(data: string) {
@@ -106,13 +105,14 @@ export class AuthHelper {
     try {
       const hashedRefreshToken = await this.hashData(refreshToken.refreshToken);
       //insertResult is database response object
-      const insertResult = await refreshTokenTransaction(
-        this.dataSource,
-        RefreshToken,
-        hashedRefreshToken,
-        { user: user.id },
-        user.id,
-      );
+      const insertResult =
+        await this.postgresTransactions.refreshTokenTransaction(
+          // this.dataSource,
+          RefreshToken,
+          hashedRefreshToken,
+          { user: user.id },
+          user.id,
+        );
 
       return {
         accessToken: accessToken.accessToken,
@@ -139,13 +139,14 @@ export class AuthHelper {
       newRefreshToken.refreshToken,
     );
 
-    const insertResult = await refreshTokenTransaction(
-      this.dataSource,
-      RefreshToken,
-      hashedRefreshToken,
-      { id: tokenId },
-      payload.sub,
-    );
+    const insertResult =
+      await this.postgresTransactions.refreshTokenTransaction(
+        // this.dataSource,
+        RefreshToken,
+        hashedRefreshToken,
+        { id: tokenId },
+        payload.sub,
+      );
 
     return {
       sub: payload.sub,
@@ -178,23 +179,26 @@ export class AuthHelper {
     payload: ITokenType,
   ) {
     const foundToken = await this.tokenRepo.findOne({ where: { id: tokenId } });
-
-    const isMatch = await this.verifyData(
-      foundToken.refreshToken ?? '',
-      refreshToken,
-    );
-    const issuedAt = dayjs.unix(payload.iat);
-    const diff = dayjs().diff(issuedAt, 'seconds');
     if (foundToken == null) {
-      //refresh token is valid but the id is not in database
+      //refresh token(sent in Auth header from FE) is valid but the id is not in database
       //TODO:inform the user with the payload sub
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
+    console.log(foundToken.refreshToken, refreshToken);
+    const isMatch = await this.verifyData(
+      foundToken.refreshToken ?? '', //argon2 hashed
+      refreshToken, //Base64Url encoded
+    );
+    const issuedAt = dayjs.unix(payload.iat);
+    const diff = dayjs().diff(issuedAt, 'seconds');
 
     if (isMatch) {
-      return await this.generateTokens(payload, tokenId);
+      return await this.generateTokens(payload, tokenId); //returns new tokens and inserts to db
     } else {
-      //less than 20s leeway allows refresh for network concurrency
+      //refresh token is valid and might have been used which makes it invalidated, and therefore not in the database anymore
+      //can occur when a user runs multiple tabs of the front-end application in a browser or sometimes a lag
+      // in a network and trying to use an already invalidated refresh token
+      //less than 20s leeway mitigates this
       if (diff < 20 * 1 * 1) {
         console.log('leeway');
         return await this.generateTokens(payload, tokenId);
@@ -209,7 +213,7 @@ export class AuthHelper {
       //   throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
       // }
 
-      throw new HttpException('Something went wrong', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);
     }
   }
 }

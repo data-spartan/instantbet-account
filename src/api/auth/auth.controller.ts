@@ -1,16 +1,11 @@
 import {
   Body,
   Controller,
-  Inject,
   Post,
-  ClassSerializerInterceptor,
-  UseInterceptors,
   UseGuards,
   Req,
   Get,
   Patch,
-  UseFilters,
-  Res,
   HttpStatus,
 } from '@nestjs/common';
 import {
@@ -21,27 +16,16 @@ import {
 } from './dto';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { AuthService } from './auth.service';
-import { User } from '../users/entities/user.entity';
-import { AuthedResponse } from './interfaces/auth.interface';
 import { CustomRequest } from 'src/common/interfaces';
-import { Serialize } from 'src/common/interceptors/serialize.interceptor';
-import { AuthRespDto } from './dto/authResp.dto';
 import { ChangePasswordDto } from '../users/dto';
-import { LoggerService } from 'src/common/logger/logger.service';
-import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { Request, Response } from 'express';
-import { ResponseSuccess } from 'src/common/helpers/successResponse.formater';
 import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
-import { use } from 'passport';
-import { ConfirmEmailDto } from 'src/mailer/dto/confirmEmail.dto';
 import { EmailJwtAuthGuard } from './guards/emailJwt.guard';
-import { UsersService } from '../users/users.service';
 import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
 import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
+import { ResponseSuccess } from 'src/common/response-formatter';
 
 @Controller('auth')
-// @Serialize(AuthRespDto)
-// @UseInterceptors(LoggingInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -104,8 +88,8 @@ export class AuthController {
     return ResponseSuccess(`Forgot password mail link sent to ${body.email}`);
   }
 
-  @Patch('/confirm-forgot-password')
   @UseGuards(ForgotPasswordJwtAuthGuard)
+  @Patch('/confirm-forgot-password')
   private verifyForgotPassword(
     @Body() { newPassword }: ForgotPasswordDto,
     @Req() { user }: CustomRequest,
@@ -117,7 +101,7 @@ export class AuthController {
   }
 
   @UseGuards(EmailJwtAuthGuard)
-  //when user clicks on confirm email, request is sent to FE.
+  // when user clicks on confirm email, request is sent to FE.
   // FE need to send token from URL, to this route. Guard decodes, verifies it ad updates confiremd email flag
   @Post('verify-email')
   async emailConfirmation(@Req() { user }: CustomRequest) {
@@ -126,6 +110,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('resend-confirmation-link')
+  //from app user click on resend-confirmation-link button if email is expired or didnt arrived at all
   async resendConfirmationLink(@Req() { user }: CustomRequest) {
     await this.authService.resendVerificationEmail(user);
     return ResponseSuccess(

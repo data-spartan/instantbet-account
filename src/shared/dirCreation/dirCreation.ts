@@ -1,14 +1,14 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
-import { LoggerService } from 'src/common/logger/logger.service';
+import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class DirectoryCreationService implements OnModuleInit {
   constructor(
     private readonly configService: ConfigService,
-    private readonly logger: LoggerService,
+    private readonly logger: Logger,
   ) {}
 
   onModuleInit() {
@@ -22,6 +22,7 @@ export class DirectoryCreationService implements OnModuleInit {
     logSubdirs.forEach((dirName) => {
       const dirPath = join(baseDir, logsDir, dirName);
       if (!existsSync(dirPath)) {
+        console.log(dirPath);
         mkdirSync(dirPath, { recursive: true });
         this.logger.log(`Created directory: ${dirPath}`);
       }

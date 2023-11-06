@@ -1,2 +1,2 @@
-export * from './typeorm.config';
+export * from '../config/typeorm/typeorm.enum';
 export * from './regexPatterns';

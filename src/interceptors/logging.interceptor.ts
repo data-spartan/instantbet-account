@@ -7,10 +7,9 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { LoggerService } from '../logger/logger.service';
 import { tap, map, finalize } from 'rxjs/operators';
-import { GlobalResponseError } from '../helpers/errorResponse.formatter';
 import { HttpAdapterHost } from '@nestjs/core';
+import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
