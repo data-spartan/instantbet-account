@@ -36,7 +36,11 @@ export class ForgotPasswordStrategy extends PassportStrategy(
   async validate(request: Request, payload: any): Promise<User> | never {
     const emailToken = request.header('Authorization').split(' ')[1];
     const user = await this.authHelper.validateUserByEmail(payload.email);
-    if (user.verifyEmailToken !== emailToken)
+    const isMatch = this.authHelper.verifyData(
+      user.verifyEmailToken,
+      emailToken,
+    );
+    if (!isMatch)
       //it can happen that user clics on resend verifyemail even if link is not expired,
       // need to ensure that only last sent link is used
       throw new BadRequestException(

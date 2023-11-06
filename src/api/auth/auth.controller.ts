@@ -88,8 +88,8 @@ export class AuthController {
     return ResponseSuccess(`Forgot password mail link sent to ${body.email}`);
   }
 
-  @Patch('/confirm-forgot-password')
   @UseGuards(ForgotPasswordJwtAuthGuard)
+  @Patch('/confirm-forgot-password')
   private verifyForgotPassword(
     @Body() { newPassword }: ForgotPasswordDto,
     @Req() { user }: CustomRequest,
@@ -101,7 +101,7 @@ export class AuthController {
   }
 
   @UseGuards(EmailJwtAuthGuard)
-  //when user clicks on confirm email, request is sent to FE.
+  // when user clicks on confirm email, request is sent to FE.
   // FE need to send token from URL, to this route. Guard decodes, verifies it ad updates confiremd email flag
   @Post('verify-email')
   async emailConfirmation(@Req() { user }: CustomRequest) {
@@ -110,6 +110,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('resend-confirmation-link')
+  //from app user click on resend-confirmation-link button if email is expired or didnt arrived at all
   async resendConfirmationLink(@Req() { user }: CustomRequest) {
     await this.authService.resendVerificationEmail(user);
     return ResponseSuccess(

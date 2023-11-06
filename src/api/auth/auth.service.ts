@@ -96,7 +96,7 @@ export class AuthService implements OnModuleInit {
     user.password = await this.authHelper.encodePassword(password);
 
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
-    user.verifyEmailToken = emailToken;
+    user.verifyEmailToken = await this.authHelper.hashData(emailToken);
 
     const registerUser = await this.userRepo.save(user);
 
@@ -161,13 +161,14 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException('Email already confirmed');
     }
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
+    const hashedEmailToken = await this.authHelper.hashData(emailToken);
     await this.mailService.sendVerificationEmail(
       user.email,
       // user.firstName,
       // user.lastName,
       emailToken,
     );
-    this.userRepo.update(user.id, { verifyEmailToken: emailToken });
+    this.userRepo.update(user.id, { verifyEmailToken: hashedEmailToken });
   }
 
   public async me(id: string): Promise<User> {
@@ -236,8 +237,10 @@ export class AuthService implements OnModuleInit {
     if (!user) throw new HttpException('user not found', HttpStatus.NOT_FOUND);
 
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
+    const hashedEmailToken = await this.authHelper.hashData(emailToken);
+
     await this.mailService.sendForgotPasswordEmail(user.email, emailToken);
-    this.userRepo.update(user.id, { verifyEmailToken: emailToken });
+    this.userRepo.update(user.id, { verifyEmailToken: hashedEmailToken });
     return true;
   }
 }

@@ -39,14 +39,18 @@ export class EmailTokenStrategy extends PassportStrategy(
     if (user.verifiedEmail)
       throw new BadRequestException('Email already confirmed');
 
-    if (user.verifyEmailToken !== emailToken)
+    const isMatch = this.authHelper.verifyData(
+      user.verifyEmailToken,
+      emailToken,
+    );
+    if (!isMatch)
       //it can happen that user clics on resend verifyemail even if link is not expired,
       // need to ensure that only last sent link is used
       throw new BadRequestException(
         'Reused some of the previous confirmation links',
       );
 
-    this.authHelper.confirmEmail(user.email, null);
+    this.authHelper.confirmEmail(user.email, null); //invalidate old email token
     return user;
   }
 }
