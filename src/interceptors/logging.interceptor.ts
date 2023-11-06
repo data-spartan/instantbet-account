@@ -6,14 +6,15 @@ import {
   Injectable,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { tap, map, finalize } from 'rxjs/operators';
 import { HttpAdapterHost } from '@nestjs/core';
-import { LoggerService } from 'src/logger/logger.service';
+// import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  constructor(private logger: LoggerService) {}
+  constructor(private logger: Logger) {}
   intercept(context: ExecutionContext, next) {
     const now = Date.now();
     const req = context.switchToHttp().getRequest();

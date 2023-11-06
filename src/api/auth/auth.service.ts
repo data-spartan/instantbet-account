@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Inject,
   Injectable,
+  Logger,
   OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,7 +20,7 @@ import { LoginDto } from './dto/login.dto';
 import { plainToInstance } from 'class-transformer';
 import { ChangePasswordDto, UserDto } from '../users/dto';
 import { AuthRespDto } from './dto/authResp.dto';
-import { LoggerService } from 'src/logger/logger.service';
+// import { LoggerService } from 'src/logger/logger.service';
 import { ITokenType } from './interfaces/token.interface';
 import * as argon2 from 'argon2';
 import * as dayjs from 'dayjs';
@@ -35,7 +36,7 @@ export class AuthService implements OnModuleInit {
     private readonly tokenRepo: Repository<RefreshToken>,
     private readonly authHelper: AuthHelper,
     private readonly config: ConfigService,
-    private readonly logger: LoggerService,
+    private readonly logger: Logger,
     private readonly mailService: MailService,
   ) {}
 

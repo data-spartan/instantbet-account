@@ -2,9 +2,7 @@ import { createLogger, format, transports } from 'winston';
 
 // custom log display format
 const customFormat = format.printf(({ timestamp, level, stack, message }) => {
-  return `${timestamp} - [${level.toUpperCase().padEnd(7)}] - ${
-    stack || message
-  }`;
+  return `${timestamp} - [${level.toUpperCase()}] - ${stack || message}`;
 });
 
 // for development environment
@@ -14,6 +12,7 @@ const devLogger = {
     format.errors({ stack: true }),
     customFormat,
   ),
+  exitOnError: false,
   transports: [new transports.Console({ level: 'info' })],
 };
 
@@ -24,6 +23,7 @@ const prodLogger = {
     format.errors({ stack: true }),
     format.json(),
   ),
+  exitOnError: false,
   transports: [
     new transports.File({
       filename: 'app.log',
@@ -36,7 +36,7 @@ const prodLogger = {
 };
 
 // export log instance based on the current environment
-const instanceLogger =
+export const instanceLogger =
   process.env.NODE_ENV !== 'production' ? devLogger : prodLogger;
 
-export const instance = createLogger(instanceLogger);
+// export const instance = createLogger(instanceLogger);

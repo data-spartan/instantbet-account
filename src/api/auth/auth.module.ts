@@ -1,4 +1,4 @@
-import { Module, MiddlewareConsumer } from '@nestjs/common';
+import { Module, MiddlewareConsumer, Logger } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 import { AccessTokenStrategy } from './strategies/accessToken.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
-import { LoggerService } from 'src/logger/logger.service';
+// import { LoggerService } from 'src/logger/logger.service';
 import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { JwtRefreshTokenStrategy } from './strategies/refreshToken.strategy';
@@ -52,6 +52,7 @@ import { DatabaseModule } from 'src/database/database.module';
   ],
   controllers: [AuthController],
   providers: [
+    Logger,
     AuthService,
     AuthHelper,
     AccessTokenStrategy,
@@ -59,14 +60,6 @@ import { DatabaseModule } from 'src/database/database.module';
     EmailTokenStrategy,
     ForgotPasswordStrategy,
     RefreshPrivateSecretService,
-
-    {
-      inject: [ConfigService], // Inject the LoggerConfig dependency
-      provide: LoggerService,
-      useFactory: (configService: ConfigService) => {
-        return new LoggerService('auth', configService);
-      },
-    },
   ],
   exports: [AuthService, AuthHelper, PassportModule],
   //export the PassportModule from AuthModule(its registered there).
@@ -74,8 +67,4 @@ import { DatabaseModule } from 'src/database/database.module';
   // you will have have to import the AuthModule and register every time PassportModule.
   // but now only import AuthModule and you will have access to authguard
 })
-export class AuthModule {
-  configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(LoggerMiddleware).forRoutes(AuthController);
-  }
-}
+export class AuthModule {}

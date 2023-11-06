@@ -10,10 +10,11 @@ import {
   TypeORMExceptionFilter,
 } from './exception-filters';
 import { DirectoryCreationService } from './shared/dirCreation/dirCreation';
-import { LoggerService } from './logger/logger.service';
+
 import { DataSource } from 'typeorm';
 import { ResponseMessageInterceptor } from './interceptors/responseMessage.interceptor';
 import { TypeOrmConfigService } from './config/typeorm/typeorm.config';
+import { LoggerMiddleware } from './middlewares/logging.middleware';
 
 @Module({
   imports: [
@@ -27,13 +28,6 @@ import { TypeOrmConfigService } from './config/typeorm/typeorm.config';
   controllers: [AppController],
   providers: [
     Logger,
-    // {
-    //   inject: [ConfigService],
-    //   provide: LoggerService,
-    //   useFactory: (configService: ConfigService) => {
-    //     return new LoggerService('sys', configService);
-    //   },
-    // },
     DirectoryCreationService,
     //using this construct if want you can inject filters wherever you want
     // using  app.useGlobalFilters you cant inject
@@ -58,4 +52,7 @@ import { TypeOrmConfigService } from './config/typeorm/typeorm.config';
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
 }

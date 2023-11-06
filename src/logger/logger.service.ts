@@ -1,44 +1,34 @@
-// custom-logger.service.ts
-import { Injectable, Scope, Logger, Inject } from '@nestjs/common';
-import { transports, createLogger, format, LoggerOptions } from 'winston';
-// import DailyRotateFile from 'winston-daily-rotate-file';
-
+import { LoggerService as LS } from '@nestjs/common';
 import * as winston from 'winston';
-import { LoggerConfig } from './logger.config';
-import { ConfigService } from '@nestjs/config';
-import { LoggerGetParams } from './helpers/loggerGetParams.helper';
 
-@Injectable({ scope: Scope.TRANSIENT })
-export class LoggerService extends Logger {
-  private logger;
+import {
+  utilities as nestWinstonModuleUtilities,
+  WinstonModule,
+} from 'nest-winston';
+import { instanceLogger } from './logger.app';
 
-  constructor(
-    context: string,
-    private readonly configService: ConfigService,
-  ) {
-    super();
+export class LoggerService implements LS {
+  private logger: LS;
 
-    const configParams = new LoggerGetParams(configService);
-    const { BASE_DIR, LOGS_DIR, LOGS_MAXSIZE, LOGS_MAXFILES, LOGS_LEVEL } =
-      configParams.getConfigParams();
-    const config: any = new LoggerConfig(
-      BASE_DIR,
-      LOGS_DIR,
-      LOGS_LEVEL,
-      LOGS_MAXSIZE,
-      LOGS_MAXFILES,
-      context,
-    ).getConfig();
-    this.logger = createLogger(config);
+  constructor() {
+    this.logger = WinstonModule.createLogger({
+      ...instanceLogger,
+    });
   }
 
-  log(message: any) {
-    this.logger.info(message);
+  log(message: any, fields?: any) {
+    this.logger.log(message);
   }
-  error(message: any) {
+  error(message: any, fields?: any) {
     this.logger.error(message);
   }
-  warn(message: any) {
+  warn(message: any, fields?: any) {
     this.logger.warn(message);
+  }
+  debug(message: any, fields?: any) {
+    this.logger.debug(message);
+  }
+  verbose(message: any, fields?: any) {
+    this.logger.verbose(message);
   }
 }
