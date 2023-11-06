@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PostgresTypeOrmQueries } from './postgres/queries/postgresTypeorm.query';
-import { PostgresTypeOrmTransactions } from './postgres/transactions_/refreshToken.transactions';
+import { PostgresTypeOrmRawQueries } from './postgres/raw-queries/postgresTypeorm.rawqueries';
 
 @Module({
-  providers: [PostgresTypeOrmQueries, PostgresTypeOrmTransactions],
+  providers: [PostgresTypeOrmQueries, PostgresTypeOrmRawQueries],
 
-  exports: [PostgresTypeOrmQueries, PostgresTypeOrmTransactions],
+  exports: [PostgresTypeOrmQueries, PostgresTypeOrmRawQueries],
 })
 export class DatabaseModule {}

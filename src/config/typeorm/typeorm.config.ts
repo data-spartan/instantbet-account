@@ -23,6 +23,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       synchronize: true,
       entities: entities,
       autoLoadEntities: true,
+      poolSize: 20,
     };
   }
 }
