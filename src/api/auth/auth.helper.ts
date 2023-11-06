@@ -15,7 +15,7 @@ import * as dayjs from 'dayjs';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from '../users/index.entity';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
-import { PostgresTypeOrmTransactions } from 'src/database/postgres/transactions_/refreshToken.transactions';
+import { PostgresTypeOrmTransactions } from 'src/database/postgres/transactions_/postgresTypeorm.transactions';
 
 @Injectable()
 export class AuthHelper {
