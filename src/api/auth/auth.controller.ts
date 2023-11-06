@@ -1,16 +1,11 @@
 import {
   Body,
   Controller,
-  Inject,
   Post,
-  ClassSerializerInterceptor,
-  UseInterceptors,
   UseGuards,
   Req,
   Get,
   Patch,
-  UseFilters,
-  Res,
   HttpStatus,
 } from '@nestjs/common';
 import {
@@ -21,25 +16,16 @@ import {
 } from './dto';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { AuthService } from './auth.service';
-import { User } from '../users/entities/user.entity';
-import { AuthedResponse } from './interfaces/auth.interface';
 import { CustomRequest } from 'src/common/interfaces';
-import { AuthRespDto } from './dto/authResp.dto';
 import { ChangePasswordDto } from '../users/dto';
-import { LoggerService } from 'src/logger/logger.service';
 import { Request, Response } from 'express';
 import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
-import { use } from 'passport';
-import { ConfirmEmailDto } from 'src/mailer/dto/confirmEmail.dto';
 import { EmailJwtAuthGuard } from './guards/emailJwt.guard';
-import { UsersService } from '../users/users.service';
 import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
 import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
 
 @Controller('auth')
-// @Serialize(AuthRespDto)
-// @UseInterceptors(LoggingInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

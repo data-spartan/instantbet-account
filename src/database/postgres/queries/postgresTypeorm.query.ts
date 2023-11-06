@@ -5,10 +5,10 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PostgresTypeOrmQueries {
+  constructor(private dataSource: DataSource) {}
   public async allUsersPagination(
     //in cursor pag with uuid, date/timestamp is in fact cursor and uuid is here to compare which date is greater/smaller when dates are equal
     //bcs uuid is hash, compare is random
-    dataSource: DataSource,
     entity: any,
     cursor: Date,
     userId: string,
@@ -29,7 +29,7 @@ export class PostgresTypeOrmQueries {
     LIMIT $3;
   `;
     //WHERE ... row constructor -> first checks created_at < x, unless these values are equal, in which case it compares id and y`.
-    const repo = dataSource.manager.getRepository(entity);
+    const repo = this.dataSource.manager.getRepository(entity);
     const table = repo.metadata.tableName;
     const users = await repo.query(query, [cursor, userId, limit]);
     return users;

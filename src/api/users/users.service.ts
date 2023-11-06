@@ -17,7 +17,6 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private userRepo: Repository<User>,
     private authHelper: AuthHelper,
-    private readonly dataSource: DataSource,
     private readonly postgresQueries: PostgresTypeOrmQueries,
   ) {}
 
@@ -27,9 +26,7 @@ export class UsersService {
     timestamp: Date,
     direction: string,
   ): Promise<User[]> {
-    // return this.repository.find();
     return this.postgresQueries.allUsersPagination(
-      this.dataSource,
       User,
       timestamp,
       cursor,
