@@ -1,14 +1,15 @@
-import { LoggerService as LS } from '@nestjs/common';
+import { LoggerService as loggService } from '@nestjs/common';
 import * as winston from 'winston';
 
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
-import { instanceLogger } from './logger.app';
+import { instanceLogger } from './loggerApp.config';
 
-export class LoggerService implements LS {
-  private logger: LS;
+//THIS LOGGER SERV FILE IS FOR GLOBAL APP LOGGER
+export class LoggerService implements loggService {
+  private logger: loggService;
 
   constructor() {
     this.logger = WinstonModule.createLogger({

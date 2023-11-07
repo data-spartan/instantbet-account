@@ -6,7 +6,9 @@ import { transports, createLogger, format, LoggerOptions } from 'winston';
 import * as winston from 'winston';
 import { LoggerConfig } from './logger.config';
 import { ConfigService } from '@nestjs/config';
-import { LoggerGetParams } from './helpers/loggerGetParams.helper';
+import { LoggerGetParams } from '../helpers/loggerGetParams.helper';
+
+//THIS IS FOR SPECIALIZED LOGGS. E.G. IF WE WANT EACH MODULE HAS ITS OWN LOGGING(separate log files)
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class LoggerServi extends Logger {

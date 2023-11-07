@@ -4,7 +4,6 @@ import { AuthModule } from '../auth/auth.module';
 import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-// import { LoggerService } from 'src/logger/logger.service';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from './entities/token.entity';
 import { LoggerMiddleware } from 'src/middlewares/logging.middleware';

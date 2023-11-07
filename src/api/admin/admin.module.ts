@@ -4,10 +4,10 @@ import { AuthModule } from '../auth/auth.module';
 import { User } from '../users/entities/user.entity';
 import { AdminController } from './admin.controller';
 import { UsersModule } from '../users/users.module';
-// import { LoggerService } from 'src/logger/logger.service';
-
+// import { LoggerService } from 'src/logger/logger_.service';
+// import { LoggerConfig } from 'src/logger/logger.config';
 import { ConfigService } from '@nestjs/config';
-import { LoggerConfig } from 'src/logger/logger.config';
+
 import { LoggerMiddleware } from 'src/middlewares/logging.middleware';
 
 @Module({
