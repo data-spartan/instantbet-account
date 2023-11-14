@@ -97,6 +97,7 @@ export class AuthService implements OnModuleInit {
     user.password = await this.authHelper.encodePassword(password);
 
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
+    const token = await this.authHelper.handleTokens(user);
     user.verifyEmailToken = await this.authHelper.hashData(emailToken);
 
     const registerUser = await this.userRepo.save(user);
@@ -113,7 +114,7 @@ export class AuthService implements OnModuleInit {
     );
 
     return {
-      // token,
+      token,
       id: user.id,
     };
   }
@@ -149,7 +150,7 @@ export class AuthService implements OnModuleInit {
     // if (!user.verifiedEmail)
     //   throw new HttpException('Confirm your email first', HttpStatus.FORBIDDEN);
 
-    const token = await this.authHelper.handleLogin(user);
+    const token = await this.authHelper.handleTokens(user);
     await this.userRepo.update(user.id, { lastLoginAt: new Date() });
     return {
       token,

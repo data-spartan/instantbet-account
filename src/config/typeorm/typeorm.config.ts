@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { entities } from 'src/api/api.entities';
-import { TypeORMConfigEnum } from 'src/constants';
+import { TypeORMConfigEnum } from './typeorm.enum';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 @Injectable()

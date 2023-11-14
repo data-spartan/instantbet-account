@@ -28,6 +28,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
     }
     return user;
   }
+  //only if want to add extra logic to canActivate need to call super.canactivate
   // public async canActivate(context: ExecutionContext): Promise<boolean> {
   //   //bcs you extended JwtAuthGuard you need to call canActivate of base AuthGuard
   //   // which then calls validate of auth.strategy to create request.user property

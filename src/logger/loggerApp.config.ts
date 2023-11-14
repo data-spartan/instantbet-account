@@ -1,6 +1,6 @@
 import { createLogger, format, transports } from 'winston';
 
-//THIS CONFIG IS FOR GLOBAL APP LOGGER
+//THIS CONFIG FILE IS FOR GLOBAL APP LOGGER
 
 // custom log display format
 const customFormat = format.printf(({ timestamp, level, stack, message }) => {
