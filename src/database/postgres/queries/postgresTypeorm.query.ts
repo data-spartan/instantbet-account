@@ -39,7 +39,7 @@ export class PostgresTypeOrmQueries {
   public async refreshTokenTransaction(
     entity: EntityClassOrSchema,
     hashedRefreshToken: string,
-    propertyObject: Object,
+    propertyObject: object,
     id: string,
   ) {
     // const queryRunner: QueryRunner = this.dataSource.createQueryRunner();

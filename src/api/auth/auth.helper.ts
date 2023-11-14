@@ -97,7 +97,7 @@ export class AuthHelper {
     };
   }
 
-  async handleLogin(user: User) {
+  async handleTokens(user: User) {
     const [accessToken, refreshToken] = await Promise.all([
       this.getJwtAccessToken(user.id),
       this.getJwtRefreshToken(user.id),

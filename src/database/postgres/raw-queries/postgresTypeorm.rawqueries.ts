@@ -1,6 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
-import { DataSource, EntityManager, QueryRunner } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PostgresTypeOrmRawQueries {

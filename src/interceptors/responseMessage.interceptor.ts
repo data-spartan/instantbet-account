@@ -17,6 +17,7 @@ export class ResponseMessageInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     return next.handle().pipe(
       map((result) => {
+        //result is actualy contorller return value/object
         const response = context.switchToHttp().getResponse();
 
         const responseData = {

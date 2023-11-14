@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { LoggerService } from 'src/logger/logger.service';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+// import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
-  constructor(private logger: LoggerService) {}
+  constructor(private logger: Logger) {}
 
   use(request: Request, response: Response, next: NextFunction): void {
-    const { method, path } = request;
+    const { method, baseUrl } = response.req;
     const ingoingTimestamp = Date.now();
 
     response.on('finish', () => {
@@ -15,7 +15,13 @@ export class LoggerMiddleware implements NestMiddleware {
         const { statusCode, message } = response.locals.loggingData;
         const processingTime = Date.now() - ingoingTimestamp;
 
-        this.logger.log({ statusCode, message, path, method, processingTime });
+        this.logger.log({
+          statusCode,
+          message,
+          path: baseUrl,
+          method,
+          processingTime,
+        });
       } else {
         this.logger.error(response.locals.errResp);
       }

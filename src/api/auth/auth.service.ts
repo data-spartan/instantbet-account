@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Inject,
   Injectable,
+  Logger,
   OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,7 +20,7 @@ import { LoginDto } from './dto/login.dto';
 import { plainToInstance } from 'class-transformer';
 import { ChangePasswordDto, UserDto } from '../users/dto';
 import { AuthRespDto } from './dto/authResp.dto';
-import { LoggerService } from 'src/logger/logger.service';
+// import { LoggerService } from 'src/logger/logger.service';
 import { ITokenType } from './interfaces/token.interface';
 import * as argon2 from 'argon2';
 import * as dayjs from 'dayjs';
@@ -35,7 +36,7 @@ export class AuthService implements OnModuleInit {
     private readonly tokenRepo: Repository<RefreshToken>,
     private readonly authHelper: AuthHelper,
     private readonly config: ConfigService,
-    private readonly logger: LoggerService,
+    private readonly logger: Logger,
     private readonly mailService: MailService,
   ) {}
 
@@ -96,6 +97,7 @@ export class AuthService implements OnModuleInit {
     user.password = await this.authHelper.encodePassword(password);
 
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
+    const token = await this.authHelper.handleTokens(user);
     user.verifyEmailToken = await this.authHelper.hashData(emailToken);
 
     const registerUser = await this.userRepo.save(user);
@@ -112,7 +114,7 @@ export class AuthService implements OnModuleInit {
     );
 
     return {
-      // token,
+      token,
       id: user.id,
     };
   }
@@ -148,7 +150,7 @@ export class AuthService implements OnModuleInit {
     // if (!user.verifiedEmail)
     //   throw new HttpException('Confirm your email first', HttpStatus.FORBIDDEN);
 
-    const token = await this.authHelper.handleLogin(user);
+    const token = await this.authHelper.handleTokens(user);
     await this.userRepo.update(user.id, { lastLoginAt: new Date() });
     return {
       token,

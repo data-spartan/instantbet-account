@@ -30,10 +30,9 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/register')
-  // @UseInterceptors(ClassSerializerInterceptor)
   private async register(@Body() body: RegisterDto, @Req() req: Request) {
-    const { id } = await this.authService.register(body);
-    // req.res.setHeader('Token-Id', token.tokenId);
+    const { token, id } = await this.authService.register(body);
+    req.res.setHeader('Token-Id', token.tokenId);
     return ResponseSuccess(
       `Verification e-mail is sent to user ${id}`,
       null,
