@@ -38,3 +38,4 @@ keys
 **/.vscode/*
 # ENV
 .env.*
+!.env.example
