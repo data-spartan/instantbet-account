@@ -1,14 +1,11 @@
 # instantbet-account
-
-Right now instantbet-data-hub microservice contains general overview of whole BE App.
-In near future all microservice projects will have their own specific README.
-
-Microservices available at the momment:
-
-1. https://github.com/data-spartan/instantbet-ws-scraper
-2. https://github.com/data-spartan/instantbet-account
-3. https://github.com/data-spartan/instantbet-data-hub
-
 ### ABOUT:
 
-- It enables authN, authZ, and Account.
+- instantbet-account is responsible for Auth(authN/authZ) and Account services
+- RBAC based authN and authZ with rotating refresh tokens, ES256 token signing algorithm with pub/priv keys and email verification
+
+Complete BE App README.md is on the following link: 
+- https://github.com/data-spartan/instantbet-BE
+
+### TECH STACK
+- NestJS, TypeScript, Postgres, Redis, Kafka, Docker
