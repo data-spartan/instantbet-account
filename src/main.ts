@@ -10,7 +10,6 @@ import { LoggerService } from './logger/logger.service';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
-    logger: new LoggerService(),
     cors: true,
   });
   const config: ConfigService = app.get(ConfigService);

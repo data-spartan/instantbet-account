@@ -39,3 +39,5 @@ keys
 # ENV
 .env.*
 !.env.example
+
+.keys

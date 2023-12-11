@@ -1,12 +1,12 @@
 # Base image
-FROM node:18.18.0-alpine As development
+FROM node:18.18.0-alpine
 
-ENV NODE_ENV development
+ARG ENV
+ENV NODE_ENV ${ENV}
 # Create app directory
-WORKDIR /usr/src/app
-
+WORKDIR /usr/src
 #in case error: EACCES: permission denied mkdir
-RUN chown -R node:node /usr/src/app
+RUN mkdir -p logs && chown -R node:node /usr/src/
 
 COPY --chown=node:node package*.json ./
 
@@ -14,11 +14,10 @@ COPY --chown=node:node package*.json ./
 RUN npm ci && npm cache clean --force
 
 # Bundle app source
-COPY . .
-
+COPY --chown=node:node . .
+# RUN chown -R node /usr/src/app
+USER node
 # Creates a "dist" folder with the production build
 RUN npm run build
-
-USER node
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]
