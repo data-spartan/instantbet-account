@@ -1,4 +1,11 @@
-.dockerignore
-node_modules
-npm-debug.log
-dist
+**/.git
+**/.gitignore
+**/node_modules
+**/npm-debug.log
+**/dist
+**/.coverage
+**/.coverage.*
+**/logs
+**/docker-compose.yml
+**/*.md
+**/.vscode

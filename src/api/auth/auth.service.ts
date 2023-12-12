@@ -120,6 +120,7 @@ export class AuthService implements OnModuleInit {
   }
 
   public async login({ email, password }: LoginDto) {
+    //req.
     const user: User = await this.userRepo.findOne({
       select: {
         id: true,
@@ -171,13 +172,6 @@ export class AuthService implements OnModuleInit {
       emailToken,
     );
     this.userRepo.update(user.id, { verifyEmailToken: hashedEmailToken });
-  }
-
-  public async me(id: string): Promise<User> {
-    const fetchedUser = await this.userRepo.findOne({
-      where: { id },
-    });
-    return fetchedUser;
   }
 
   async signOut(tokenId: string) {

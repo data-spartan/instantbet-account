@@ -42,19 +42,12 @@ export class AuthController {
 
   @Post('/login')
   private async login(@Body() body: LoginDto, @Req() req: Request) {
+    //cookies token
     const { token, id } = await this.authService.login(body);
-    req.res.setHeader('Token-Id', token.tokenId);
+    req.res.setHeader('Token-Id', token.tokenId); //ne treba uopste dodavati u req
     return ResponseSuccess(`user ${id} loged in succesfully`, token);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('/me')
-  private async me(@Req() { user }: CustomRequest) {
-    return ResponseSuccess(
-      `user ${user.id} profile retrieved succesfully`,
-      user,
-    );
-  }
   @UseGuards(EmailConfirmationGuard)
   @UseGuards(JwtAuthGuard)
   @Patch('/change-password')

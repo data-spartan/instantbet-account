@@ -27,13 +27,18 @@ export class PostgresTypeOrmQueries {
     //if Next page is clicked, FE needs to send last record(oldest) in  user array; Send CreatedAt, id, direction(Next) from previous array
     //to able to to show older records than CreatedAt
     //when Previous is clicked first record in array is sent.
-
     const queryRunner = this.dataSource.createQueryRunner();
-    const rawQuery = await this.rawQueries.allUsersPagination(sign);
-    await queryRunner.connect();
-    const users = await queryRunner.query(rawQuery, [cursor, userId, limit]);
-    await queryRunner.release();
-    return users;
+    try {
+      const rawQuery = await this.rawQueries.allUsersPagination(sign);
+      await queryRunner.connect();
+      const users = await queryRunner.query(rawQuery, [cursor, userId, limit]);
+      await queryRunner.release();
+      return users;
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   public async refreshTokenTransaction(
@@ -42,7 +47,6 @@ export class PostgresTypeOrmQueries {
     propertyObject: object,
     id: string,
   ) {
-    // const queryRunner: QueryRunner = this.dataSource.createQueryRunner();
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

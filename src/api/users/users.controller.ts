@@ -9,6 +9,7 @@ import {
   Body,
   Req,
   UseFilters,
+  Delete,
 } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -36,14 +37,23 @@ export class UsersController {
     private readonly authService: AuthService,
   ) {}
 
-  @Patch('/me/update-profile')
-  async updateMyProfile(
-    @Req() { user }: CustomRequest,
-    @Body() body: UserUpdateDto,
-  ) {
-    const result = await this.usersService.updateMyProfile(user, body);
+  @Get('/me')
+  private async me(@Req() { user }: CustomRequest): Promise<User | never> {
+    return this.usersService.findOne(user.id);
+  }
+
+  @Patch('/me')
+  async update(@Req() { user }: CustomRequest, @Body() body: UserUpdateDto) {
+    const result = await this.usersService.updateProfile(user, body);
     return ResponseSuccess(
       `user ${result.id} updated ${result.props} succesfully`,
     );
+  }
+
+  @Delete()
+  async remove(@Req() { user }: CustomRequest) {
+    await this.usersService.remove(user.id);
+
+    return ResponseSuccess(`user ${user.id} deleted succesfully.`);
   }
 }

@@ -33,16 +33,12 @@ import { Roles } from '../auth/decorators/roles.decorator';
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRolesEnum.Administrator)
-// @Serialize(UserDto)
-// @UseInterceptors(LoggingInterceptor)
-// @UseFilters(HttpExceptionFilter, AllExceptionsFilter)
 export class AdminController {
-  constructor(private readonly usersService: UsersService) {
-    // this.logger.setContext('NUTRA');
-  }
+  constructor(private readonly usersService: UsersService) {}
 
   @Get('/users')
   public async findAll(@Query() query: UsersPaginationDto) {
+    //broj korisnika takodje
     //http://localhost:5000/admin/users?timestamp=2023-10-02 14:11:29.400&limit=2&cursor=c5369eed-fb5d-467a-a151-b6e77bee5783&direction=Next
     const { timestamp, limit, cursor, direction } = query;
     const result = await this.usersService.findAll(
@@ -55,9 +51,10 @@ export class AdminController {
   }
 
   @Get('/users/:id')
-  public async findOne(@Param('id') id: string) {
+  public async findOne(@Param('id') id: string, @Req() req) {
+    //dodati req/resp
     const result = await this.usersService.findOne(id);
-    return ResponseSuccess(`user ${id} retrieved succesfully`, result);
+    return ResponseSuccess(`user ${id} retrieved succesfully`, result); //izbaciti message akd je resp pozitivan
   }
 
   @Post('/users')
@@ -76,23 +73,23 @@ export class AdminController {
     return ResponseSuccess(`user ${id} deleted succesfully`);
   }
 
-  // @Get('/me')
-  // private async me(@Req() { user }: CustomRequest): Promise<User | never> {
-  //   return this.authService.me(user);
-  // }
+  @Get('/me')
+  private async me(@Req() { user }: CustomRequest): Promise<User | never> {
+    return this.usersService.findOne(user.id);
+  }
 
-  @Patch('/me/update-profile')
-  async updateAdminProfile(
-    @Req() { user }: CustomRequest,
-    @Body() body: UserUpdateDto,
-  ) {
-    const result = await this.usersService.updateMyProfile(user, body);
-    // return ResponseSuccess(
-    //   `${Object.keys(body).join(',')} updated succesfully`,
-    // );
+  @Patch('/me')
+  async update(@Req() { user }: CustomRequest, @Body() body: UserUpdateDto) {
+    const result = await this.usersService.updateProfile(user, body);
 
     return ResponseSuccess(
       `user ${result.id} updated ${result.props} succesfully`,
     );
+  }
+  @Delete(':id')
+  async remove(@Param() { id }: any, @Req() { user }: CustomRequest) {
+    await this.usersService.remove(id);
+
+    return ResponseSuccess(`user ${user.id} deleted succesfully.`);
   }
 }
