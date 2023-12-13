@@ -44,7 +44,6 @@ export class PostgresTypeOrmQueries {
   public async refreshTokenTransaction(
     entity: EntityClassOrSchema,
     hashedRefreshToken: string,
-    propertyObject: object,
     id: string,
   ) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -52,7 +51,7 @@ export class PostgresTypeOrmQueries {
     await queryRunner.startTransaction();
     const manager = queryRunner.manager;
     try {
-      await manager.delete(entity, propertyObject); //{ user: id }
+      await manager.delete(entity, { user: id }); //{ user: id }
       const insertResult = await manager.insert(entity, {
         refreshToken: hashedRefreshToken,
         user: id,

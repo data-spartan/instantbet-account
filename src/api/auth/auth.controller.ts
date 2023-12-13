@@ -7,6 +7,7 @@ import {
   Get,
   Patch,
   HttpStatus,
+  Res,
 } from '@nestjs/common';
 import {
   RegisterDto,
@@ -24,6 +25,7 @@ import { EmailJwtAuthGuard } from './guards/emailJwt.guard';
 import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
 import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
+import { LoginVerifiedGuard } from './guards/verificationGuard.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -39,13 +41,23 @@ export class AuthController {
       HttpStatus.CREATED,
     );
   }
-  // @UseGuards(EmailConfirmationGuard)
+  // @Post('/login')
+  // private async login(@Body() body: LoginDto, @Req() req: Request) {
+  //   //cookies token
+  //   const { token, id } = await this.authService.login(body);
+  //   req.res.setHeader('Token-Id', token.tokenId);
+  //   return ResponseSuccess(`user ${id} loged in succesfully`, token);
+  // }
+
   @Post('/login')
-  private async login(@Body() body: LoginDto, @Req() req: Request) {
+  private async login(
+    @Body() body: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     //cookies token
     const { token, id } = await this.authService.login(body);
-    req.res.setHeader('Token-Id', token.tokenId);
-    return ResponseSuccess(`user ${id} loged in succesfully`, token);
+    res.cookie('auth-cookie', token, { httpOnly: true, secure: false });
+    return ResponseSuccess(`user ${id} loged in succesfully`, null);
   }
 
   @UseGuards(EmailConfirmationGuard)
@@ -67,10 +79,16 @@ export class AuthController {
     return ResponseSuccess(`user ${request.user.id} succesfully`);
   }
 
-  @UseGuards(JwtRefreshGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('/refresh')
-  async refresh(@Req() { user }: CustomRequest) {
+  async refresh(@Req() { user }: any, @Res() res: Response) {
     const result = user;
+    const { accessToken, refreshToken } = user;
+    res.cookie(
+      'auth-cookie',
+      { accessToken, refreshToken },
+      { httpOnly: true, secure: false },
+    );
     return ResponseSuccess(`token refreshed succesfully`, result);
   }
 

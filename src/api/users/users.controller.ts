@@ -24,9 +24,10 @@ import { EmailConfirmationGuard } from '../auth/guards/emailConfirmation.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('users')
-@UseGuards(JwtAuthGuard, RolesGuard, EmailConfirmationGuard)
+@UseGuards(JwtAuthGuard, RolesGuard) // EmailConfirmationGuard)
 @Roles(UserRolesEnum.Basic, UserRolesEnum.Test)
 // @Serialize(UserDto)
 // @UseInterceptors(LoggingInterceptor)
@@ -38,8 +39,9 @@ export class UsersController {
   ) {}
 
   @Get('/me')
-  private async me(@Req() { user }: CustomRequest): Promise<User | never> {
-    return this.usersService.findOne(user.id);
+  private async me(@Req() { user }: CustomRequest) {
+    const result = await this.usersService.findOne(user.id);
+    return ResponseSuccess('', result);
   }
 
   @Patch('/me')

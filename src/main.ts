@@ -7,6 +7,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { WinstonModule } from 'nest-winston';
 import { LoggerService } from './logger/logger.service';
 // import { instance } from './logger/logger.app';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
@@ -21,6 +22,7 @@ async function bootstrap() {
       crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   );
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       disableErrorMessages: false,

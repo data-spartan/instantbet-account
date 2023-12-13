@@ -22,6 +22,8 @@ import { ForgotPasswordStrategy } from './strategies/forgotPasswordToken.strateg
 import { readFileSync } from './helpers/readFile.helpers';
 import { LoggerMiddleware } from 'src/middlewares/logging.middleware';
 import { DatabaseModule } from 'src/database/database.module';
+import { CookieJwtStrategy } from './strategies/cookieStrategy.strategy';
+import { CookieRefreshStrategy } from './strategies/cookieRefreshStrategy.strategy';
 
 @Module({
   imports: [
@@ -55,8 +57,10 @@ import { DatabaseModule } from 'src/database/database.module';
     Logger,
     AuthService,
     AuthHelper,
-    AccessTokenStrategy,
-    JwtRefreshTokenStrategy,
+    CookieJwtStrategy,
+    CookieRefreshStrategy,
+    // AccessTokenStrategy,
+    // JwtRefreshTokenStrategy,
     EmailTokenStrategy,
     ForgotPasswordStrategy,
     RefreshPrivateSecretService,

@@ -10,7 +10,7 @@ import { readFileSync } from '../helpers/readFile.helpers';
 @Injectable()
 export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
-    private readonly helper: AuthHelper,
+    private readonly authHelper: AuthHelper,
     private readonly configService: ConfigService,
   ) {
     super({
@@ -28,7 +28,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
     //after canActivate in authGuard returns true it trigger jwtstrategy to verify token signature
     //if true, then proceeds to validate
     //payload is token decoded object
-    const user = await this.helper.validateUser(payload);
+    const user = await this.authHelper.validateUser(payload);
     if (!user) throw new UnauthorizedException();
     //this validate method attaches user to Request object when return user
     return user;

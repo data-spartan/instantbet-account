@@ -33,7 +33,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
     const tokenId = request.header('Token-Id');
     const user = await this.authHelper.getUserIfRefreshTokenMatches(
       refreshToken,
-      tokenId,
+      // tokenId,
       payload,
     );
     const cookie = `Refresh=${
@@ -42,7 +42,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
       'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
     )}`;
     request.res.set({
-      'Token-Id': user.tokenId,
+      // 'Token-Id': user.tokenId,
       'Set-Cookie': [{ cookie, refreshToken: user.refreshToken }],
     });
 

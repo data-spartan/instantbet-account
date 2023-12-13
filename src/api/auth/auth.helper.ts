@@ -109,26 +109,19 @@ export class AuthHelper {
         // this.dataSource,
         RefreshToken,
         hashedRefreshToken,
-        { user: user.id },
         user.id,
       );
 
       return {
         accessToken: accessToken.accessToken,
-        tokenId: insertResult.identifiers[0].id,
         refreshToken: refreshToken.refreshToken,
-        // tokenId: token.id,
-        // accessTokenExpires: getAccessExpiry(),
-        // user: {
-        //   id: user.id,
-        // },
       };
     } catch (error) {
       throw new Error(`${error.message}`);
     }
   }
 
-  public async generateTokens(payload: ITokenType, tokenId: string) {
+  public async generateTokens(payload: ITokenType) {
     const [accessToken, newRefreshToken] = await Promise.all([
       this.getJwtAccessToken(payload.sub),
       this.getJwtRefreshToken(payload.sub),
@@ -142,14 +135,12 @@ export class AuthHelper {
       // this.dataSource,
       RefreshToken,
       hashedRefreshToken,
-      { id: tokenId },
       payload.sub,
     );
 
     return {
       sub: payload.sub,
       accessToken: accessToken.accessToken,
-      tokenId: insertResult.identifiers[0].id,
       refreshToken: newRefreshToken.refreshToken,
       // accessTokenExpires: 10000, //getAccessExpiry(),
       // user: {
@@ -171,18 +162,63 @@ export class AuthHelper {
     return passwordValid;
   }
 
+  // public async getUserIfRefreshTokenMatches(
+  //   refreshToken: string,
+  //   tokenId: string,
+  //   payload: ITokenType,
+  // ) {
+  //   const foundToken = await this.tokenRepo.findOne({ where: { user: tokenId } });
+  //   if (foundToken == null) {
+  //     //refresh token(sent in Auth header from FE) is valid but the id is not in database
+  //     //TODO:inform the user with the payload sub
+  //     throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+  //   }
+  //   console.log(foundToken.refreshToken, refreshToken);
+  //   const isMatch = await this.verifyData(
+  //     foundToken.refreshToken ?? '', //argon2 hashed
+  //     refreshToken, //Base64Url encoded
+  //   );
+  //   const issuedAt = dayjs.unix(payload.iat);
+  //   const diff = dayjs().diff(issuedAt, 'seconds');
+
+  //   if (isMatch) {
+  //     return await this.generateTokens(payload, tokenId); //returns new tokens and inserts to db
+  //   } else {
+  //     //refresh token is valid and might have been used which makes it invalidated, and therefore not in the database anymore
+  //     //can occur when a user runs multiple tabs of the front-end application in a browser or sometimes a lag
+  //     // in a network and trying to use an already invalidated refresh token
+  //     //less than 20s leeway mitigates this
+  //     if (diff < 20 * 1 * 1) {
+  //       console.log('leeway');
+  //       return await this.generateTokens(payload, tokenId);
+  //     }
+
+  //     //refresh token is valid but not in db
+  //     // //possible re-use!!! delete all refresh tokens(sessions) belonging to the sub
+  //     // if (payload.sub !== foundToken.user) {
+  //     //   //the sub of the token isn't the id of the token in db
+  //     //   // log out all session of this payalod id, reFreshToken has been compromised
+  //     //   await this.tokenRepo.delete({ user: payload.sub });
+  //     //   throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+  //     // }
+
+  //     throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);
+  //   }
+  // }
+
   public async getUserIfRefreshTokenMatches(
     refreshToken: string,
-    tokenId: string,
     payload: ITokenType,
   ) {
-    const foundToken = await this.tokenRepo.findOne({ where: { id: tokenId } });
+    const foundToken = await this.tokenRepo.findOne({
+      where: { user: payload.sub },
+    });
+    console.log(foundToken);
     if (foundToken == null) {
-      //refresh token(sent in Auth header from FE) is valid but the id is not in database
+      //refresh token(sent in Auth header from FE) is valid but is not in database
       //TODO:inform the user with the payload sub
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-    console.log(foundToken.refreshToken, refreshToken);
     const isMatch = await this.verifyData(
       foundToken.refreshToken ?? '', //argon2 hashed
       refreshToken, //Base64Url encoded
@@ -191,7 +227,7 @@ export class AuthHelper {
     const diff = dayjs().diff(issuedAt, 'seconds');
 
     if (isMatch) {
-      return await this.generateTokens(payload, tokenId); //returns new tokens and inserts to db
+      return await this.generateTokens(payload); //returns new tokens and inserts to db
     } else {
       //refresh token is valid and might have been used which makes it invalidated, and therefore not in the database anymore
       //can occur when a user runs multiple tabs of the front-end application in a browser or sometimes a lag
@@ -199,7 +235,7 @@ export class AuthHelper {
       //less than 20s leeway mitigates this
       if (diff < 20 * 1 * 1) {
         console.log('leeway');
-        return await this.generateTokens(payload, tokenId);
+        return await this.generateTokens(payload);
       }
 
       //refresh token is valid but not in db

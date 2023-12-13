@@ -11,7 +11,10 @@ import { jwtGuardException } from 'src/exception-filters/exceptions';
 
 @Injectable() //when req comes to guard,first goes through canAcivate
 //,then it calls accessToken strategy
-export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
+export class JwtAuthGuard
+  extends AuthGuard(['jwt', 'jwt.refresh'])
+  implements IAuthGuard
+{
   constructor() {
     super();
   }
@@ -29,12 +32,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
     return user;
   }
   //only if want to add extra logic to canActivate need to call super.canactivate
-  // public async canActivate(context: ExecutionContext): Promise<boolean> {
-  //   //bcs you extended JwtAuthGuard you need to call canActivate of base AuthGuard
-  //   // which then calls validate of auth.strategy to create request.user property
-  //   // then you can extract user from req
-  //   await super.canActivate(context);
-  //   const { user }: Request = context.switchToHttp().getRequest();
-  //   return user ? true : false;
-  // }
+  public async canActivate(context: ExecutionContext): Promise<boolean> {
+    //bcs you extended JwtAuthGuard you need to call canActivate of base AuthGuard
+    // which then calls validate of auth.strategy to create request.user property
+    // then you can extract user from req
+    await super.canActivate(context);
+    const { user }: Request = context.switchToHttp().getRequest();
+    return user ? true : false;
+  }
 }
