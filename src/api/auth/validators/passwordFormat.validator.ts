@@ -17,16 +17,16 @@ const exceptionInvalidPasswordFormat = (label: string) =>
 export class IsPasswordFormatValidConstraint
   implements ValidatorConstraintInterface
 {
-  private currentPassword: string;
-  private newPassword: string;
+  // private currentPassword: string;
+  // private newPassword: string;
   validate(
     value: any,
     validationArguments?: ValidationArguments,
   ): boolean | Promise<boolean> {
     const { newPassword, currentPassword } =
       validationArguments.object as ChangePasswordDto;
-    this.newPassword = newPassword;
-    this.currentPassword = currentPassword;
+    // this.newPassword = newPassword;
+    // this.currentPassword = currentPassword;
     //at least one lowercase letter, one uppercase letter, one digit, and one special character, lenght 8-12
     const IsFormatValid = passwordRegex.test(value);
     //in register its only importnatn if password have valid format

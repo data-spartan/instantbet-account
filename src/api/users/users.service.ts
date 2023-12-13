@@ -34,7 +34,9 @@ export class UsersService {
         limit,
         direction,
       );
-    } catch (error) {}
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   public async findOne(id: string): Promise<User> {
@@ -60,10 +62,7 @@ export class UsersService {
       this.userRepo.save(user);
       return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
     } catch (error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error.message, error.status);
     }
   }
 
@@ -73,10 +72,7 @@ export class UsersService {
       body.password = await this.authHelper.encodePassword(body.password);
       return this.userRepo.save(body);
     } catch (error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error.message, error.status);
     }
   }
 
@@ -84,10 +80,7 @@ export class UsersService {
     try {
       await this.userRepo.delete(id);
     } catch (error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(error.message, error.status);
     }
   }
 }

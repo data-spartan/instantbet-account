@@ -31,20 +31,20 @@ export class AuthController {
 
   @Post('/register')
   private async register(@Body() body: RegisterDto, @Req() req: Request) {
-    const { token, id } = await this.authService.register(body);
-    req.res.setHeader('Token-Id', token.tokenId);
+    const userId = await this.authService.register(body);
+    // req.res.setHeader('Token-Id', token.tokenId);
     return ResponseSuccess(
-      `Verification e-mail is sent to user ${id}`,
+      `user ${userId} has been registered successfully.`,
       null,
       HttpStatus.CREATED,
     );
   }
-
+  // @UseGuards(EmailConfirmationGuard)
   @Post('/login')
   private async login(@Body() body: LoginDto, @Req() req: Request) {
     //cookies token
     const { token, id } = await this.authService.login(body);
-    req.res.setHeader('Token-Id', token.tokenId); //ne treba uopste dodavati u req
+    req.res.setHeader('Token-Id', token.tokenId);
     return ResponseSuccess(`user ${id} loged in succesfully`, token);
   }
 

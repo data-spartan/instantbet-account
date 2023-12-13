@@ -5,19 +5,19 @@ import { IsOptional, IsString } from 'class-validator';
 
 export class UserUpdateDto {
   //crucial not to include password valdiation, bcs only in change-password could change passwd
-  @IsString()
   @IsOptional()
+  @IsString()
   public firstName: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   public lastName: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   public telephone: string;
 
-  @IsString()
   @IsOptional()
+  @IsString()
   public email!: string;
 }

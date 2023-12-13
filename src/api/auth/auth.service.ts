@@ -52,7 +52,8 @@ export class AuthService implements OnModuleInit {
   private async createAdministrator(): Promise<void> {
     const superAdminEmail = this.config.get('APP_SUPER_ADMIN_EMAIL');
     const superAdminPassword = this.config.get('APP_SUPER_ADMIN_PASSWORD');
-    let admin: User = await this.userRepo.findOne({
+    const superAdminAge = this.config.get('APP_SUPER_ADMIN_AGE');
+    let admin: User | null = await this.userRepo.findOne({
       where: { email: superAdminEmail },
     });
     if (admin) {
@@ -61,12 +62,13 @@ export class AuthService implements OnModuleInit {
       );
       throw new HttpException('Conflict', HttpStatus.CONFLICT);
     }
-    admin = new User();
+    admin = Object();
     admin.firstName = 'Super';
     admin.lastName = 'Admin';
     admin.email = superAdminEmail;
     admin.role = UserRolesEnum.Administrator;
     admin.password = await this.authHelper.encodePassword(superAdminPassword);
+    admin.age = superAdminAge;
 
     const registerAdmin = await this.userRepo.save(admin);
 
@@ -81,23 +83,20 @@ export class AuthService implements OnModuleInit {
     }
   }
 
-  public async register({ firstName, lastName, email, password }: RegisterDto) {
+  public async register(registerDto: RegisterDto) {
     let user: User = await this.userRepo.findOne({
       select: { id: true },
-      where: { email },
+      where: { email: registerDto.email },
     });
     if (user) {
       throw new HttpException('User already registered', HttpStatus.CONFLICT);
     }
 
-    user = new User();
-    user.firstName = firstName;
-    user.lastName = lastName;
-    user.email = email;
-    user.password = await this.authHelper.encodePassword(password);
+    user = new User(registerDto);
+    user.password = await this.authHelper.encodePassword(user.password);
 
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
-    const token = await this.authHelper.handleTokens(user);
+    // const token = await this.authHelper.handleTokens(user);
     user.verifyEmailToken = await this.authHelper.hashData(emailToken);
 
     const registerUser = await this.userRepo.save(user);
@@ -113,10 +112,7 @@ export class AuthService implements OnModuleInit {
       emailToken,
     );
 
-    return {
-      token,
-      id: user.id,
-    };
+    return user.id;
   }
 
   public async login({ email, password }: LoginDto) {
