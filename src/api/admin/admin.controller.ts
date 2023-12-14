@@ -51,10 +51,9 @@ export class AdminController {
   }
 
   @Get('/users/:id')
-  public async findOne(@Param('id') id: string, @Req() req) {
-    //dodati req/resp
+  public async findOne(@Param('id') id: string) {
     const result = await this.usersService.findOne(id);
-    return ResponseSuccess(`user ${id} retrieved succesfully`, result); //izbaciti message akd je resp pozitivan
+    return ResponseSuccess(`user ${id} retrieved succesfully`, result);
   }
 
   @Post('/users')

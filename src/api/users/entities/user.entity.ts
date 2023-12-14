@@ -9,6 +9,7 @@ import {
   OneToMany,
   JoinColumn,
   Index,
+  OneToOne,
 } from 'typeorm';
 import { UserRolesEnum } from '../roles/roles.enum';
 import { RefreshToken } from './token.entity';
@@ -62,10 +63,11 @@ export class User {
   public verifyEmailToken?: string;
 
   // @Column({ array: true, nullable: true })
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
+  @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user, {
     nullable: true,
   })
-  public refreshToken?: RefreshToken[];
+  @JoinColumn({ name: 'tokenId', referencedColumnName: 'id' })
+  public refreshToken?: RefreshToken;
 
   @Column({ type: 'timestamp', nullable: true, default: null, select: false })
   public lastLoginAt: Date | null;

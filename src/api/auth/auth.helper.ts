@@ -210,10 +210,18 @@ export class AuthHelper {
     refreshToken: string,
     payload: ITokenType,
   ) {
-    const foundToken = await this.tokenRepo.findOne({
-      where: { user: payload.sub },
-    });
-    console.log(foundToken);
+    const foundToken = await this.tokenRepo
+      .createQueryBuilder('refreshToken')
+      .leftJoinAndSelect('refreshToken.user', 'user')
+      .where('refreshToken.userId = :userId', { userId: payload.sub })
+      .select(['refreshToken'])
+      .getOne();
+
+    // const foundToken = await this.tokenRepo.findOne({
+    //   relations: ['user'],
+    //   where: { user: payload.sub },
+    //   select: ['user'],
+    // });
     if (foundToken == null) {
       //refresh token(sent in Auth header from FE) is valid but is not in database
       //TODO:inform the user with the payload sub

@@ -28,6 +28,7 @@ export class CookieRefreshStrategy extends PassportStrategy(
       jwtFromRequest: ExtractJwt.fromExtractors([
         (request: Request) => {
           let data = request?.cookies['auth-cookie'];
+          // console.log(data);
           if (!data) {
             return null;
           }
@@ -39,7 +40,7 @@ export class CookieRefreshStrategy extends PassportStrategy(
 
   async validate(req: Request, payload: any) {
     const data = req?.cookies['auth-cookie'];
-
+    // console.log(data);
     if (!data?.refreshToken) {
       throw new BadRequestException('invalid refresh token');
     }

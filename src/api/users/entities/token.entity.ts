@@ -8,6 +8,7 @@ import {
   Unique,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { User } from './user.entity';
 
@@ -25,7 +26,7 @@ export class RefreshToken {
   @UpdateDateColumn({ type: 'timestamp', nullable: true, default: null })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.refreshToken, { onDelete: 'CASCADE' })
-  // @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
+  @OneToOne(() => User, (user) => user.refreshToken, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User | string;
 }

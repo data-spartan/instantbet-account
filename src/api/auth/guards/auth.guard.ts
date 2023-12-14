@@ -8,6 +8,7 @@ import { AuthGuard, IAuthGuard } from '@nestjs/passport';
 import { User } from 'src/api/users/entities/user.entity';
 import { Request } from 'express';
 import { jwtGuardException } from 'src/exception-filters/exceptions';
+import { use } from 'passport';
 
 @Injectable() //when req comes to guard,first goes through canAcivate
 //,then it calls accessToken strategy
@@ -38,6 +39,7 @@ export class JwtAuthGuard
     // then you can extract user from req
     await super.canActivate(context);
     const { user }: Request = context.switchToHttp().getRequest();
+    console.log(user);
     return user ? true : false;
   }
 }

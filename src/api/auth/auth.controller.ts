@@ -26,6 +26,7 @@ import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
 import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
 import { LoginVerifiedGuard } from './guards/verificationGuard.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -79,9 +80,12 @@ export class AuthController {
     return ResponseSuccess(`user ${request.user.id} succesfully`);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(AuthGuard('jwt.refresh'))
   @Get('/refresh')
-  async refresh(@Req() { user }: any, @Res() res: Response) {
+  async refresh(
+    @Req() { user }: any,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const result = user;
     const { accessToken, refreshToken } = user;
     res.cookie(
