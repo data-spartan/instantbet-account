@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthHelper } from '../auth.helper';
 
 @Injectable()
-export class CookieRefreshStrategy extends PassportStrategy(
+export class JwtRefreshStrategy extends PassportStrategy(
   Strategy,
   'jwt.refresh',
 ) {
@@ -26,13 +26,12 @@ export class CookieRefreshStrategy extends PassportStrategy(
         configService.get<string>('JWT_PUBLIC_SECRET_REFRESH'),
       ).toString(),
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          let data = request?.cookies['auth-cookie'];
-          // console.log(data);
-          if (!data) {
-            return null;
+        (req: Request) => {
+          const authCookie = req?.cookies['auth-cookie'];
+          if (authCookie && authCookie.refreshToken) {
+            return req.cookies['auth-cookie'].refreshToken;
           }
-          return data.refreshToken;
+          return null;
         },
       ]),
     });

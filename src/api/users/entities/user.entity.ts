@@ -64,9 +64,9 @@ export class User {
 
   // @Column({ array: true, nullable: true })
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user, {
+    onDelete: 'CASCADE',
     nullable: true,
   })
-  @JoinColumn({ name: 'tokenId', referencedColumnName: 'id' })
   public refreshToken?: RefreshToken;
 
   @Column({ type: 'timestamp', nullable: true, default: null, select: false })

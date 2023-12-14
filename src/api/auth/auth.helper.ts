@@ -105,7 +105,7 @@ export class AuthHelper {
     try {
       const hashedRefreshToken = await this.hashData(refreshToken.refreshToken);
       //insertResult is database response object
-      const insertResult = await this.postgresQueries.refreshTokenTransaction(
+      await this.postgresQueries.refreshTokenTransaction(
         // this.dataSource,
         RefreshToken,
         hashedRefreshToken,
@@ -214,14 +214,9 @@ export class AuthHelper {
       .createQueryBuilder('refreshToken')
       .leftJoinAndSelect('refreshToken.user', 'user')
       .where('refreshToken.userId = :userId', { userId: payload.sub })
-      .select(['refreshToken'])
+      .select(['refreshToken.refreshToken'])
       .getOne();
 
-    // const foundToken = await this.tokenRepo.findOne({
-    //   relations: ['user'],
-    //   where: { user: payload.sub },
-    //   select: ['user'],
-    // });
     if (foundToken == null) {
       //refresh token(sent in Auth header from FE) is valid but is not in database
       //TODO:inform the user with the payload sub

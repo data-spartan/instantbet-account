@@ -26,7 +26,10 @@ export class RefreshToken {
   @UpdateDateColumn({ type: 'timestamp', nullable: true, default: null })
   updatedAt: Date;
 
-  @OneToOne(() => User, (user) => user.refreshToken, { onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.refreshToken, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User | string;
 }

@@ -170,11 +170,14 @@ export class AuthService implements OnModuleInit {
     this.userRepo.update(user.id, { verifyEmailToken: hashedEmailToken });
   }
 
-  async signOut(tokenId: string) {
+  public async signOut(userId: string) {
     try {
-      await this.tokenRepo.delete({
-        id: tokenId,
-      });
+      await this.tokenRepo
+        .createQueryBuilder()
+        .delete()
+        .from(RefreshToken)
+        .where('userId = :userId', { userId })
+        .execute();
     } catch (error) {
       throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
     }

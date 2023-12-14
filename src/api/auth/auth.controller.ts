@@ -15,18 +15,18 @@ import {
   ForgotPasswordEmailDto,
   ForgotPasswordDto,
 } from './dto';
-import { JwtAuthGuard } from './guards/auth.guard';
+import { JwtAuthGuard } from './guards/jwtAuth.guard';
 import { AuthService } from './auth.service';
 import { CustomRequest } from 'src/common/interfaces';
 import { ChangePasswordDto } from '../users/dto';
 import { Request, Response } from 'express';
-import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
-import { EmailJwtAuthGuard } from './guards/emailJwt.guard';
+import { JwtRefreshGuard } from './guards/jwtRefreshAuth.guard';
 import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
 import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
 import { LoginVerifiedGuard } from './guards/verificationGuard.guard';
 import { AuthGuard } from '@nestjs/passport';
+import { VerifyEmailAuthGuard } from './guards/emailJwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -74,13 +74,12 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/sign-out')
-  async signOut(@Req() request: CustomRequest) {
-    const tokenId = request.header('Token-Id');
-    await this.authService.signOut(tokenId); //invalidate current refresh token
-    return ResponseSuccess(`user ${request.user.id} succesfully`);
+  async signOut(@Req() { user }: CustomRequest) {
+    await this.authService.signOut(user.id);
+    return ResponseSuccess(`user ${user.id} signed-out succesfully`);
   }
 
-  @UseGuards(AuthGuard('jwt.refresh'))
+  @UseGuards(JwtRefreshGuard)
   @Get('/refresh')
   async refresh(
     @Req() { user }: any,
@@ -114,7 +113,7 @@ export class AuthController {
     );
   }
 
-  @UseGuards(EmailJwtAuthGuard)
+  @UseGuards(VerifyEmailAuthGuard)
   // when user clicks on confirm email, request is sent to FE.
   // FE need to send token from URL, to this route. Guard decodes, verifies it ad updates confiremd email flag
   @Post('verify-email')

@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthHelper } from '../auth.helper';
 
 @Injectable()
-export class CookieJwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly configService: ConfigService,
     private readonly authHelper: AuthHelper,
@@ -18,12 +18,12 @@ export class CookieJwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         configService.get<string>('JWT_PUBLIC_SECRET_ACCESS'),
       ).toString(),
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          let data = request?.cookies['auth-cookie'];
-          if (!data) {
-            return null;
+        (req: Request) => {
+          const authCookie = req?.cookies['auth-cookie'];
+          if (authCookie && authCookie.accessToken) {
+            return req.cookies['auth-cookie'].accessToken;
           }
-          return data.accessToken;
+          return null;
         },
       ]),
     });
