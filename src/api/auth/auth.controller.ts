@@ -85,14 +85,13 @@ export class AuthController {
     @Req() { user }: any,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const result = user;
-    const { accessToken, refreshToken } = user;
+    const { accessToken, refreshToken, sub } = user;
     res.cookie(
       'auth-cookie',
       { accessToken, refreshToken },
       { httpOnly: true, secure: false },
     );
-    return ResponseSuccess(`token refreshed succesfully`, result);
+    return ResponseSuccess(`user ${sub} token refreshed succesfully`);
   }
 
   @Post('/forgot-password')

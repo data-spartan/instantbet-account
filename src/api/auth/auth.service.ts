@@ -147,7 +147,7 @@ export class AuthService implements OnModuleInit {
     // if (!user.verifiedEmail)
     //   throw new HttpException('Confirm your email first', HttpStatus.FORBIDDEN);
 
-    const token = await this.authHelper.handleTokens(user);
+    const token = await this.authHelper.generateLoginTokens(user);
     await this.userRepo.update(user.id, { lastLoginAt: new Date() });
     return {
       token,
@@ -237,5 +237,18 @@ export class AuthService implements OnModuleInit {
     await this.mailService.sendForgotPasswordEmail(user.email, emailToken);
     this.userRepo.update(user.id, { verifyEmailToken: hashedEmailToken });
     return true;
+  }
+
+  public async refreshTokens(user) {
+    try {
+      const { refreshToken } = user;
+      const tokens = await this.authHelper.getUserIfRefreshTokenMatches(
+        refreshToken,
+        user.id,
+      );
+      return tokens;
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 }

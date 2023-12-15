@@ -39,7 +39,6 @@ export class JwtRefreshStrategy extends PassportStrategy(
 
   async validate(req: Request, payload: any) {
     const data = req?.cookies['auth-cookie'];
-    // console.log(data);
     if (!data?.refreshToken) {
       throw new BadRequestException('invalid refresh token');
     }
@@ -49,6 +48,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
     );
     if (!user) throw new UnauthorizedException();
     //this validate method attaches user to Request object when return user
+
     return user;
   }
 }
