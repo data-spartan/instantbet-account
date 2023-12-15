@@ -11,8 +11,8 @@ import {
   Max,
   IsNotEmpty,
 } from 'class-validator';
-import { IsPasswordFormatValid } from '../validators';
-import { UserEnum } from 'src/api/users/entities/user.enum';
+import { IsDateOfBirth, IsPasswordFormatValid } from '../validators';
+import { UserAgeEnum } from 'src/api/users/entities/user.enum';
 
 export class RegisterDto {
   @Trim()
@@ -32,14 +32,8 @@ export class RegisterDto {
   public readonly lastName: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  @Min(UserEnum.AGE_MIN, {
-    message: `Must be greater than ${UserEnum.AGE_MIN}`,
-  })
-  @Max(UserEnum.AGE_MAX, {
-    message: `Must be smaller than ${UserEnum.AGE_MAX}`,
-  })
-  public readonly age: number;
+  @IsDateOfBirth()
+  public readonly dateOfBirth: Date;
 
   @IsMobilePhone('sr-RS')
   public readonly telephone!: string;

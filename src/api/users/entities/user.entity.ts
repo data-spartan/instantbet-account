@@ -13,8 +13,8 @@ import {
 } from 'typeorm';
 import { UserRolesEnum } from '../roles/roles.enum';
 import { RefreshToken } from './token.entity';
-import { IsNumber, Max, Min } from 'class-validator';
-import { UserEnum } from './user.enum';
+import { IsDate, IsNumber, Max, Min } from 'class-validator';
+import { UserAgeEnum } from './user.enum';
 
 //changed default UQ name to be able to catch UQ constraint error properly
 //in typeormException.filter and propagate adequate resp to the client
@@ -41,15 +41,8 @@ export class User {
   @Column({ type: 'varchar' })
   public email!: string;
 
-  @Column({ type: 'smallint', unsigned: true, nullable: false })
-  @IsNumber()
-  @Min(UserEnum.AGE_MIN, {
-    message: `Must be greater than ${UserEnum.AGE_MIN}`,
-  })
-  @Max(UserEnum.AGE_MAX, {
-    message: `Must be smaller than ${UserEnum.AGE_MAX}`,
-  })
-  public age: number;
+  @Column({ type: 'date', nullable: false })
+  public dateOfBirth: Date;
 
   @Column({ type: 'boolean', default: false })
   public verifiedEmail: boolean;
@@ -62,7 +55,6 @@ export class User {
   @Column({ type: 'varchar', nullable: true, default: null, select: false })
   public verifyEmailToken?: string;
 
-  // @Column({ array: true, nullable: true })
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user, {
     onDelete: 'CASCADE',
     nullable: true,

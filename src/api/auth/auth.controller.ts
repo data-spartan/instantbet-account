@@ -18,7 +18,7 @@ import {
 import { JwtAuthGuard } from './guards/jwtAuth.guard';
 import { AuthService } from './auth.service';
 import { CustomRequest } from 'src/common/interfaces';
-import { ChangePasswordDto } from '../users/dto';
+import { ChangePasswordDto, UserDto } from '../users/dto';
 import { Request, Response } from 'express';
 import { JwtRefreshGuard } from './guards/jwtRefreshAuth.guard';
 import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
@@ -27,6 +27,8 @@ import { ResponseSuccess } from 'src/common/response-formatter';
 import { LoginVerifiedGuard } from './guards/verificationGuard.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { VerifyEmailAuthGuard } from './guards/emailJwt.guard';
+import { ITokenType } from './interfaces/index';
+import { classToPlain, instanceToPlain } from 'class-transformer';
 
 @Controller('auth')
 export class AuthController {
@@ -55,10 +57,9 @@ export class AuthController {
     @Body() body: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    //cookies token
     const { token, id } = await this.authService.login(body);
     res.cookie('auth-cookie', token, { httpOnly: true, secure: false });
-    return ResponseSuccess(`user ${id} loged in succesfully`, null);
+    return ResponseSuccess(`user ${id} loged in succesfully`);
   }
 
   @UseGuards(EmailConfirmationGuard)

@@ -52,7 +52,7 @@ export class AuthService implements OnModuleInit {
   private async createAdministrator(): Promise<void> {
     const superAdminEmail = this.config.get('APP_SUPER_ADMIN_EMAIL');
     const superAdminPassword = this.config.get('APP_SUPER_ADMIN_PASSWORD');
-    const superAdminAge = this.config.get('APP_SUPER_ADMIN_AGE');
+    const superAdminDateOfBirth = this.config.get('APP_SUPER_ADMIN_AGE');
     let admin: User | null = await this.userRepo.findOne({
       where: { email: superAdminEmail },
     });
@@ -68,7 +68,7 @@ export class AuthService implements OnModuleInit {
     admin.email = superAdminEmail;
     admin.role = UserRolesEnum.Administrator;
     admin.password = await this.authHelper.encodePassword(superAdminPassword);
-    admin.age = superAdminAge;
+    admin.dateOfBirth = superAdminDateOfBirth;
 
     const registerAdmin = await this.userRepo.save(admin);
 

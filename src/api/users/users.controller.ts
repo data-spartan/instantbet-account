@@ -25,6 +25,7 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
+import { Serialize } from 'src/interceptors/serialize.interceptor';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard) // EmailConfirmationGuard)
