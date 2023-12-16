@@ -14,7 +14,6 @@ export class LoggerMiddleware implements NestMiddleware {
       if (!response.locals.errResp) {
         const { statusCode, message } = response.locals.loggingData;
         const processingTime = Date.now() - ingoingTimestamp;
-
         this.logger.log({
           statusCode,
           message,

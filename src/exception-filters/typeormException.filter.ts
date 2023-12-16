@@ -18,14 +18,10 @@ export class TypeORMExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    // let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    // let message = 'Internal Server Error';
 
     const path = request.path;
     const method = request.method;
-
     const { status, message, stack } = checkTypeORMErrorType(exception);
-
     const errRespBody = GlobalResponseError(
       status,
       message,
@@ -33,7 +29,6 @@ export class TypeORMExceptionFilter implements ExceptionFilter {
       method,
       stack,
     );
-
     response.locals.errResp = errRespBody;
     //bcs middlewares are executed jsut before the actual response is sent back to the client ,
     //  middleware cant directly access response body e.g.

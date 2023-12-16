@@ -3,9 +3,16 @@ import { createLogger, format, transports } from 'winston';
 //THIS CONFIG FILE IS FOR GLOBAL APP LOGGER
 
 // custom log display format
-const customFormat = format.printf(({ timestamp, level, stack, message }) => {
-  return `${timestamp} - [${level.toUpperCase()}] - ${stack || message}`;
-});
+const customFormat = format.printf(
+  ({ timestamp, level, stack, message, method, path }) => {
+    if (path) {
+      return `${timestamp} - [${level.toUpperCase()}] - ${
+        message || stack
+      } - ${method} - ${path}`;
+    }
+    return `${timestamp} - [${level.toUpperCase()}] - ${message || stack}`;
+  },
+);
 
 // for development environment
 const devLogger = {
@@ -38,7 +45,7 @@ const prodLogger = {
 };
 
 // export log instance based on the current environment
-export const instanceLogger =
+const instanceLogger =
   process.env.NODE_ENV !== 'production' ? devLogger : prodLogger;
 
-// export const instance = createLogger(instanceLogger);
+export const instance = createLogger(instanceLogger);

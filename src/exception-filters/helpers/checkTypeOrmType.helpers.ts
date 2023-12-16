@@ -10,7 +10,6 @@ export const checkTypeORMErrorType = (
   let status = HttpStatus.INTERNAL_SERVER_ERROR;
   let message;
   let stack;
-
   switch (error.name) {
     case QueryFailedError.name:
       if (error.message.includes('UQ_')) {

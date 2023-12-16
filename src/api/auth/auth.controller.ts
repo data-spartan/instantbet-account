@@ -92,7 +92,7 @@ export class AuthController {
       { accessToken, refreshToken },
       { httpOnly: true, secure: false },
     );
-    return ResponseSuccess(`user ${sub} token refreshed succesfully`);
+    return ResponseSuccess(`user ${sub} refreshed tokens succesfully`);
   }
 
   @Post('/forgot-password')

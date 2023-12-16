@@ -5,7 +5,7 @@ import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
-import { instanceLogger } from './loggerApp.config';
+import { instance } from './loggerApp.config';
 
 //THIS LOGGER SERV FILE IS FOR GLOBAL APP LOGGER
 export class LoggerService implements loggService {
@@ -13,7 +13,7 @@ export class LoggerService implements loggService {
 
   constructor() {
     this.logger = WinstonModule.createLogger({
-      ...instanceLogger,
+      ...instance,
     });
   }
 
