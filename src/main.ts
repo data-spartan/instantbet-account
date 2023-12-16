@@ -8,11 +8,13 @@ import { WinstonModule } from 'nest-winston';
 import { LoggerService } from './logger/logger.service';
 
 import * as cookieParser from 'cookie-parser';
-import { instanceLogger } from './logger/loggerApp.config';
+import { instance } from './logger/loggerApp.config';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
-    // logger: new LoggerService(),
+    logger: WinstonModule.createLogger({
+      instance: instance,
+    }),
     cors: true,
   });
   const config: ConfigService = app.get(ConfigService);

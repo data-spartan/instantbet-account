@@ -35,10 +35,6 @@ import { LoggerMiddleware } from './middlewares/logging.middleware';
       provide: APP_FILTER,
       useClass: AllExceptionsFilter,
     },
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: HttpExceptionFilter,
-    // },
     {
       provide: APP_FILTER,
       useClass: TypeORMExceptionFilter,

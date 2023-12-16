@@ -20,10 +20,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const { httpAdapter } = this.httpAdapterHost;
     const ctx = host.switchToHttp();
 
-    // let message = 'Internal Server Error';
-    // let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    // let stack = '';
-
     const path = httpAdapter.getRequestUrl(ctx.getRequest());
     const method = httpAdapter.getRequestMethod(ctx.getRequest());
     const { status, message, stack } = checkErrorType(exception);
@@ -34,7 +30,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       method,
       stack,
     );
-
     const response = ctx.getResponse();
     response.locals.errResp = errRespBody;
     httpAdapter.reply(response, errRespBody, status);
