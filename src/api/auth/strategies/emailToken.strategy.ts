@@ -50,7 +50,7 @@ export class EmailTokenStrategy extends PassportStrategy(
         'Reused some of the previous confirmation links',
       );
 
-    this.authHelper.confirmEmail(user.email, null); //invalidate old email token
+    await this.authHelper.confirmEmail(user.email, null); //invalidate old email token
     return user;
   }
 }

@@ -5,13 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
 import { AuthHelper } from './auth.helper';
 import { AuthService } from './auth.service';
-import { AccessTokenStrategy } from './strategies/accessToken.strategy';
+
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
 // import { LoggerService } from 'src/logger/logger.service';
-import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
-import { JwtAuthGuard } from './guards/auth.guard';
-import { JwtRefreshTokenStrategy } from './strategies/refreshToken.strategy';
+import { JwtRefreshGuard } from './guards/jwtRefreshAuth.guard';
+import { JwtAuthGuard } from './guards/jwtAuth.guard';
+
 import { RefreshToken } from '../users/index.entity';
 import * as fs from 'fs';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
@@ -22,6 +22,8 @@ import { ForgotPasswordStrategy } from './strategies/forgotPasswordToken.strateg
 import { readFileSync } from './helpers/readFile.helpers';
 import { LoggerMiddleware } from 'src/middlewares/logging.middleware';
 import { DatabaseModule } from 'src/database/database.module';
+import { JwtStrategy } from './strategies/jwtStrategy.strategy';
+import { JwtRefreshStrategy } from './strategies/jwtRefreshStrategy.strategy';
 
 @Module({
   imports: [
@@ -55,8 +57,8 @@ import { DatabaseModule } from 'src/database/database.module';
     Logger,
     AuthService,
     AuthHelper,
-    AccessTokenStrategy,
-    JwtRefreshTokenStrategy,
+    JwtStrategy,
+    JwtRefreshStrategy,
     EmailTokenStrategy,
     ForgotPasswordStrategy,
     RefreshPrivateSecretService,

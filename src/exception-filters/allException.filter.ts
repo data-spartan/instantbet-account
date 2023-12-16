@@ -26,7 +26,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const path = httpAdapter.getRequestUrl(ctx.getRequest());
     const method = httpAdapter.getRequestMethod(ctx.getRequest());
-
     const { status, message, stack } = checkErrorType(exception);
     const errRespBody = GlobalResponseError(
       status,

@@ -8,12 +8,6 @@ export class MailSender {
 
   public async sendEmail<T>({ to, subject, template, context }) {
     try {
-      console.log({
-        to,
-        subject,
-        template,
-        context,
-      });
       await this.mailerService.sendMail({
         to,
         subject,

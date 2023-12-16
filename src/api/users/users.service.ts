@@ -26,48 +26,61 @@ export class UsersService {
     timestamp: Date,
     direction: string,
   ): Promise<User[]> {
-    return this.postgresQueries.allUsersPagination(
-      User,
-      timestamp,
-      cursor,
-      limit,
-      direction,
-    );
+    try {
+      return this.postgresQueries.allUsersPagination(
+        User,
+        timestamp,
+        cursor,
+        limit,
+        direction,
+      );
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   public async findOne(id: string): Promise<User> {
-    const user = await this.userRepo.findOneBy({ id });
-    if (!user) throw new HttpException(`user with id: ${id} not found`, 404);
-
-    return user;
+    try {
+      const user = await this.userRepo.findOneByOrFail({ id });
+      return user;
+    } catch (error) {
+      throw new HttpException(`user with id: ${id} not found`, 404);
+    }
   }
 
   public async findByEmail(email: string): Promise<User> {
     try {
-      return await this.userRepo.findOneOrFail({
-        where: { email: email },
-      });
+      return await this.userRepo.findOneByOrFail({ email });
     } catch (e) {
       throw new NotFoundException(`user with email: ${email} not found`);
     }
   }
 
-  async updateMyProfile(user: User, attrs: Partial<User>) {
-    if (!user)
-      throw new HttpException(`user with id: ${user.id} not found`, 404);
-
-    Object.assign(user, attrs);
-    this.userRepo.save(user);
-    return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
+  async updateProfile(user: User, attrs: Partial<User>) {
+    try {
+      Object.assign(user, attrs);
+      this.userRepo.save(user);
+      return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   //admin could create testing user
   public async createTestUser(body: CreateTestUserDto): Promise<User> {
-    body.password = await this.authHelper.encodePassword(body.password);
-    return this.userRepo.save(body);
+    try {
+      body.password = await this.authHelper.encodePassword(body.password);
+      return this.userRepo.save(body);
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   public async remove(id: string): Promise<void> {
-    await this.userRepo.delete(id);
+    try {
+      await this.userRepo.delete(id);
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 }

@@ -7,6 +7,7 @@ import {
   Get,
   Patch,
   HttpStatus,
+  Res,
 } from '@nestjs/common';
 import {
   RegisterDto,
@@ -14,16 +15,20 @@ import {
   ForgotPasswordEmailDto,
   ForgotPasswordDto,
 } from './dto';
-import { JwtAuthGuard } from './guards/auth.guard';
+import { JwtAuthGuard } from './guards/jwtAuth.guard';
 import { AuthService } from './auth.service';
 import { CustomRequest } from 'src/common/interfaces';
-import { ChangePasswordDto } from '../users/dto';
+import { ChangePasswordDto, UserDto } from '../users/dto';
 import { Request, Response } from 'express';
-import { JwtRefreshGuard } from './guards/jwtRefresh.guard';
-import { EmailJwtAuthGuard } from './guards/emailJwt.guard';
+import { JwtRefreshGuard } from './guards/jwtRefreshAuth.guard';
 import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
 import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
+import { LoginVerifiedGuard } from './guards/verificationGuard.guard';
+import { AuthGuard } from '@nestjs/passport';
+import { VerifyEmailAuthGuard } from './guards/emailJwt.guard';
+import { ITokenType } from './interfaces/index';
+import { classToPlain, instanceToPlain } from 'class-transformer';
 
 @Controller('auth')
 export class AuthController {
@@ -31,30 +36,32 @@ export class AuthController {
 
   @Post('/register')
   private async register(@Body() body: RegisterDto, @Req() req: Request) {
-    const { token, id } = await this.authService.register(body);
-    req.res.setHeader('Token-Id', token.tokenId);
+    const userId = await this.authService.register(body);
+    // req.res.setHeader('Token-Id', token.tokenId);
     return ResponseSuccess(
-      `Verification e-mail is sent to user ${id}`,
+      `user ${userId} has been registered successfully.`,
       null,
       HttpStatus.CREATED,
     );
   }
+  // @Post('/login')
+  // private async login(@Body() body: LoginDto, @Req() req: Request) {
+  //   //cookies token
+  //   const { token, id } = await this.authService.login(body);
+  //   req.res.setHeader('Token-Id', token.tokenId);
+  //   return ResponseSuccess(`user ${id} loged in succesfully`, token);
+  // }
 
   @Post('/login')
-  private async login(@Body() body: LoginDto, @Req() req: Request) {
+  private async login(
+    @Body() body: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { token, id } = await this.authService.login(body);
-    req.res.setHeader('Token-Id', token.tokenId);
-    return ResponseSuccess(`user ${id} loged in succesfully`, token);
+    res.cookie('auth-cookie', token, { httpOnly: true, secure: false });
+    return ResponseSuccess(`user ${id} loged in succesfully`);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('/me')
-  private async me(@Req() { user }: CustomRequest) {
-    return ResponseSuccess(
-      `user ${user.id} profile retrieved succesfully`,
-      user,
-    );
-  }
   @UseGuards(EmailConfirmationGuard)
   @UseGuards(JwtAuthGuard)
   @Patch('/change-password')
@@ -68,17 +75,24 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('/sign-out')
-  async signOut(@Req() request: CustomRequest) {
-    const tokenId = request.header('Token-Id');
-    await this.authService.signOut(tokenId); //invalidate current refresh token
-    return ResponseSuccess(`user ${request.user.id} succesfully`);
+  async signOut(@Req() { user }: CustomRequest) {
+    await this.authService.signOut(user.id);
+    return ResponseSuccess(`user ${user.id} signed-out succesfully`);
   }
 
   @UseGuards(JwtRefreshGuard)
   @Get('/refresh')
-  async refresh(@Req() { user }: CustomRequest) {
-    const result = user;
-    return ResponseSuccess(`token refreshed succesfully`, result);
+  async refresh(
+    @Req() { user }: any,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken, refreshToken, sub } = user;
+    res.cookie(
+      'auth-cookie',
+      { accessToken, refreshToken },
+      { httpOnly: true, secure: false },
+    );
+    return ResponseSuccess(`user ${sub} token refreshed succesfully`);
   }
 
   @Post('/forgot-password')
@@ -99,7 +113,7 @@ export class AuthController {
     );
   }
 
-  @UseGuards(EmailJwtAuthGuard)
+  @UseGuards(VerifyEmailAuthGuard)
   // when user clicks on confirm email, request is sent to FE.
   // FE need to send token from URL, to this route. Guard decodes, verifies it ad updates confiremd email flag
   @Post('verify-email')

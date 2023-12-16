@@ -5,9 +5,9 @@ import { IsOptional } from 'class-validator';
 import { ECDH } from 'crypto';
 
 export class UserDto {
-  @Expose()
   @IsOptional()
-  token: string;
+  @Expose()
+  public token: string;
 
   @Expose()
   public id: string;

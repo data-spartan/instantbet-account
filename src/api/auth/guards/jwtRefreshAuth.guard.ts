@@ -4,14 +4,16 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { User } from 'src/api/users/index.entity';
 import { AuthGuard, IAuthGuard } from '@nestjs/passport';
-import { User } from 'src/api/users/entities/user.entity';
-import { Request } from 'express';
 import { jwtGuardException } from 'src/exception-filters/exceptions';
+import { Request } from 'express';
 
-@Injectable() //when req comes to guard,first goes through canAcivate
-//,then it calls accessToken strategy
-export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
+@Injectable()
+export class JwtRefreshGuard
+  extends AuthGuard('jwt.refresh')
+  implements IAuthGuard
+{
   constructor() {
     super();
   }
@@ -28,7 +30,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
     }
     return user;
   }
-  //only if want to add extra logic to canActivate need to call super.canactivate
+
   // public async canActivate(context: ExecutionContext): Promise<boolean> {
   //   //bcs you extended JwtAuthGuard you need to call canActivate of base AuthGuard
   //   // which then calls validate of auth.strategy to create request.user property

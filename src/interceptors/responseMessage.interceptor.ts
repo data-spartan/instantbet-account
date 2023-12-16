@@ -26,10 +26,9 @@ export class ResponseMessageInterceptor implements NestInterceptor {
           ...(result.result !== null && { data: result.result }),
           //include property only if result is not null
         };
-
-        const { data, ...rest } = responseData; // for logging we dont need data
-        response.locals.loggingData = rest;
-        return responseData;
+        const { data, statusCode, message } = responseData; // for logging we dont need data
+        response.locals.loggingData = { statusCode, message };
+        return { statusCode, data };
       }),
     );
   }

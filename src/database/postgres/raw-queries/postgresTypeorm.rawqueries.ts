@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class PostgresTypeOrmRawQueries {
   public async allUsersPagination(sign: string) {
-    const columns = `"id","firstName", "lastName", "telephone","email","verifiedEmail","role","createdAt","updatedAt","lastLoginAt"`;
+    const columns = `"id","email","verifiedEmail","role","createdAt"`;
     const query = `
     SELECT ${columns}
     FROM public.users
@@ -11,6 +11,13 @@ export class PostgresTypeOrmRawQueries {
     ORDER BY "createdAt" DESC
     LIMIT $3;`;
     //WHERE ... row constructor -> first checks created_at < x, unless these values are equal, in which case it compares id and y`.
+    return query;
+  }
+  public async allUsersCount() {
+    //Index-Only Scan
+    const query = `
+    SELECT COUNT(*) as totalCount
+    FROM (SELECT DISTINCT "id" FROM public.users) users`;
     return query;
   }
 }

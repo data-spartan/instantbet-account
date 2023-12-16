@@ -21,34 +21,47 @@ export class PostgresTypeOrmQueries {
     userId: string,
     limit: number,
     direction: string,
-  ): Promise<User[]> {
+  ): Promise<any> {
     //CURSOR PAGINATION
     const sign = direction === 'Next' ? `<` : `>`; //next is clicked sign < is evaluated bcs we need older records
     //if Next page is clicked, FE needs to send last record(oldest) in  user array; Send CreatedAt, id, direction(Next) from previous array
     //to able to to show older records than CreatedAt
     //when Previous is clicked first record in array is sent.
-
     const queryRunner = this.dataSource.createQueryRunner();
-    const rawQuery = await this.rawQueries.allUsersPagination(sign);
     await queryRunner.connect();
-    const users = await queryRunner.query(rawQuery, [cursor, userId, limit]);
-    await queryRunner.release();
-    return users;
+    await queryRunner.startTransaction();
+    try {
+      const allUsersQuery = await this.rawQueries.allUsersPagination(sign);
+      const usersCountQuery = await this.rawQueries.allUsersCount();
+      const users = await queryRunner.query(allUsersQuery, [
+        cursor,
+        userId,
+        limit,
+      ]);
+      const usersCount = (await queryRunner.query(usersCountQuery))[0];
+      await queryRunner.commitTransaction();
+      return { users, count: Number(usersCount.totalcount) };
+    } catch (error) {
+      await queryRunner.rollbackTransaction().catch((error: Error) => {
+        throw error;
+      });
+      throw new InternalServerErrorException(error);
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   public async refreshTokenTransaction(
     entity: EntityClassOrSchema,
     hashedRefreshToken: string,
-    propertyObject: object,
     id: string,
   ) {
-    // const queryRunner: QueryRunner = this.dataSource.createQueryRunner();
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     const manager = queryRunner.manager;
     try {
-      await manager.delete(entity, propertyObject); //{ user: id }
+      await manager.delete(entity, { user: id }); //{ user: id }
       const insertResult = await manager.insert(entity, {
         refreshToken: hashedRefreshToken,
         user: id,
