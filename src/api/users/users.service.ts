@@ -21,16 +21,16 @@ export class UsersService {
   ) {}
 
   public async findAll(
+    cursor: Date,
+    userId: string,
     limit: number,
-    cursor: string,
-    timestamp: Date,
     direction: string,
   ): Promise<User[]> {
     try {
       return this.postgresQueries.allUsersPagination(
         User,
-        timestamp,
         cursor,
+        userId,
         limit,
         direction,
       );
@@ -66,7 +66,7 @@ export class UsersService {
     }
   }
 
-  //admin could create testing user
+  //admin only can create testing user
   public async createTestUser(body: CreateTestUserDto): Promise<User> {
     try {
       body.password = await this.authHelper.encodePassword(body.password);

@@ -56,7 +56,6 @@ export class User {
   public verifyEmailToken?: string;
 
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user, {
-    onDelete: 'CASCADE',
     nullable: true,
   })
   public refreshToken?: RefreshToken;

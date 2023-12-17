@@ -14,7 +14,7 @@ import { Request } from 'express';
 import { readFileSync } from '../helpers/readFile.helpers';
 
 @Injectable()
-export class EmailTokenStrategy extends PassportStrategy(
+export class VerifyEmailStrategy extends PassportStrategy(
   Strategy,
   'jwt.verify-email',
 ) {

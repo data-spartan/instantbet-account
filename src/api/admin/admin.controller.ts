@@ -39,11 +39,11 @@ export class AdminController {
   @Get('/users')
   public async findAll(@Query() query: UsersPaginationDto) {
     //http://localhost:5000/admin/users?timestamp=2023-10-02 14:11:29.400&limit=2&cursor=c5369eed-fb5d-467a-a151-b6e77bee5783&direction=Next
-    const { timestamp, limit, cursor, direction } = query;
+    const { cursor, userId, limit, direction } = query;
     const result = await this.usersService.findAll(
-      limit,
       cursor,
-      timestamp,
+      userId,
+      limit,
       direction,
     );
     return ResponseSuccess(`users retrieved succesfully`, result);

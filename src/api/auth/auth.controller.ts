@@ -35,22 +35,14 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/register')
-  private async register(@Body() body: RegisterDto, @Req() req: Request) {
+  private async register(@Body() body: RegisterDto) {
     const userId = await this.authService.register(body);
-    // req.res.setHeader('Token-Id', token.tokenId);
     return ResponseSuccess(
       `user ${userId} has been registered successfully.`,
       null,
       HttpStatus.CREATED,
     );
   }
-  // @Post('/login')
-  // private async login(@Body() body: LoginDto, @Req() req: Request) {
-  //   //cookies token
-  //   const { token, id } = await this.authService.login(body);
-  //   req.res.setHeader('Token-Id', token.tokenId);
-  //   return ResponseSuccess(`user ${id} loged in succesfully`, token);
-  // }
 
   @Post('/login')
   private async login(

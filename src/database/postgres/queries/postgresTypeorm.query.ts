@@ -38,9 +38,12 @@ export class PostgresTypeOrmQueries {
         userId,
         limit,
       ]);
-      const usersCount = (await queryRunner.query(usersCountQuery))[0];
+      //count always returns bigint so js automaticaly returns string-use parseint
+      const totalCount = parseInt(
+        (await queryRunner.query(usersCountQuery))[0]['totalcount'],
+      );
       await queryRunner.commitTransaction();
-      return { users, count: Number(usersCount.totalcount) };
+      return { users, totalCount };
     } catch (error) {
       await queryRunner.rollbackTransaction().catch((error: Error) => {
         throw error;

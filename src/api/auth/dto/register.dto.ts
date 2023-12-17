@@ -13,13 +13,26 @@ import {
 } from 'class-validator';
 import { IsDateOfBirth, IsPasswordFormatValid } from '../validators';
 import { UserAgeEnum } from 'src/api/users/entities/user.enum';
+import { User } from 'src/api/users/interfaces/user.interface';
 
-export class RegisterDto {
+interface RegisterUserDto
+  extends Omit<
+    User,
+    | 'id'
+    | 'verifyEmailToken'
+    | 'verifiedEmail'
+    | 'role'
+    | 'createdAt'
+    | 'updatedAt'
+    | 'lastLoginAt'
+  > {}
+
+export class RegisterDto implements RegisterUserDto {
+  @IsDefined()
   @Trim()
   @IsEmail()
   public readonly email!: string;
 
-  @IsString()
   @IsPasswordFormatValid()
   public readonly password!: string;
 

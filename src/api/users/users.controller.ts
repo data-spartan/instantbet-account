@@ -42,7 +42,7 @@ export class UsersController {
   @Get('/me')
   private async me(@Req() { user }: CustomRequest) {
     const result = await this.usersService.findOne(user.id);
-    return ResponseSuccess('', result);
+    return ResponseSuccess(`Retrieved user ${user.id} profile.`, result);
   }
 
   @Patch('/me')

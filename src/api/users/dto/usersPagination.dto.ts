@@ -6,22 +6,25 @@ import {
   IsInt,
   IsNumber,
   IsNumberString,
+  IsOptional,
   IsString,
   IsUUID,
   Matches,
+  ValidateIf,
 } from 'class-validator';
 import { UUID } from 'crypto';
 
 export class UsersPaginationDto {
   @IsString()
-  timestamp: Date;
+  cursor: Date;
+
+  @IsOptional()
+  @IsUUID()
+  userId: UUID | null;
 
   @Type(() => Number)
   @IsNumber()
   limit: number;
-
-  @IsUUID()
-  cursor: UUID;
 
   @IsIn(['Next', 'Previous'])
   direction: 'Next' | 'Previous';

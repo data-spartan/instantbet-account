@@ -19,5 +19,5 @@ export class UserUpdateDto {
 
   @IsOptional()
   @IsString()
-  public email!: string;
+  public email: string;
 }
