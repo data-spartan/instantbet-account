@@ -56,11 +56,10 @@ export class UsersService {
     }
   }
 
-  async updateProfile(user: User, attrs: Partial<User>) {
+  async updateProfile(id: User['id'], attrs: Partial<User>) {
     try {
-      Object.assign(user, attrs);
-      this.userRepo.save(user);
-      return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
+      await this.userRepo.update({ id }, { ...attrs });
+      return { id, props: `${Object.keys(attrs).join(',')}` };
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }

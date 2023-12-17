@@ -21,14 +21,14 @@ export class ResponseMessageInterceptor implements NestInterceptor {
         const response = context.switchToHttp().getResponse();
 
         const responseData = {
-          statusCode: result.statusCode,
+          // statusCode: result.statusCode,
           message: result.message,
           ...(result.result !== null && { data: result.result }),
           //include property only if result is not null
         };
-        const { data, statusCode, message } = responseData; // for logging we dont need data
-        response.locals.loggingData = { statusCode, message };
-        return { statusCode, data };
+        const { data, message } = responseData; // for logging we dont need data
+        response.locals.loggingData = { message };
+        return { message, data };
       }),
     );
   }

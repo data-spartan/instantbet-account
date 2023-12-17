@@ -15,7 +15,6 @@ import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { UserRolesEnum } from './roles/roles.enum';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
-import { UserDto } from './dto/user.dto';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
 import { CustomRequest } from 'src/common/interfaces';
@@ -47,7 +46,7 @@ export class UsersController {
 
   @Patch('/me')
   async update(@Req() { user }: CustomRequest, @Body() body: UserUpdateDto) {
-    const result = await this.usersService.updateProfile(user, body);
+    const result = await this.usersService.updateProfile(user.id, body);
     return ResponseSuccess(
       `user ${result.id} updated ${result.props} succesfully`,
     );

@@ -22,9 +22,9 @@ export interface User {
 
   readonly role: UserRolesEnum;
 
-  readonly verifiedEmail: boolean;
+  readonly verifiedEmail?: boolean | null;
 
-  readonly verifyEmailToken: string;
+  readonly verifyEmailToken?: string | null;
 
   readonly dateOfBirth: Date;
 

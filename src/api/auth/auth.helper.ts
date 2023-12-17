@@ -40,9 +40,19 @@ export class AuthHelper {
     return argon2.verify(data1, data2);
   }
 
-  public async validateUser(decoded: any): Promise<User> {
+  public async validateUser(
+    decoded: any,
+    getPassword: boolean = false,
+  ): Promise<User> {
     return this.userRepo.findOne({
-      // select: { password: selectPassword },
+      select: {
+        id: true,
+        email: true,
+        verifyEmailToken: true,
+        role: true,
+        verifiedEmail: true,
+        password: getPassword,
+      },
       where: { id: decoded.sub },
     });
   }
@@ -60,6 +70,12 @@ export class AuthHelper {
   public async validateUserByEmail(email: string): Promise<User> {
     try {
       return await this.userRepo.findOneOrFail({
+        select: {
+          id: true,
+          email: true,
+          verifyEmailToken: true,
+          role: true,
+        },
         where: { email: email },
       });
     } catch (e) {
