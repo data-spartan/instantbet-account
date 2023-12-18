@@ -39,6 +39,27 @@ export class UsersService {
     }
   }
 
+  public async findAllQuery(
+    cursor: Date,
+    userId: string,
+    limit: number,
+    direction: string,
+    queryParams: any,
+  ): Promise<User[]> {
+    try {
+      return this.postgresQueries.usersQueryPagination(
+        User,
+        cursor,
+        userId,
+        limit,
+        direction,
+        queryParams,
+      );
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   public async findOne(id: string): Promise<User> {
     try {
       const user = await this.userRepo.findOneByOrFail({ id });

@@ -13,6 +13,20 @@ export class PostgresTypeOrmRawQueries {
     //WHERE ... row constructor -> first checks created_at < x, unless these values are equal, in which case it compares id and y`.
     return query;
   }
+
+  public async usersQueryPagination(sign: string, params: any) {
+    const columns = `"id","email","verifiedEmail","role","createdAt"`;
+    const a= params
+    const query = `
+    SELECT ${columns}
+    FROM public.users
+    WHERE ("createdAt", "id") ${sign} ($1, $2)
+    ORDER BY "createdAt" DESC
+    LIMIT $3;`;
+    //WHERE ... row constructor -> first checks created_at < x, unless these values are equal, in which case it compares id and y`.
+    return query;
+  }
+
   public async allUsersCount() {
     //Index-Only Scan
     const query = `

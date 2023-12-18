@@ -29,6 +29,7 @@ import { UsersPaginationDto } from '../users/dto/usersPagination.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { UsersPaginationQueryDto } from '../users/dto/usersPaginationQuery.dto';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -46,6 +47,21 @@ export class AdminController {
       userId,
       limit,
       direction,
+    );
+    return ResponseSuccess(`users retrieved succesfully`, result);
+  }
+
+  @Get('/users/search')
+  @HttpCode(200)
+  public async findAllQuery(@Query() query: any) {
+    //http://localhost:5000/admin/users?timestamp=2023-10-02 14:11:29.400&limit=2&cursor=c5369eed-fb5d-467a-a151-b6e77bee5783&direction=Next
+    const { cursor, userId, limit, direction, ...rest } = query;
+    const result = await this.usersService.findAllQuery(
+      cursor,
+      userId,
+      limit,
+      direction,
+      rest,
     );
     return ResponseSuccess(`users retrieved succesfully`, result);
   }

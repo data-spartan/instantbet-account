@@ -16,16 +16,16 @@ import { UUID } from 'crypto';
 
 export class UsersPaginationDto {
   @IsString()
-  cursor: Date;
+  public cursor: Date;
 
   @IsOptional()
   @IsUUID()
-  userId: UUID | null;
+  public userId: UUID | null;
 
   @Type(() => Number)
   @IsNumber()
-  limit: number;
+  public limit: number;
 
   @IsIn(['Next', 'Previous'])
-  direction: 'Next' | 'Previous';
+  public direction: 'Next' | 'Previous';
 }
