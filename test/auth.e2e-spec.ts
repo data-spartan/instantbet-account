@@ -3,87 +3,53 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { User } from 'src/api/users/index.entity';
+import { clearDatabase } from './typeormTest';
+import { UserMock } from './mock/user.mock';
 
 describe('AuthModule (e2e)', () => {
   let app: INestApplication;
-  let user;
   let userToken;
-
+  const authMock = new UserMock();
+  const MOCK_USER = authMock.authUser();
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-
+    // const MOCK_USER = USER_MOCK;
     app = moduleFixture.createNestApplication();
     await app.init();
-
-    // const email = 'stefan@test.com';
-    // const password = '1!Aa45678';
-    // const firstName = 'stefan';
-    // const lastName = 'mili';
-    // const telephone = '0642298381';
-    // const dateOfBirth = new Date('1993-03-23');
-
-    // user = new User({
-    //   email,
-    //   password,
-    //   firstName,
-    //   lastName,
-    //   telephone,
-    //   dateOfBirth,
-    // });
   });
 
-  it('should return 201 if user has registered', () => {
+  it('POST should return 201 if user has registered', () => {
     return request(app.getHttpServer())
       .post('/auth/register')
-      .send({
-        email: 'stefan@test.com',
-        password: '1!Aa45678',
-        firstName: 'stefan',
-        lastName: 'mili',
-        telephone: '0642298384',
-        dateOfBirth: new Date('1993-03-23'),
-      })
+      .send(MOCK_USER)
       .expect(201);
   });
-  it('should return 409 if user is already registered', () => {
+  it('POST should return 409 if user is already registered', () => {
     return request(app.getHttpServer())
       .post('/auth/register')
-      .send({
-        email: 'stefan@test.com',
-        password: '1!Aa45678',
-        firstName: 'stefan',
-        lastName: 'mili',
-        telephone: '0642298384',
-        dateOfBirth: new Date('1993-03-23'),
-      })
+      .send(MOCK_USER)
       .expect(409);
   });
 
-  it('should return 404 if firstName is missing', () => {
+  it('POST should return 404 if firstName is missing', () => {
+    const { firstName, ...modifiedUser } = MOCK_USER;
     return request(app.getHttpServer())
       .post('auth/register')
-      .send({
-        email: 'stefan@test.com',
-        password: '1!Aa45678',
-        lastName: 'mili',
-        telephone: '0642298384',
-        dateOfBirth: '1993-03-23',
-      })
+      .send(modifiedUser)
       .expect(404);
   });
-  it('should return 404 if telephone is missing', () => {
+  it('POST should return 404 if telephone is missing', () => {
+    const { telephone, ...modifiedUser } = MOCK_USER;
     return request(app.getHttpServer())
       .post('auth/register')
-      .send({
-        email: 'stefan@test.com',
-        password: '1!Aa45678',
-        firstName: 'stefan',
-        lastName: 'mili',
-        dateOfBirth: '1993-03-23',
-      })
+      .send(modifiedUser)
       .expect(404);
+  });
+  afterAll(async () => {
+    await clearDatabase(app);
+    await app.close();
   });
 });
 

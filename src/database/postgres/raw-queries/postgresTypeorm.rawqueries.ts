@@ -16,11 +16,14 @@ export class PostgresTypeOrmRawQueries {
 
   public async usersQueryPagination(sign: string, params: any) {
     const columns = `"id","email","verifiedEmail","role","createdAt"`;
-    const a= params
+
+    const andConditions = params
+      .map((prop, index) => `"${prop}" = $${index + 4}`)
+      .join(' AND ');
     const query = `
     SELECT ${columns}
     FROM public.users
-    WHERE ("createdAt", "id") ${sign} ($1, $2)
+    WHERE ("createdAt", "id") ${sign} ($1, $2) AND ${andConditions}
     ORDER BY "createdAt" DESC
     LIMIT $3;`;
     //WHERE ... row constructor -> first checks created_at < x, unless these values are equal, in which case it compares id and y`.
