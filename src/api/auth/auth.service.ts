@@ -18,7 +18,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthedResponse } from './interfaces/auth.interface';
 import { LoginDto } from './dto/login.dto';
 import { plainToInstance } from 'class-transformer';
-import { ChangePasswordDto, UserDto } from '../users/dto';
+import { ChangePasswordDto } from '../users/dto';
 import { AuthRespDto } from './dto/authResp.dto';
 // import { LoggerService } from 'src/logger/logger.service';
 import { ITokenType } from './interfaces/token.interface';
@@ -52,7 +52,9 @@ export class AuthService implements OnModuleInit {
   private async createAdministrator(): Promise<void> {
     const superAdminEmail = this.config.get('APP_SUPER_ADMIN_EMAIL');
     const superAdminPassword = this.config.get('APP_SUPER_ADMIN_PASSWORD');
-    const superAdminDateOfBirth = this.config.get('APP_SUPER_ADMIN_AGE');
+    const superAdminDateOfBirth = this.config.get(
+      'APP_SUPER_ADMIN_DATEOFBIRTH',
+    );
     let admin: User | null = await this.userRepo.findOne({
       where: { email: superAdminEmail },
     });
@@ -99,7 +101,7 @@ export class AuthService implements OnModuleInit {
     // const token = await this.authHelper.handleTokens(user);
     user.verifyEmailToken = await this.authHelper.hashData(emailToken);
 
-    const registerUser = await this.userRepo.save(user);
+    const registerUser = await this.userRepo.insert(user);
 
     if (!registerUser) {
       throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);
@@ -121,10 +123,9 @@ export class AuthService implements OnModuleInit {
       select: {
         id: true,
         password: true,
-        firstName: true,
-        lastName: true,
         email: true,
         verifiedEmail: true,
+        role: true,
       },
       where: { email },
     });
@@ -185,20 +186,20 @@ export class AuthService implements OnModuleInit {
 
   public async changePassword(
     { currentPassword, newPassword }: ChangePasswordDto,
-    id: string,
+    user: User,
   ) {
-    const userExists: User = await this.userRepo.findOne({
-      select: { id: true, password: true },
-      where: { id },
-    });
+    // const userExists: User = await this.userRepo.findOne({
+    //   select: { id: true, password: true },
+    //   where: { id },
+    // });
 
-    if (!userExists) {
+    if (!user) {
       throw new HttpException('No user found', HttpStatus.NOT_FOUND);
     }
 
     const isPasswordValid: boolean = await this.authHelper.isPasswordValid(
       currentPassword,
-      userExists.password,
+      user.password,
     );
 
     if (!isPasswordValid) {
@@ -207,12 +208,12 @@ export class AuthService implements OnModuleInit {
 
     const hashedPassword = await this.authHelper.encodePassword(newPassword);
 
-    this.userRepo.update(userExists.id, { password: hashedPassword });
+    this.userRepo.update(user.id, { password: hashedPassword });
 
     return true;
   }
 
-  public async forgotChangePassword(newPassword: string, id: string) {
+  public async confirmForgotPassword(newPassword: string, id: string) {
     const hashedPassword = await this.authHelper.encodePassword(newPassword);
 
     await this.userRepo.update(id, {
@@ -227,6 +228,12 @@ export class AuthService implements OnModuleInit {
     email,
   }: ForgotPasswordEmailDto): Promise<boolean> {
     const user: User = await this.userRepo.findOne({
+      select: {
+        id: true,
+        email: true,
+        verifyEmailToken: true,
+        role: true,
+      },
       where: { email },
     });
     if (!user) throw new HttpException('user not found', HttpStatus.NOT_FOUND);

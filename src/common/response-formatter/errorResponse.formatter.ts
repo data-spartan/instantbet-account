@@ -1,13 +1,7 @@
 import { IErrorResponse } from '../interfaces';
 import { Request, Response } from 'express';
 
-export const GlobalResponseError: (
-  statusCode: number,
-  message: string,
-  path: string,
-  method: string,
-  stack: string | void,
-) => IErrorResponse = (
+export const GlobalResponseError = (
   statusCode: number,
   message: string,
   path: string,
@@ -17,7 +11,6 @@ export const GlobalResponseError: (
   return {
     statusCode,
     message,
-    // timestamp: new Date().toISOString(),
     path,
     method,
     stack,

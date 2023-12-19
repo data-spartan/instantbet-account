@@ -16,7 +16,7 @@ import { RefreshToken } from '../users/index.entity';
 import * as fs from 'fs';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 import { MailModule } from 'src/mailer/mail.module';
-import { EmailTokenStrategy } from './strategies/emailToken.strategy';
+import { VerifyEmailStrategy } from './strategies/verifyEmail.strategy';
 import { UsersModule } from '../users/users.module';
 import { ForgotPasswordStrategy } from './strategies/forgotPasswordToken.strategy';
 import { readFileSync } from './helpers/readFile.helpers';
@@ -59,7 +59,7 @@ import { JwtRefreshStrategy } from './strategies/jwtRefreshStrategy.strategy';
     AuthHelper,
     JwtStrategy,
     JwtRefreshStrategy,
-    EmailTokenStrategy,
+    VerifyEmailStrategy,
     ForgotPasswordStrategy,
     RefreshPrivateSecretService,
   ],

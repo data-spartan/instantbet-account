@@ -21,18 +21,39 @@ export class UsersService {
   ) {}
 
   public async findAll(
+    cursor: Date,
+    userId: string,
     limit: number,
-    cursor: string,
-    timestamp: Date,
     direction: string,
   ): Promise<User[]> {
     try {
       return this.postgresQueries.allUsersPagination(
         User,
-        timestamp,
         cursor,
+        userId,
         limit,
         direction,
+      );
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  public async findAllQuery(
+    cursor: Date,
+    userId: string,
+    limit: number,
+    direction: string,
+    queryParams: any,
+  ): Promise<User[]> {
+    try {
+      return this.postgresQueries.usersQueryPagination(
+        User,
+        cursor,
+        userId,
+        limit,
+        direction,
+        queryParams,
       );
     } catch (error) {
       throw new HttpException(error.message, error.status);
@@ -56,17 +77,16 @@ export class UsersService {
     }
   }
 
-  async updateProfile(user: User, attrs: Partial<User>) {
+  async updateProfile(id: User['id'], attrs: Partial<User>) {
     try {
-      Object.assign(user, attrs);
-      this.userRepo.save(user);
-      return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
+      await this.userRepo.update({ id }, { ...attrs });
+      return { id, props: `${Object.keys(attrs).join(',')}` };
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
   }
 
-  //admin could create testing user
+  //admin only can create testing user
   public async createTestUser(body: CreateTestUserDto): Promise<User> {
     try {
       body.password = await this.authHelper.encodePassword(body.password);

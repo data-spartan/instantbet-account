@@ -13,8 +13,10 @@ import { DirectoryCreationService } from './shared/dirCreation/dirCreation';
 
 import { DataSource } from 'typeorm';
 import { ResponseMessageInterceptor } from './interceptors/responseMessage.interceptor';
-import { TypeOrmConfigService } from './config/typeorm/typeorm.config';
+import { TypeOrmConfigService } from './config/typeorm/typeorm.service';
 import { LoggerMiddleware } from './middlewares/logging.middleware';
+import { getConfigServiceTypeOrmConfig } from './config/typeorm/typeorm.config';
+import { TypeORMConfigEnum } from './config/typeorm/typeorm.enum';
 
 @Module({
   imports: [
@@ -47,8 +49,33 @@ import { LoggerMiddleware } from './middlewares/logging.middleware';
   ],
 })
 export class AppModule {
-  constructor(private dataSource: DataSource) {}
+  constructor(private configService: ConfigService) {}
   configure(consumer: MiddlewareConsumer): void {
     consumer.apply(LoggerMiddleware).forRoutes('*');
   }
+  // async onModuleInit(): Promise<void> {
+  //   Logger.log('✅ App Users Module initialized!');
+  //   const typeOrmConfig = getConfigServiceTypeOrmConfig(this.configService);
+  //   const dataSource = new DataSource({
+  //     ...typeOrmConfig,
+  //   });
+  //   const connection = await dataSource.initialize();
+  //   const database = typeOrmConfig.database;
+  //   try {
+  //     console.log(database);
+  //     const databaseExists = await connection.query(
+  //       `SELECT FROM pg_database WHERE datname = '${database}'`,
+  //     );
+  //     if (databaseExists.rowCount === 0) {
+  //       await connection.query(`CREATE DATABASE ${database}`);
+  //       Logger.log(`✅ Database ${database} created! `);
+  //     } else {
+  //       Logger.log(`✅ Database ${database} already exists! `);
+  //     }
+  //   } catch (e) {
+  //     Logger.error(`🚩 Create database ${database} failed: ${e.message}`);
+  //   } finally {
+  //     await connection.destroy();
+  //   }
+  // }
 }

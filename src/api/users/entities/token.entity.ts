@@ -9,10 +9,12 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
+  Index,
 } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity('refresh_tokens')
+@Index('idx_userid', ['id'])
 export class RefreshToken {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
@@ -26,10 +28,7 @@ export class RefreshToken {
   @UpdateDateColumn({ type: 'timestamp', nullable: true, default: null })
   updatedAt: Date;
 
-  @OneToOne(() => User, (user) => user.refreshToken, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
+  @OneToOne(() => User, (user) => user.refreshToken, { onDelete: 'CASCADE' }) //when user is deleted related token is also deleted
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User | string;
 }

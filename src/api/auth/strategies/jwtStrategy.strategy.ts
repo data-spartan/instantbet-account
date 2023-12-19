@@ -14,6 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   ) {
     super({
       ignoreExpiration: false,
+      passReqToCallback: true,
       secretOrKey: readFileSync(
         configService.get<string>('JWT_PUBLIC_SECRET_ACCESS'),
       ).toString(),
@@ -29,8 +30,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: any) {
-    const user = await this.authHelper.validateUser(payload);
+  async validate(req: Request, payload: any) {
+    if (!req.originalUrl.includes('password')) {
+      const user = await this.authHelper.validateUser(payload);
+    }
+    const user = await this.authHelper.validateUser(payload, true);
     if (!user) throw new UnauthorizedException();
     //this validate method attaches user to Request object when return user
     return user;
