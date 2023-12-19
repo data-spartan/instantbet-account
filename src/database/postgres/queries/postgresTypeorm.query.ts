@@ -69,17 +69,17 @@ export class PostgresTypeOrmQueries {
     //if Next page is clicked, FE needs to send last record(oldest) in  user array; Send CreatedAt, id, direction(Next) from previous array
     //to able to to show older records than CreatedAt
     //when Previous is clicked first record in array is sent.
-    console.log(queryParams);
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const m = { keys: [], values: [] };
-      m.keys = [...Object.keys(queryParams)];
-      m.values = [...Object.values(queryParams)];
+      const paramsKeysValues = {
+        keys: Object.keys(queryParams),
+        values: Object.values(queryParams),
+      };
       const allUsersQuery = await this.rawQueries.usersQueryPagination(
         sign,
-        m.keys,
+        paramsKeysValues.keys,
       );
 
       const usersCountQuery = await this.rawQueries.allUsersCount();
@@ -87,7 +87,7 @@ export class PostgresTypeOrmQueries {
         cursor,
         userId,
         limit,
-        ...m.values,
+        ...paramsKeysValues.values,
       ]);
       //count always returns bigint so js automaticaly returns string-use parseint
       const totalCount = parseInt(

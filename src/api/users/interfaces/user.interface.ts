@@ -10,21 +10,21 @@ import { UserRolesEnum } from '../roles/roles.enum';
 export interface User {
   readonly id: string;
 
-  readonly firstName: string;
+  firstName: string;
 
-  readonly lastName: string;
+  lastName: string;
 
-  readonly telephone: string;
+  telephone: string;
 
-  readonly email: string;
+  email: string;
 
-  readonly password: string;
+  password: string;
 
-  readonly role: UserRolesEnum;
+  role: UserRolesEnum;
 
-  readonly verifiedEmail?: boolean | null;
+  verifiedEmail?: boolean | null;
 
-  readonly verifyEmailToken?: string | null;
+  verifyEmailToken?: string | null;
 
   readonly dateOfBirth: Date;
 

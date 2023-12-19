@@ -26,11 +26,19 @@ describe('AuthModule (e2e)', () => {
       .send(MOCK_USER)
       .expect(201);
   });
-  it('POST should return 409 if user is already registered', () => {
+  it('POST should return 409 if user is already registered with same email', () => {
     return request(app.getHttpServer())
       .post('/auth/register')
       .send(MOCK_USER)
       .expect(409);
+  });
+  it('POST should return 409 if user is already registered with same telephone', () => {
+    const TELEPHONE_MOCK_USER = MOCK_USER;
+    TELEPHONE_MOCK_USER.email = 'stefan2@test.com';
+    return request(app.getHttpServer())
+      .post('/auth/register')
+      .send(TELEPHONE_MOCK_USER)
+      .expect(422);
   });
 
   it('POST should return 404 if firstName is missing', () => {

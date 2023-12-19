@@ -101,7 +101,7 @@ export class AuthService implements OnModuleInit {
     // const token = await this.authHelper.handleTokens(user);
     user.verifyEmailToken = await this.authHelper.hashData(emailToken);
 
-    const registerUser = await this.userRepo.save(user);
+    const registerUser = await this.userRepo.insert(user);
 
     if (!registerUser) {
       throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);

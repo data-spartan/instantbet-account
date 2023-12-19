@@ -54,7 +54,6 @@ export class AdminController {
   @Get('/users/search')
   @HttpCode(200)
   public async findAllQuery(@Query() query: any) {
-    //http://localhost:5000/admin/users?timestamp=2023-10-02 14:11:29.400&limit=2&cursor=c5369eed-fb5d-467a-a151-b6e77bee5783&direction=Next
     const { cursor, userId, limit, direction, ...rest } = query;
     const result = await this.usersService.findAllQuery(
       cursor,
