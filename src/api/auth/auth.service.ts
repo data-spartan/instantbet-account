@@ -118,7 +118,6 @@ export class AuthService implements OnModuleInit {
   }
 
   public async login({ email, password }: LoginDto) {
-    //req.
     const user: User = await this.userRepo.findOne({
       select: {
         id: true,
