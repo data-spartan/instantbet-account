@@ -1,23 +1,36 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { User } from 'src/api/users/index.entity';
 import { clearDatabase } from './typeormTest';
 import { UserMock } from './mock/user.mock';
+import * as cookieParser from 'cookie-parser';
 
 describe('AuthModule (e2e)', () => {
   let app: INestApplication;
-  let userToken;
-  const authMock = new UserMock();
-  const MOCK_USER = authMock.authUser();
-  beforeEach(async () => {
+  let cookie;
+  let MOCK_USER;
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-    // const MOCK_USER = USER_MOCK;
+
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
+    app.use(cookieParser());
     await app.init();
+  });
+  beforeEach(async () => {
+    // const moduleFixture: TestingModule = await Test.createTestingModule({
+    //   imports: [AppModule],
+    // }).compile();
+
+    // app = moduleFixture.createNestApplication();
+    const authMock = new UserMock();
+    MOCK_USER = authMock.authUser();
+
+    // await app.init();
   });
 
   it('POST should return 201 if user has registered', () => {
@@ -32,29 +45,69 @@ describe('AuthModule (e2e)', () => {
       .send(MOCK_USER)
       .expect(409);
   });
-  it('POST should return 409 if user is already registered with same telephone', () => {
-    const TELEPHONE_MOCK_USER = MOCK_USER;
-    TELEPHONE_MOCK_USER.email = 'stefan2@test.com';
+  it('POST should return 422 if user is already registered with same telephone', () => {
+    MOCK_USER.email = 'stefan2@test.com';
     return request(app.getHttpServer())
       .post('/auth/register')
-      .send(TELEPHONE_MOCK_USER)
+      .send(MOCK_USER)
       .expect(422);
   });
 
-  it('POST should return 404 if firstName is missing', () => {
+  it('POST should return 400 if firstName is missing', () => {
     const { firstName, ...modifiedUser } = MOCK_USER;
     return request(app.getHttpServer())
-      .post('auth/register')
+      .post('/auth/register')
       .send(modifiedUser)
-      .expect(404);
+      .expect(400);
   });
-  it('POST should return 404 if telephone is missing', () => {
+  it('POST should return 400 if telephone is missing', () => {
     const { telephone, ...modifiedUser } = MOCK_USER;
     return request(app.getHttpServer())
-      .post('auth/register')
+      .post('/auth/register')
       .send(modifiedUser)
+      .expect(400);
+  });
+  it('POST should return 400 if password format is invalid', () => {
+    MOCK_USER.password = '123';
+    return request(app.getHttpServer())
+      .post('/auth/register')
+      .send(MOCK_USER)
+      .expect(400);
+  });
+  it('POST should return 200 if login is successfull', async () => {
+    const { email, password } = MOCK_USER;
+    const res = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email, password });
+    cookie = res.header['set-cookie'];
+    expect(res.statusCode).toBe(200);
+  });
+  it('POST should return 409 if user with specified email doesnt exist', () => {
+    MOCK_USER.email = 'stefan1@test.com';
+    const { email, password } = MOCK_USER;
+
+    return request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email, password })
       .expect(404);
   });
+
+  it('POST should return 404 if user exist but password is invalid', () => {
+    MOCK_USER.password = '1!Aa4567810';
+    const { email, password } = MOCK_USER;
+
+    return request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email, password })
+      .expect(404);
+  });
+  it('POST should return 200 user is signed-out', () => {
+    return request(app.getHttpServer())
+      .post('/auth/sign-out')
+      .set('Cookie', cookie)
+      .expect(200);
+  });
+
   afterAll(async () => {
     await clearDatabase(app);
     await app.close();

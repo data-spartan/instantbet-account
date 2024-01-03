@@ -7,4 +7,5 @@ export async function clearDatabase(app: INestApplication): Promise<void> {
     .map((entity) => entity.tableName)
     .join(', ');
   await entityManager.query(`TRUNCATE ${tableNames} RESTART IDENTITY CASCADE;`);
+  await entityManager.connection.destroy();
 }
