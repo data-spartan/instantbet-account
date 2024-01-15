@@ -1,12 +1,6 @@
-import {
-  Injectable,
-  ExecutionContext,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, ExecutionContext } from '@nestjs/common';
 import { AuthGuard, IAuthGuard } from '@nestjs/passport';
 import { User } from 'src/api/users/entities/user.entity';
-import { Request } from 'express';
 import { jwtGuardException } from 'src/exception-filters/exceptions';
 
 @Injectable() //when req comes to guard, it call accessToken strategy

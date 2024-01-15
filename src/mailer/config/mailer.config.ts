@@ -1,5 +1,5 @@
 import { MailerOptions, MailerOptionsFactory } from '@nestjs-modules/mailer';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { join } from 'path';

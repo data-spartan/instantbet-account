@@ -1,26 +1,19 @@
-import { Module, MiddlewareConsumer, Logger } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { Module, Logger } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
 import { AuthHelper } from './auth.helper';
 import { AuthService } from './auth.service';
 
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { User } from '../users/entities/user.entity';
-// import { LoggerService } from 'src/logger/logger.service';
-import { JwtRefreshGuard } from './guards/jwtRefreshAuth.guard';
-import { JwtAuthGuard } from './guards/jwtAuth.guard';
-
 import { RefreshToken } from '../users/index.entity';
-import * as fs from 'fs';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 import { MailModule } from 'src/mailer/mail.module';
 import { VerifyEmailStrategy } from './strategies/verifyEmail.strategy';
-import { UsersModule } from '../users/users.module';
 import { ForgotPasswordStrategy } from './strategies/forgotPasswordToken.strategy';
 import { readFileSync } from './helpers/readFile.helpers';
-import { LoggerMiddleware } from 'src/middlewares/logging.middleware';
 import { DatabaseModule } from 'src/database/database.module';
 import { JwtStrategy } from './strategies/jwtStrategy.strategy';
 import { JwtRefreshStrategy } from './strategies/jwtRefreshStrategy.strategy';

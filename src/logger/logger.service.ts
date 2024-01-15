@@ -1,10 +1,6 @@
 import { LoggerService as loggService } from '@nestjs/common';
-import * as winston from 'winston';
 
-import {
-  utilities as nestWinstonModuleUtilities,
-  WinstonModule,
-} from 'nest-winston';
+import { WinstonModule } from 'nest-winston';
 import { instance } from './loggerApp.config';
 
 //THIS LOGGER SERV FILE IS FOR GLOBAL APP LOGGER

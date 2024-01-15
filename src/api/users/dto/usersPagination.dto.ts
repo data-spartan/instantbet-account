@@ -1,17 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsDate,
-  IsDateString,
-  IsIn,
-  IsInt,
-  IsNumber,
-  IsNumberString,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Matches,
-  ValidateIf,
-} from 'class-validator';
+import { IsIn, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 import { UUID } from 'crypto';
 
 export class UsersPaginationDto {

@@ -1,5 +1,4 @@
 import { IErrorResponse } from '../interfaces';
-import { Request, Response } from 'express';
 
 export const GlobalResponseError = (
   statusCode: number,

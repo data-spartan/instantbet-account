@@ -1,5 +1,5 @@
 // this is default way of showing user resp to clients
-import { Expose, Exclude } from 'class-transformer';
+import { Expose } from 'class-transformer';
 import { UserRolesEnum } from 'src/api/users/roles/roles.enum';
 
 //if using dto in serialize interceptor need to define Expose/Exclude on all properties

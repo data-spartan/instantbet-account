@@ -1,6 +1,5 @@
 import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
-import { DataSource, Entity, QueryRunner } from 'typeorm';
-import { User } from 'src/api/users/index.entity';
+import { DataSource } from 'typeorm';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PostgresTypeOrmRawQueries } from '../raw-queries/postgresTypeorm.rawqueries';
 

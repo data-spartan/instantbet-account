@@ -1,4 +1,3 @@
-import { HttpStatus } from '@nestjs/common';
 import { ISuccessResponse } from '../interfaces';
 
 export const ResponseSuccess = (

@@ -1,4 +1,4 @@
-import { QueryFailedError, TypeORMError } from 'typeorm';
+import { QueryFailedError } from 'typeorm';
 import { HttpStatus } from '@nestjs/common';
 import { IErrorTypeObject } from 'src/common/interfaces';
 

@@ -2,12 +2,11 @@ import {
   Injectable,
   HttpException,
   HttpStatus,
-  UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { InjectRepository, InjectDataSource } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import * as argon2 from 'argon2';
 import { ITokenType } from './interfaces/token.interface';

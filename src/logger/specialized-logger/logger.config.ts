@@ -1,7 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
-import { transports, createLogger, format, LoggerOptions } from 'winston';
+import { transports, format, LoggerOptions } from 'winston';
 
 export class LoggerConfig {
   private options: LoggerOptions;

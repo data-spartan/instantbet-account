@@ -11,12 +11,9 @@ import {
 } from './exception-filters';
 import { DirectoryCreationService } from './shared/dirCreation/dirCreation';
 
-import { DataSource } from 'typeorm';
 import { ResponseMessageInterceptor } from './interceptors/responseMessage.interceptor';
 import { TypeOrmConfigService } from './config/typeorm/typeorm.service';
 import { LoggerMiddleware } from './middlewares/logging.middleware';
-import { getConfigServiceTypeOrmConfig } from './config/typeorm/typeorm.config';
-import { TypeORMConfigEnum } from './config/typeorm/typeorm.enum';
 
 @Module({
   imports: [
@@ -24,8 +21,7 @@ import { TypeORMConfigEnum } from './config/typeorm/typeorm.enum';
       isGlobal: true,
       //using this.config.get can read proces.env var or .env file if specified
       // envFilePath: '.env',
-      ignoreEnvFile: process.env.NODE_ENV ==='dev' ? false : true
-      
+      ignoreEnvFile: process.env.NODE_ENV === 'dev' ? false : true,
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     ApiModule,

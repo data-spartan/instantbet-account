@@ -1,13 +1,7 @@
-import {
-  Injectable,
-  ExecutionContext,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, ExecutionContext } from '@nestjs/common';
 import { User } from 'src/api/users/index.entity';
 import { AuthGuard, IAuthGuard } from '@nestjs/passport';
 import { jwtGuardException } from 'src/exception-filters/exceptions';
-import { Request } from 'express';
 
 @Injectable()
 export class JwtRefreshGuard

@@ -4,9 +4,6 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Logger } from '@nestjs/common';
-import { Request } from 'express';
-import { UsersService } from 'src/api/users/users.service';
 import { AuthHelper } from '../auth.helper';
 import { User } from 'src/api/users/index.entity';
 

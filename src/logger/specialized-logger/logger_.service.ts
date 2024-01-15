@@ -1,9 +1,8 @@
 // custom-logger.service.ts
-import { Injectable, Scope, Logger, Inject } from '@nestjs/common';
-import { transports, createLogger, format, LoggerOptions } from 'winston';
+import { Injectable, Scope, Logger } from '@nestjs/common';
+import { createLogger } from 'winston';
 // import DailyRotateFile from 'winston-daily-rotate-file';
 
-import * as winston from 'winston';
 import { LoggerConfig } from './logger.config';
 import { ConfigService } from '@nestjs/config';
 import { LoggerGetParams } from '../helpers/loggerGetParams.helper';

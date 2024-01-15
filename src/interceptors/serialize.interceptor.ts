@@ -5,11 +5,11 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { plainToInstance } from 'class-transformer';
 
 interface ClassConstructor {
-  new (...args: any[]): {}; // any class you pass as dto will be valid, this is basic.
+  new (...args: any[]): Record<string, never>; // any class you pass as dto will be valid, this is basic.
 }
 
 // CREAETING WRAPPER DECORATOR IN ORDER FOR DECORATOR TO BE SHORTER

@@ -1,15 +1,12 @@
 import {
-  UseInterceptors,
   NestInterceptor,
   ExecutionContext,
-  CallHandler,
   Injectable,
   HttpException,
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { tap, map, finalize } from 'rxjs/operators';
-import { HttpAdapterHost } from '@nestjs/core';
+import { tap } from 'rxjs/operators';
 // import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()

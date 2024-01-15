@@ -1,13 +1,7 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { Request, Response } from 'express';
 
-import { TypeORMError, QueryFailedError } from 'typeorm';
+import { TypeORMError } from 'typeorm';
 import { checkTypeORMErrorType } from './helpers';
 import { GlobalResponseError } from 'src/common/response-formatter';
 @Catch(TypeORMError)
