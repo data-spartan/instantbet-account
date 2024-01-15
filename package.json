@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "docker:dev": "docker-compose --env-file .env.development up -d postgres pgadmin",
+    "docker:dev": "docker-compose --env-file .env up -d postgres pgadmin",
     "start": "cross-env NODE_ENV=development TZ=UTC nest start",
     "start:dev": "cross-env NODE_ENV=development TZ=UTC nest start --watch",
     "start:debug": "cross-env NODE_ENV=development TZ=UTC nest start --debug --watch",

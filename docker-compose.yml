@@ -46,17 +46,16 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-      args:
-        - ENV=${ENV}
+      # args:
+      #   - ENV=${ENV}
     env_file:
-      - ${ENV_FILE}
+      - .env
     ports:
       - ${APP_PORT}:${APP_PORT}
     networks:
       - instantbet-account
     volumes:
       - acc-app:/usr/src/logs
-      # - ./home/data_spartan/stefanProj/.keys/instantbet:/usr/.keys/instantbet
     restart: unless-stopped
     depends_on:
       - postgres

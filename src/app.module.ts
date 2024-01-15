@@ -22,7 +22,10 @@ import { TypeORMConfigEnum } from './config/typeorm/typeorm.enum';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      //using this.config.get can read proces.env var or .env file if specified
+      // envFilePath: '.env',
+      ignoreEnvFile: process.env.NODE_ENV ==='dev' ? false : true
+      
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     ApiModule,

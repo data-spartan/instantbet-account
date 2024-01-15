@@ -25,7 +25,6 @@ export class LoggingInterceptor implements NestInterceptor {
         next: () => {
           const res = context.switchToHttp().getResponse();
           const delay = Date.now() - now;
-          console.log(res);
           this.logger.log('rest');
         },
         error: (error: Error) => {
