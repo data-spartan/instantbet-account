@@ -53,6 +53,7 @@ describe('AuthModule (e2e)', () => {
   });
 
   it('POST should return 400 if firstName is missing', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { firstName, ...modifiedUser } = MOCK_USER;
     return request(app.getHttpServer())
       .post('/auth/register')
@@ -60,6 +61,7 @@ describe('AuthModule (e2e)', () => {
       .expect(400);
   });
   it('POST should return 400 if telephone is missing', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { telephone, ...modifiedUser } = MOCK_USER;
     return request(app.getHttpServer())
       .post('/auth/register')

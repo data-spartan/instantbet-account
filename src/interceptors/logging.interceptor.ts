@@ -13,15 +13,15 @@ import { tap } from 'rxjs/operators';
 export class LoggingInterceptor implements NestInterceptor {
   constructor(private logger: Logger) {}
   intercept(context: ExecutionContext, next) {
-    const now = Date.now();
+    // const now = Date.now();
     const req = context.switchToHttp().getRequest();
     const method = req.method;
     const path = req.url;
     return next.handle().pipe(
       tap({
         next: () => {
-          const res = context.switchToHttp().getResponse();
-          const delay = Date.now() - now;
+          // const res = context.switchToHttp().getResponse();
+          // const delay = Date.now() - now;
           this.logger.log('rest');
         },
         error: (error: Error) => {
