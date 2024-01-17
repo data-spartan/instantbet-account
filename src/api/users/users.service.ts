@@ -57,8 +57,8 @@ export class UsersService {
 
   public async findOne(id: string): Promise<User> {
     try {
-      const user = await this.userRepo.findOneByOrFail({ id });
-      return user;
+      return await this.userRepo.findOneByOrFail({ id });
+      // return user;
     } catch (error) {
       throw new HttpException(`user with id: ${id} not found`, 404);
     }
