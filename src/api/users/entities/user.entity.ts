@@ -1,4 +1,3 @@
-import { Exclude } from 'class-transformer';
 import {
   Entity,
   Column,
@@ -6,15 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Unique,
-  OneToMany,
-  JoinColumn,
   Index,
   OneToOne,
 } from 'typeorm';
 import { UserRolesEnum } from '../roles/roles.enum';
 import { RefreshToken } from './token.entity';
-import { IsDate, IsNumber, Max, Min } from 'class-validator';
-import { UserAgeEnum } from './user.enum';
 
 //changed default UQ name to be able to catch UQ constraint error properly
 //in typeormException.filter and propagate adequate resp to the client

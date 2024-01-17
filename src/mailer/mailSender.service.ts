@@ -5,7 +5,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 @Injectable()
 export class MailSender {
   constructor(private readonly mailerService: MailerService) {}
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async sendEmail<T>({ to, subject, template, context }) {
     try {
       await this.mailerService.sendMail({

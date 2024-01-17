@@ -2,7 +2,6 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
-  Inject,
   Injectable,
   Logger,
   OnModuleInit,
@@ -10,20 +9,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthHelper } from './auth.helper';
 import { Repository } from 'typeorm';
-import { v4 } from 'uuid';
 import { UserRolesEnum } from '../users/roles/roles.enum';
 import { User } from '../users/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { ConfigService } from '@nestjs/config';
-import { AuthedResponse } from './interfaces/auth.interface';
 import { LoginDto } from './dto/login.dto';
-import { plainToInstance } from 'class-transformer';
 import { ChangePasswordDto } from '../users/dto';
-import { AuthRespDto } from './dto/authResp.dto';
-// import { LoggerService } from 'src/logger/logger.service';
-import { ITokenType } from './interfaces/token.interface';
-import * as argon2 from 'argon2';
-import * as dayjs from 'dayjs';
 import { RefreshToken } from '../users/index.entity';
 import { MailService } from 'src/mailer/mail.service';
 import { ForgotPasswordEmailDto } from './dto';

@@ -1,11 +1,6 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateTestUserDto } from '../admin/dto';
 import { AuthHelper } from '../auth/auth.helper';
@@ -62,8 +57,8 @@ export class UsersService {
 
   public async findOne(id: string): Promise<User> {
     try {
-      const user = await this.userRepo.findOneByOrFail({ id });
-      return user;
+      return await this.userRepo.findOneByOrFail({ id });
+      // return user;
     } catch (error) {
       throw new HttpException(`user with id: ${id} not found`, 404);
     }

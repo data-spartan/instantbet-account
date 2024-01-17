@@ -5,7 +5,6 @@ import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { WinstonModule } from 'nest-winston';
-import { LoggerService } from './logger/logger.service';
 
 import * as cookieParser from 'cookie-parser';
 import { instance } from './logger/loggerApp.config';
@@ -20,9 +19,7 @@ async function bootstrap() {
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('APP_PORT');
   const apiPrefix: string = config.get('APP_API_PREFIX');
-
   app.setGlobalPrefix(apiPrefix);
-  // app.useLogger(instance);
   app.set('trust proxy', 1);
   app.use(
     helmet({

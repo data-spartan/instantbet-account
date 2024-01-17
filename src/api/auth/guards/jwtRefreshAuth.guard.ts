@@ -1,13 +1,7 @@
-import {
-  Injectable,
-  ExecutionContext,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from 'src/api/users/index.entity';
 import { AuthGuard, IAuthGuard } from '@nestjs/passport';
 import { jwtGuardException } from 'src/exception-filters/exceptions';
-import { Request } from 'express';
 
 @Injectable()
 export class JwtRefreshGuard
@@ -17,13 +11,7 @@ export class JwtRefreshGuard
   constructor() {
     super();
   }
-  public handleRequest(
-    err: any,
-    user: User,
-    info: any,
-    context: ExecutionContext,
-    status?: any,
-  ): any {
+  public handleRequest(err: any, user: User, info: any): any {
     //need to implement handleReq bcs want to catch jwt related errors without nest throwing generic forbiden
     if (!user) {
       jwtGuardException(err, info);

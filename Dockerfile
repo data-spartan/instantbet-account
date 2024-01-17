@@ -1,8 +1,8 @@
 # Base image
 FROM node:18.18.0-alpine
 
-ARG ENV
-ENV NODE_ENV ${ENV}
+# ARG ENV
+# ENV NODE_ENV ${ENV}
 # Create app directory
 WORKDIR /usr/src
 #in case error: EACCES: permission denied mkdir

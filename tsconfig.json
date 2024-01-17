@@ -19,7 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "src/*": ["src/*"],
-      "tests/*": ["src/shared/tests/*"]
+      "tests/*": ["src/test/*"]
     }
   },
   "watchOptions": { "excludeFiles": ["src/logs"] }

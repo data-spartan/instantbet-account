@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
-import { JwtModuleAsyncOptions } from '@nestjs/jwt';
 
 @Injectable()
 export class RefreshPrivateSecretService {

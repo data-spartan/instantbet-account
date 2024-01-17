@@ -1,5 +1,3 @@
-import { UserRolesEnum } from 'src/api/users/roles/roles.enum';
-
 export interface AuthedResponse {
   token: string;
   id?: string;

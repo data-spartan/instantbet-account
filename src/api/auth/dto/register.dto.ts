@@ -3,16 +3,10 @@ import {
   IsEmail,
   IsMobilePhone,
   IsString,
-  MinLength,
-  IsOptional,
   IsDefined,
-  IsNumber,
-  Min,
-  Max,
   IsNotEmpty,
 } from 'class-validator';
 import { IsDateOfBirth, IsPasswordFormatValid } from '../validators';
-import { UserAgeEnum } from 'src/api/users/entities/user.enum';
 import { User } from 'src/api/users/interfaces/user.interface';
 
 interface RegisterUserDto

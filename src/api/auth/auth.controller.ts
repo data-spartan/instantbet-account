@@ -6,7 +6,6 @@ import {
   Req,
   Get,
   Patch,
-  HttpStatus,
   Res,
   HttpCode,
 } from '@nestjs/common';
@@ -20,13 +19,11 @@ import { JwtAuthGuard } from './guards/jwtAuth.guard';
 import { AuthService } from './auth.service';
 import { CustomRequest } from 'src/common/interfaces';
 import { ChangePasswordDto } from '../users/dto';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { JwtRefreshGuard } from './guards/jwtRefreshAuth.guard';
 import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
 import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
-import { LoginVerifiedGuard } from './guards/verificationGuard.guard';
-import { AuthGuard } from '@nestjs/passport';
 import { VerifyEmailAuthGuard } from './guards/emailJwt.guard';
 
 @Controller('auth')
