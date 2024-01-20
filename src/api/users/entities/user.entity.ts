@@ -50,6 +50,9 @@ export class User {
   @Column({ type: 'varchar', nullable: true, default: null, select: false })
   public verifyEmailToken?: string;
 
+  @Column({ type: 'varchar', nullable: true, default: null, select: false })
+  public photoUrl?: string;
+
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user, {
     nullable: true,
   })
