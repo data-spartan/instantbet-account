@@ -10,7 +10,6 @@ const customFormat = format.printf(
         message || stack
       } - ${method} - ${path}`;
     }
-    console.log(stack);
     return `${timestamp} - [${level.toUpperCase()}] - ${message || stack}`;
   },
 );

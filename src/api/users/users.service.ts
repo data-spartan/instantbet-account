@@ -6,6 +6,7 @@ import { CreateTestUserDto } from '../admin/dto';
 import { AuthHelper } from '../auth/auth.helper';
 // import { LoggerService } from 'src/logger/logger.service';
 import { PostgresTypeOrmQueries } from 'src/database/postgres/queries/postgresTypeorm.query';
+import { renameSync, unlink } from 'fs';
 
 @Injectable()
 export class UsersService {
@@ -71,12 +72,21 @@ export class UsersService {
     }
   }
 
-  async updateProfile(id: User['id'], attrs: Partial<User>) {
+  async updateProfile(
+    id: User['id'],
+    attrs: Partial<User>,
+    profilePhoto: Express.Multer.File,
+  ) {
     try {
+      if (profilePhoto) {
+        attrs.photoUrl = profilePhoto.path;
+      }
       await this.userRepo.update({ id }, { ...attrs });
       return { id, props: `${Object.keys(attrs).join(',')}` };
     } catch (error) {
-      throw new HttpException(error.message, error.status);
+      unlink(profilePhoto.path, () => {
+        throw new HttpException(error.message, error.status);
+      });
     }
   }
 

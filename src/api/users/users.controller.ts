@@ -45,7 +45,11 @@ export class UsersController {
     @Body() body: UserUpdateDto,
   ) {
     console.log(profilePhoto);
-    const result = await this.usersService.updateProfile(user.id, body);
+    const result = await this.usersService.updateProfile(
+      user.id,
+      body,
+      profilePhoto,
+    );
     return ResponseSuccess(
       `user ${result.id} updated ${result.props} succesfully. ${profilePhoto.path}`,
     );

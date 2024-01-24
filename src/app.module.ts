@@ -25,7 +25,7 @@ import { ServeStaticConfigService } from './shared/serveStatic/serveStatic.servi
       // envFilePath: '.env',
       ignoreEnvFile: process.env.NODE_ENV === 'dev' ? false : true,
     }),
-    //If we need to get the users picture
+    //If we need to get the localy uploaded users media
     //the server detects the file as a route, thats why we need ServeStatic
     ServeStaticModule.forRootAsync({
       useClass: ServeStaticConfigService,

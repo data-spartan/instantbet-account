@@ -10,8 +10,9 @@ import {
   Delete,
   Query,
   HttpCode,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
-import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { UserRolesEnum } from '../users/roles/roles.enum';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
@@ -24,6 +25,7 @@ import { ResponseSuccess } from 'src/common/response-formatter';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UsersPaginationQueryDto } from '../users/dto/usersPaginationQuery.dto';
 import { CheckIdDto } from 'src/common/dto/checkId.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -85,8 +87,17 @@ export class AdminController {
   }
 
   @Patch('/me')
-  async update(@Req() { user }: CustomRequest, @Body() body: UserUpdateDto) {
-    const result = await this.usersService.updateProfile(user.id, body);
+  @UseInterceptors(FileInterceptor('profilePhoto'))
+  async update(
+    @Req() { user }: CustomRequest,
+    @Body() body: UserUpdateDto,
+    @UploadedFile() profilePhoto: Express.Multer.File,
+  ) {
+    const result = await this.usersService.updateProfile(
+      user.id,
+      body,
+      profilePhoto,
+    );
 
     return ResponseSuccess(
       `user ${result.id} updated ${result.props} succesfully`,

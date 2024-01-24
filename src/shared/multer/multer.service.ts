@@ -17,11 +17,9 @@ export class MulterConfigService implements MulterOptionsFactory {
   private readonly config: ConfigService;
 
   onModuleInit() {
-    const tempFolderUrl = join(
-      this.config.get<string>('APP_ROOT_DIR'),
-      this.config.get<string>(ServeStaticConfigEnum.APP_FILE_PUBLIC_IMAGES_DIR),
+    const tempFolderUrl = this.config.get<string>(
+      ServeStaticConfigEnum.APP_FILE_PUBLIC_IMAGES_DIR,
     );
-    console.log(tempFolderUrl);
     if (!existsSync(tempFolderUrl)) {
       console.warn(`### Multer Service Module ###`);
       console.warn(
@@ -36,9 +34,6 @@ export class MulterConfigService implements MulterOptionsFactory {
 
   createMulterOptions(): MulterModuleOptions {
     return {
-      dest: this.config.get<string>(
-        ServeStaticConfigEnum.APP_FILE_PUBLIC_IMAGES_DIR,
-      ),
       limits: { fileSize: ALLOWED_FILE_SIZE_TO_UPLOAD },
       fileFilter: (
         _req: Express.Request,
@@ -58,12 +53,17 @@ export class MulterConfigService implements MulterOptionsFactory {
         }
       },
       storage: diskStorage({
+        destination: join(
+          // this.config.get<string>('APP_ROOT_DIR'),
+          this.config.get<string>(
+            ServeStaticConfigEnum.APP_FILE_PUBLIC_IMAGES_DIR,
+          ),
+        ),
         filename: (
           _req: Express.Request,
           file: Express.Multer.File,
           cb: (error: Error, destination: string) => void,
         ) => {
-          console.log(file.path);
           cb(null, `${Date.now()}_${file.originalname}`);
         },
       }),
