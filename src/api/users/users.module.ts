@@ -7,7 +7,7 @@ import { UsersService } from './users.service';
 import { RefreshToken } from './entities/token.entity';
 import { DatabaseModule } from 'src/database/database.module';
 import { MulterModule } from '@nestjs/platform-express';
-import { MulterConfigService } from 'src/shared/multer/multer.service';
+import { MulterLocalConfigService } from 'src/shared/multer/multerLocal.service';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { MulterConfigService } from 'src/shared/multer/multer.service';
     AuthModule,
     DatabaseModule,
     MulterModule.registerAsync({
-      useClass: MulterConfigService,
+      useClass: MulterLocalConfigService,
     }),
   ],
   controllers: [UsersController],

@@ -4,37 +4,30 @@ import {
   MulterModuleOptions,
   MulterOptionsFactory,
 } from '@nestjs/platform-express';
-import { existsSync, mkdirSync } from 'fs';
-import { diskStorage } from 'multer';
-import { extname, join } from 'path';
-import { ALLOWED_FILE_SIZE_TO_UPLOAD } from './multer.consts';
-import { fileExtensionAccepted } from './multer.utility';
-import { ServeStaticConfigEnum } from 'src/constants/serveStatic.enum';
+import { extname } from 'path';
+import {
+  ALLOWED_FILE_SIZE_TO_UPLOAD,
+  ALLOWED_FILE_TYPES_TO_UPLOAD,
+  ALLOWED_NUMBER_OF_FILES_TO_UPLOAD,
+} from './multer.consts';
+
+export const fileExtensionAccepted = (mimetype: string) => {
+  if (ALLOWED_FILE_TYPES_TO_UPLOAD.includes(mimetype)) return true;
+  return false;
+};
 
 @Injectable()
 export class MulterConfigService implements MulterOptionsFactory {
   @Inject(ConfigService)
   private readonly config: ConfigService;
 
-  onModuleInit() {
-    const tempFolderUrl = this.config.get<string>(
-      ServeStaticConfigEnum.APP_FILE_PUBLIC_IMAGES_DIR,
-    );
-    if (!existsSync(tempFolderUrl)) {
-      console.warn(`### Multer Service Module ###`);
-      console.warn(
-        `Folder for static serving doesn't exist. Creating: ${this.config.get<string>(
-          ServeStaticConfigEnum.APP_FILE_PUBLIC_IMAGES_DIR,
-        )}.`,
-      );
-      console.warn(`### Multer Service Module END ###`);
-      mkdirSync(tempFolderUrl, { recursive: true });
-    }
-  }
-
   createMulterOptions(): MulterModuleOptions {
     return {
-      limits: { fileSize: ALLOWED_FILE_SIZE_TO_UPLOAD },
+      limits: {
+        //these values are passed internally to fileFilter to be checked for each file
+        fileSize: ALLOWED_FILE_SIZE_TO_UPLOAD,
+        files: ALLOWED_NUMBER_OF_FILES_TO_UPLOAD,
+      },
       fileFilter: (
         _req: Express.Request,
         { mimetype, originalname }: Express.Multer.File,
@@ -52,21 +45,6 @@ export class MulterConfigService implements MulterOptionsFactory {
           );
         }
       },
-      storage: diskStorage({
-        destination: join(
-          // this.config.get<string>('APP_ROOT_DIR'),
-          this.config.get<string>(
-            ServeStaticConfigEnum.APP_FILE_PUBLIC_IMAGES_DIR,
-          ),
-        ),
-        filename: (
-          _req: Express.Request,
-          file: Express.Multer.File,
-          cb: (error: Error, destination: string) => void,
-        ) => {
-          cb(null, `${Date.now()}_${file.originalname}`);
-        },
-      }),
     };
   }
 }

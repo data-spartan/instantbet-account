@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { MediaController } from './media.controller';
 import { MulterModule } from '@nestjs/platform-express';
-import { MulterConfigService } from './multer/multer.service';
+import { MulterConfigService } from '../../shared/multer/multer.service';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({

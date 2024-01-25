@@ -37,13 +37,15 @@ export class ServeStaticConfigService
     | Promise<ServeStaticModuleOptions[]> {
     return [
       {
-        serveRoot: join('/', 'uploads'), //virtual path for client to hit http://localhost:5000/uploads/image.png
+        //virtual path for client to hit http://localhost:5000/uploads/image.png
+        //must be /dir
+        serveRoot: join('/', 'uploads'),
         rootPath: join(
           this.config.get<string>(ServeStaticConfigEnum.APP_ROOT_DIR),
           this.config.get<string>(
             ServeStaticConfigEnum.APP_FILE_PUBLIC_IMAGES_DIR,
           ),
-        ), //physical path for media
+        ), //physical path on server for media to get
         exclude: [
           `/${this.config.get<string>(ServeStaticConfigEnum.APP_API_PREFIX)}*`,
           //specify routes that should be excluded from static file serving.

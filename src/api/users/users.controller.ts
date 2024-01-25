@@ -44,7 +44,6 @@ export class UsersController {
     @UploadedFile() profilePhoto: Express.Multer.File,
     @Body() body: UserUpdateDto,
   ) {
-    console.log(profilePhoto);
     const result = await this.usersService.updateProfile(
       user.id,
       body,
