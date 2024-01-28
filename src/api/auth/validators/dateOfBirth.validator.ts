@@ -1,6 +1,6 @@
 // src/validators/is-date-string.validator.ts
 import { ValidateBy, ValidationOptions, isDateString } from 'class-validator';
-import { UserAgeEnum } from 'src/api/users/entities/user.enum';
+import { UserAgeEnum } from 'src/api/users/interfaces/user.interface';
 
 export function IsDateOfBirth(
   validationOptions?: ValidationOptions,

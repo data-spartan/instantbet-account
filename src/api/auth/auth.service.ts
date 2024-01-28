@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthHelper } from './auth.helper';
 import { Repository } from 'typeorm';
 import { UserRolesEnum } from '../users/roles/roles.enum';
-import { User } from '../users/entities/user.entity';
+import { User } from '../../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { ConfigService } from '@nestjs/config';
 import { LoginDto } from './dto/login.dto';

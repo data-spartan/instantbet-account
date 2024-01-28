@@ -7,6 +7,11 @@ import { UserRolesEnum } from '../roles/roles.enum';
 //   role: UserRolesEnum;
 // }
 
+export enum UserAgeEnum {
+  AGE_MIN = 18,
+  AGE_MAX = 150,
+}
+
 export interface User {
   readonly id: string;
 

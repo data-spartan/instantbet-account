@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { User } from '../../users/entities/user.entity';
+import { User } from '../../../entities/user.entity';
 import { AuthHelper } from '../auth.helper';
 import { Request } from 'express';
 import { readFileSync } from '../helpers/readFile.helpers';

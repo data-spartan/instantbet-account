@@ -7,9 +7,11 @@ import {
   Unique,
   Index,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
-import { UserRolesEnum } from '../roles/roles.enum';
+import { UserRolesEnum } from '../api/users/roles/roles.enum';
 import { RefreshToken } from './token.entity';
+import { PrivateFile } from './file.entity';
 
 //changed default UQ name to be able to catch UQ constraint error properly
 //in typeormException.filter and propagate adequate resp to the client
@@ -52,6 +54,9 @@ export class User {
 
   @Column({ type: 'varchar', nullable: true, default: null, select: false })
   public photoUrl?: string;
+
+  @OneToMany(() => PrivateFile, (file: PrivateFile) => file.owner)
+  public files: PrivateFile[];
 
   @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user, {
     nullable: true,

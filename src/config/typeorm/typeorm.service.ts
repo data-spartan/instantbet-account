@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { entities } from 'src/api/api.entities';
 import { TypeORMConfigEnum } from './typeorm.enum';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import { entities } from 'src/entities/api.entities';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {

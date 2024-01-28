@@ -1,7 +1,7 @@
 import { ISuccessResponse } from '../interfaces';
 
 export const ResponseSuccess = (
-  message: string,
+  message: string = '',
   result: any = null,
   // statusCode: number = HttpStatus.OK,
 ): ISuccessResponse => {
