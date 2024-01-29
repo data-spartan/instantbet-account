@@ -53,7 +53,7 @@ export class User {
   public verifyEmailToken?: string;
 
   @Column({ type: 'varchar', nullable: true, default: null, select: false })
-  public photoUrl?: string;
+  public avatar?: string;
 
   @OneToMany(() => PrivateFile, (file: PrivateFile) => file.owner)
   public files: PrivateFile[];

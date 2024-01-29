@@ -73,18 +73,23 @@ export class UsersService {
   }
 
   async updateProfile(
-    id: User['id'],
+    user: User,
     attrs: Partial<User>,
-    profilePhoto: Express.Multer.File,
+    avatar: Express.Multer.File,
   ) {
     try {
-      if (profilePhoto) {
-        attrs.photoUrl = profilePhoto.path;
+      if (avatar) {
+        attrs.avatar = avatar.path;
       }
-      await this.userRepo.update({ id }, { ...attrs });
-      return { id, props: `${Object.keys(attrs).join(',')}` };
+      unlink(user.avatar, (err) => {
+        if (err) {
+          throw err;
+        }
+      });
+      await this.userRepo.update({ id: user.id }, { ...attrs });
+      return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
     } catch (error) {
-      unlink(profilePhoto.path, () => {
+      unlink(avatar.path, () => {
         throw new HttpException(error.message, error.status);
       });
     }

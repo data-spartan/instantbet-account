@@ -87,17 +87,13 @@ export class AdminController {
   }
 
   @Patch('/me')
-  @UseInterceptors(FileInterceptor('profilePhoto'))
+  @UseInterceptors(FileInterceptor('avatar'))
   async update(
     @Req() { user }: CustomRequest,
     @Body() body: UserUpdateDto,
-    @UploadedFile() profilePhoto: Express.Multer.File,
+    @UploadedFile() avatar: Express.Multer.File,
   ) {
-    const result = await this.usersService.updateProfile(
-      user.id,
-      body,
-      profilePhoto,
-    );
+    const result = await this.usersService.updateProfile(user, body, avatar);
 
     return ResponseSuccess(
       `user ${result.id} updated ${result.props} succesfully`,

@@ -58,7 +58,7 @@ export class AuthController {
     @Req() { user }: CustomRequest,
     @Body() body: ChangePasswordDto,
   ) {
-    await this.authService.changePassword(body, user);
+    await this.authService.changePassword(body, user.id);
     return ResponseSuccess(`user ${user.id} changed password succesfully`);
   }
 

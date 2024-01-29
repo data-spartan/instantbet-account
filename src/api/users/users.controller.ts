@@ -38,19 +38,15 @@ export class UsersController {
   }
 
   @Patch('/me')
-  @UseInterceptors(FileInterceptor('profilePhoto'))
+  @UseInterceptors(FileInterceptor('avatar'))
   async update(
     @Req() { user }: CustomRequest,
-    @UploadedFile() profilePhoto: Express.Multer.File,
+    @UploadedFile() avatar: Express.Multer.File,
     @Body() body: UserUpdateDto,
   ) {
-    const result = await this.usersService.updateProfile(
-      user.id,
-      body,
-      profilePhoto,
-    );
+    const result = await this.usersService.updateProfile(user, body, avatar);
     return ResponseSuccess(
-      `user ${result.id} updated ${result.props} succesfully. ${profilePhoto.path}`,
+      `user ${result.id} updated ${result.props} succesfully.`,
     );
   }
 

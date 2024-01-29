@@ -59,12 +59,19 @@ export class MediaService {
     files: Array<Express.Multer.File>,
     ownerId: User['id'],
   ): Promise<any> {
+    const fileObjects = files.map((file) => ({
+      key: uuidv4() + file.originalname,
+      bucket: this.bucketName,
+      buffer: file.buffer,
+      owner: ownerId,
+      mimetype: file.mimetype,
+      acl: 'private',
+    }));
     try {
-      const signedUrlsPromises = files.map(async (file) => {
-        const key = uuidv4() + file.originalname;
+      const signedUrlsPromises = fileObjects.map(async (file) => {
         const params = this.createParams(
           this.bucketName,
-          key,
+          file.key,
           file.buffer,
           'private',
           file.mimetype,
@@ -74,25 +81,24 @@ export class MediaService {
          for S3 bucket. */
         const command = new GetObjectCommand(params);
         await this.s3.putObject(params);
-        const f = this.fileRepo.create({
-          id: uuidv4(),
-          key: uuidv4() + file.originalname,
+        await this.fileRepo.insert({
+          key: file.key,
+          owner: {
+            id: ownerId,
+          },
           mimetype: file.mimetype,
-          owner: { id: ownerId },
         });
-        console.log(f);
-        await this.fileRepo.insert(f);
-        // await this.fileRepo.insert({
-        //   key: key,
-        //   owner: {
-        //     id: ownerId,
-        //   },
-        //   mimetype: file.mimetype,
-        // });
         return getSignedUrl(this.s3, command, { expiresIn: 300 });
       });
       return await Promise.all(signedUrlsPromises);
     } catch (error) {
+      //any error occurs delete from db and s3 to preserve data integrity
+      const deleteOperation = fileObjects.map(async (file) => {
+        await this.s3.deleteObject({ Bucket: file.bucket, Key: file.key });
+        await this.fileRepo.delete({ key: file.key });
+      });
+      await Promise.all(deleteOperation);
+
       throw new HttpException(
         error.Code || error.message,
         error['$metadata']?.httpStatusCode || error.status,

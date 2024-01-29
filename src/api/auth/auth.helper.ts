@@ -39,18 +39,16 @@ export class AuthHelper {
     return argon2.verify(data1, data2);
   }
 
-  public async validateUser(
-    decoded: any,
-    getPassword: boolean = false,
-  ): Promise<User> {
+  public async validateUser(decoded: any): Promise<User> {
     return this.userRepo.findOne({
       select: {
         id: true,
         email: true,
-        verifyEmailToken: true,
+        // verifyEmailToken: true,
         role: true,
         verifiedEmail: true,
-        password: getPassword,
+        avatar: true,
+        password: false,
       },
       where: { id: decoded.sub },
     });

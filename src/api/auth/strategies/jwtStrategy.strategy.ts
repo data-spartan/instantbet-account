@@ -31,10 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(req: Request, payload: any) {
-    if (!req.originalUrl.includes('password')) {
-      const user = await this.authHelper.validateUser(payload);
-    }
-    const user = await this.authHelper.validateUser(payload, true);
+    const user = await this.authHelper.validateUser(payload);
     if (!user) throw new UnauthorizedException();
     //this validate method attaches user to Request object when return user
     return user;

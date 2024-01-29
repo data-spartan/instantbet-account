@@ -176,17 +176,16 @@ export class AuthService implements OnModuleInit {
 
   public async changePassword(
     { currentPassword, newPassword }: ChangePasswordDto,
-    user: User,
+    id: User['id'],
   ) {
-    // const userExists: User = await this.userRepo.findOne({
-    //   select: { id: true, password: true },
-    //   where: { id },
-    // });
+    const user: User = await this.userRepo.findOne({
+      select: { id: true, password: true },
+      where: { id },
+    });
 
     if (!user) {
       throw new HttpException('No user found', HttpStatus.NOT_FOUND);
     }
-
     const isPasswordValid: boolean = await this.authHelper.isPasswordValid(
       currentPassword,
       user.password,
