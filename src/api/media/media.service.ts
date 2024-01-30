@@ -47,12 +47,28 @@ export class MediaService {
   }
 
   public async getUsersFiles(ownerId: User['id']) {
-    const userWithFiles = await this.userRepo.findOne({
-      where: { id: ownerId },
-      relations: ['files'],
-      select: { id: true, files: true },
-    });
+    /* user is the alias for the User entity.
+    files is the alias for the files relation in the User entity */
+    const userWithFiles = await this.userRepo
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.files', 'files')
+      .where('user.id = :ownerId', { ownerId })
+      .select(['user.id', 'files'])
+      .getOne();
+    // const userWithFiles = await this.userRepo.findOne({
+    //   where: { id: ownerId },
+    //   relations: ['files'],
+    //   select: { id: true, files: true },
+    // });
     return userWithFiles;
+  }
+
+  public async deleteFiles(filesKeys: string[]) {
+    const deleteOperation = filesKeys.map(async (key) => {
+      await this.s3.deleteObject({ Bucket: this.bucketName, Key: key });
+      await this.fileRepo.delete({ key: key });
+    });
+    await Promise.all(deleteOperation);
   }
 
   public async uploadFiles(
@@ -61,11 +77,9 @@ export class MediaService {
   ): Promise<any> {
     const fileObjects = files.map((file) => ({
       key: uuidv4() + file.originalname,
-      bucket: this.bucketName,
       buffer: file.buffer,
       owner: ownerId,
       mimetype: file.mimetype,
-      acl: 'private',
     }));
     try {
       const signedUrlsPromises = fileObjects.map(async (file) => {
@@ -92,9 +106,9 @@ export class MediaService {
       });
       return await Promise.all(signedUrlsPromises);
     } catch (error) {
-      //any error occurs delete from db and s3 to preserve data integrity
+      //any error occurs delete from db and s3 to preserve data consistency
       const deleteOperation = fileObjects.map(async (file) => {
-        await this.s3.deleteObject({ Bucket: file.bucket, Key: file.key });
+        await this.s3.deleteObject({ Bucket: this.bucketName, Key: file.key });
         await this.fileRepo.delete({ key: file.key });
       });
       await Promise.all(deleteOperation);

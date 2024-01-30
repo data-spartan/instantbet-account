@@ -1,5 +1,7 @@
 import {
+  Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Post,
@@ -13,6 +15,7 @@ import { MediaService } from './media.service';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
 import { CustomRequest } from 'src/common/interfaces';
 import { ResponseSuccess } from 'src/common/response-formatter';
+import { DeleteMediaDto } from './dto/deleteMedia.dto';
 
 @Controller('/media')
 export class MediaController {
@@ -35,5 +38,13 @@ export class MediaController {
   async getUserMedia(@Req() { user }: CustomRequest) {
     const signedUrls = await this.mediaService.getUsersFiles(user.id);
     return ResponseSuccess('files retrieved succesfully', signedUrls);
+  }
+
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @Delete('')
+  async deleteUserMedia(@Body() { deleteFiles }: DeleteMediaDto) {
+    await this.mediaService.deleteFiles(deleteFiles);
+    return ResponseSuccess('files deleted succesfully');
   }
 }
