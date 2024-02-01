@@ -16,25 +16,6 @@ export class UsersService {
     private readonly postgresQueries: PostgresTypeOrmQueries,
   ) {}
 
-  public async findAll(
-    cursor: Date,
-    userId: string,
-    limit: number,
-    direction: string,
-  ): Promise<User[]> {
-    try {
-      return this.postgresQueries.allUsersPagination(
-        User,
-        cursor,
-        userId,
-        limit,
-        direction,
-      );
-    } catch (error) {
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
   public async findAllQuery(
     cursor: Date,
     userId: string,

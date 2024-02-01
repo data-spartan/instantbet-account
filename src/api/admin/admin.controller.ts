@@ -19,7 +19,6 @@ import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
 import { CreateTestUserDto } from './dto/createTestUser.dto';
 import { CustomRequest } from 'src/common/interfaces';
 import { UserUpdateDto } from '../users/dto';
-import { UsersPaginationDto } from '../users/dto/usersPagination.dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -33,23 +32,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class AdminController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('/users')
-  @HttpCode(200)
-  public async findAll(@Query() query: UsersPaginationDto) {
-    //http://localhost:5000/admin/users?timestamp=2023-10-02 14:11:29.400&limit=2&cursor=c5369eed-fb5d-467a-a151-b6e77bee5783&direction=Next
-    const { cursor, userId, limit, direction } = query;
-    const result = await this.usersService.findAll(
-      cursor,
-      userId,
-      limit,
-      direction,
-    );
-    return ResponseSuccess(`users retrieved succesfully`, result);
-  }
-
   @Get('/users/search')
   @HttpCode(200)
-  public async findAllQuery(@Query() query: any) {
+  public async findAllQuery(@Query() query: UsersPaginationQueryDto) {
+    //http://localhost:5000/admin/users?timestamp=2023-10-02 14:11:29.400&limit=2&cursor=c5369eed-fb5d-467a-a151-b6e77bee5783&direction=Next
     const { cursor, userId, limit, direction, ...rest } = query;
     const result = await this.usersService.findAllQuery(
       cursor,

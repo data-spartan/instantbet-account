@@ -12,6 +12,11 @@ export enum UserAgeEnum {
   AGE_MAX = 150,
 }
 
+export enum CursorPaginationDirections {
+  NEXT = 'Next',
+  PREVIOUS = 'Previous',
+}
+
 export interface User {
   readonly id: string;
 
