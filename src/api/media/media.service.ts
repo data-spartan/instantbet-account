@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PrivateFile, User } from '../users/index.entity';
+import { S3Enum } from './s3.provider';
 
 @Injectable()
 export class MediaService {
@@ -13,7 +14,7 @@ export class MediaService {
   private bucketName: string;
   constructor(
     private readonly configService: ConfigService,
-    @Inject('S3_PROVIDER') private readonly s3Provider: S3,
+    @Inject(S3Enum.S3_PROVIDER) private readonly s3Provider: S3,
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(PrivateFile) private fileRepo: Repository<PrivateFile>,
   ) {

@@ -2,10 +2,12 @@ import { Provider } from '@nestjs/common';
 import { S3 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
 
-export const S3_PROVIDER = 'S3_PROVIDER';
+export enum S3Enum {
+  S3_PROVIDER = 'S3_PROVIDER',
+}
 
 export const S3Provider: Provider = {
-  provide: S3_PROVIDER,
+  provide: S3Enum.S3_PROVIDER,
   useFactory: (configService: ConfigService) => {
     return new S3({
       endpoint: configService.get('S3_ENDPOINT'),
