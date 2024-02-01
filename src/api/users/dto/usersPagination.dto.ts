@@ -1,6 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { UUID } from 'crypto';
+import { CursorPaginationDirections } from '../interfaces/user.interface';
 
 export class UsersPaginationDto {
   @IsString()
@@ -14,6 +21,6 @@ export class UsersPaginationDto {
   @IsNumber()
   public limit: number;
 
-  @IsIn(['Next', 'Previous'])
-  public direction: 'Next' | 'Previous';
+  @IsEnum(CursorPaginationDirections)
+  public direction: CursorPaginationDirections;
 }

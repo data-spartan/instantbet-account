@@ -8,6 +8,7 @@ import { WinstonModule } from 'nest-winston';
 
 import * as cookieParser from 'cookie-parser';
 import { instance } from './logger/loggerApp.config';
+// import { join } from 'path';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
@@ -17,6 +18,10 @@ async function bootstrap() {
     cors: true,
   });
   const config: ConfigService = app.get(ConfigService);
+  // app.useStaticAssets(join(__dirname, '..', 'uploads'), {
+  //   index: false,
+  //   prefix: '/uploads',
+  // });
   const port: number = config.get<number>('APP_PORT');
   const apiPrefix: string = config.get('APP_API_PREFIX');
   app.setGlobalPrefix(apiPrefix);

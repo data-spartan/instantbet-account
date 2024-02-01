@@ -14,12 +14,15 @@ export class PostgresTypeOrmRawQueries {
     return query;
   }
 
-  public async usersQueryPagination(sign: string, params: any) {
+  public async usersQueryPagination(sign: string, params: string[]) {
+    let andConditions = '';
     const columns = `"id","email","verifiedEmail","role","createdAt"`;
-
-    const andConditions =
-      'AND ' +
-      params.map((prop, index) => `"${prop}" = $${index + 4}`).join(' AND ');
+    // index + 4 -> we have $1,$2,$3 and by adding +4 we ensure that every param gets own $ placeholder
+    if (params.length > 0) {
+      andConditions =
+        'AND ' +
+        params.map((prop, index) => `"${prop}" = $${index + 4}`).join(' AND ');
+    }
     const query = `
     SELECT ${columns}
     FROM public.users

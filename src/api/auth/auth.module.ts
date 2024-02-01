@@ -7,7 +7,7 @@ import { AuthHelper } from './auth.helper';
 import { AuthService } from './auth.service';
 
 import { ConfigService } from '@nestjs/config';
-import { User } from '../users/entities/user.entity';
+import { User } from '../../entities/user.entity';
 import { RefreshToken } from '../users/index.entity';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 import { MailModule } from 'src/mailer/mail.module';

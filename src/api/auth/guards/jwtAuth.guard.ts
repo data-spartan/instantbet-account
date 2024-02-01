@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthGuard, IAuthGuard } from '@nestjs/passport';
-import { User } from 'src/api/users/entities/user.entity';
+import { User } from 'src/entities/user.entity';
 import { jwtGuardException } from 'src/exception-filters/exceptions';
 
 @Injectable() //when req comes to guard,first goes through canAcivate

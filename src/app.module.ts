@@ -14,6 +14,8 @@ import { DirectoryCreationService } from './shared/dirCreation/dirCreation';
 import { ResponseMessageInterceptor } from './interceptors/responseMessage.interceptor';
 import { TypeOrmConfigService } from './config/typeorm/typeorm.service';
 import { LoggerMiddleware } from './middlewares/logging.middleware';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { ServeStaticConfigService } from './shared/serveStatic/serveStatic.service';
 
 @Module({
   imports: [
@@ -22,6 +24,11 @@ import { LoggerMiddleware } from './middlewares/logging.middleware';
       //using this.config.get can read proces.env var or .env file if specified
       // envFilePath: '.env',
       ignoreEnvFile: process.env.NODE_ENV === 'dev' ? false : true,
+    }),
+    //If we need to get the localy uploaded users media
+    //the server detects the file as a route, thats why we need ServeStatic
+    ServeStaticModule.forRootAsync({
+      useClass: ServeStaticConfigService,
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     ApiModule,

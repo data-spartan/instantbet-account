@@ -1,11 +1,12 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { User } from '../../entities/user.entity';
 import { CreateTestUserDto } from '../admin/dto';
 import { AuthHelper } from '../auth/auth.helper';
 // import { LoggerService } from 'src/logger/logger.service';
 import { PostgresTypeOrmQueries } from 'src/database/postgres/queries/postgresTypeorm.query';
+import { unlink } from 'fs';
 
 @Injectable()
 export class UsersService {
@@ -14,25 +15,6 @@ export class UsersService {
     private authHelper: AuthHelper,
     private readonly postgresQueries: PostgresTypeOrmQueries,
   ) {}
-
-  public async findAll(
-    cursor: Date,
-    userId: string,
-    limit: number,
-    direction: string,
-  ): Promise<User[]> {
-    try {
-      return this.postgresQueries.allUsersPagination(
-        User,
-        cursor,
-        userId,
-        limit,
-        direction,
-      );
-    } catch (error) {
-      throw new HttpException(error.message, error.status);
-    }
-  }
 
   public async findAllQuery(
     cursor: Date,
@@ -58,7 +40,6 @@ export class UsersService {
   public async findOne(id: string): Promise<User> {
     try {
       return await this.userRepo.findOneByOrFail({ id });
-      // return user;
     } catch (error) {
       throw new HttpException(`user with id: ${id} not found`, 404);
     }
@@ -72,12 +53,26 @@ export class UsersService {
     }
   }
 
-  async updateProfile(id: User['id'], attrs: Partial<User>) {
+  async updateProfile(
+    user: User,
+    attrs: Partial<User>,
+    avatar: Express.Multer.File,
+  ) {
     try {
-      await this.userRepo.update({ id }, { ...attrs });
-      return { id, props: `${Object.keys(attrs).join(',')}` };
+      if (avatar) {
+        attrs.avatar = avatar.path;
+      }
+      unlink(user.avatar, (err) => {
+        if (err) {
+          throw err;
+        }
+      });
+      await this.userRepo.update({ id: user.id }, { ...attrs });
+      return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
     } catch (error) {
-      throw new HttpException(error.message, error.status);
+      unlink(avatar.path, () => {
+        throw new HttpException(error.message, error.status);
+      });
     }
   }
 

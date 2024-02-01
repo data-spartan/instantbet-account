@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthHelper } from './auth.helper';
 import { Repository } from 'typeorm';
 import { UserRolesEnum } from '../users/roles/roles.enum';
-import { User } from '../users/entities/user.entity';
+import { User } from '../../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { ConfigService } from '@nestjs/config';
 import { LoginDto } from './dto/login.dto';
@@ -176,17 +176,16 @@ export class AuthService implements OnModuleInit {
 
   public async changePassword(
     { currentPassword, newPassword }: ChangePasswordDto,
-    user: User,
+    id: User['id'],
   ) {
-    // const userExists: User = await this.userRepo.findOne({
-    //   select: { id: true, password: true },
-    //   where: { id },
-    // });
+    const user: User = await this.userRepo.findOne({
+      select: { id: true, password: true },
+      where: { id },
+    });
 
     if (!user) {
       throw new HttpException('No user found', HttpStatus.NOT_FOUND);
     }
-
     const isPasswordValid: boolean = await this.authHelper.isPasswordValid(
       currentPassword,
       user.password,

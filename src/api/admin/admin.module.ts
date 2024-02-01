@@ -1,7 +1,7 @@
 import { Module, UseFilters, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
-import { User } from '../users/entities/user.entity';
+import { User } from '../../entities/user.entity';
 import { AdminController } from './admin.controller';
 import { UsersModule } from '../users/users.module';
 // import { LoggerService } from 'src/logger/logger_.service';
