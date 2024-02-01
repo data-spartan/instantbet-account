@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { GetObjectCommand, ObjectCannedACL, S3 } from '@aws-sdk/client-s3';
 import { ConfigService } from '@nestjs/config';
@@ -9,23 +9,15 @@ import { PrivateFile, User } from '../users/index.entity';
 
 @Injectable()
 export class MediaService {
-  private s3: S3;
+  private readonly s3: S3;
   private bucketName: string;
   constructor(
     private readonly configService: ConfigService,
+    @Inject('S3_PROVIDER') private readonly s3Provider: S3,
     @InjectRepository(User) private userRepo: Repository<User>,
     @InjectRepository(PrivateFile) private fileRepo: Repository<PrivateFile>,
   ) {
-    this.s3 = new S3({
-      endpoint: this.configService.get('S3_ENDPOINT'),
-      region: this.configService.get('S3_REGION'),
-      credentials: {
-        accessKeyId: this.configService.get('S3_KEY'),
-        secretAccessKey: this.configService.get('S3_SECRET'),
-      },
-      maxAttempts: 5,
-    });
-
+    this.s3 = s3Provider;
     this.bucketName = this.configService.get('S3_BUCKET_NAME');
   }
 
