@@ -17,6 +17,7 @@ import { readFileSync } from './helpers/readFile.helpers';
 import { DatabaseModule } from 'src/database/database.module';
 import { JwtStrategy } from './strategies/jwtStrategy.strategy';
 import { JwtRefreshStrategy } from './strategies/jwtRefreshStrategy.strategy';
+import { RedisCacheModule } from 'src/shared/redisCache/redisCache.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { JwtRefreshStrategy } from './strategies/jwtRefreshStrategy.strategy';
     TypeOrmModule.forFeature([User, RefreshToken]),
     MailModule,
     DatabaseModule,
+    RedisCacheModule,
   ],
   controllers: [AuthController],
   providers: [

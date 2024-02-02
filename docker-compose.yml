@@ -7,8 +7,8 @@ networks:
 services:
   postgres:
     hostname: instantbet-account
-    container_name: instanbet-acc-postgres
     image: postgres:15.5
+    container_name: instanbet-acc-postgres
     restart: unless-stopped
     ports:
       - ${DATABASE_PORT}:5432
@@ -22,11 +22,11 @@ services:
     networks:
       - instantbet-account
     healthcheck:
-      test: 'exit 0'
+      test: exit 0
 
   pgadmin:
-    container_name: instanbet-acc-pgadmin
     image: dpage/pgadmin4:latest
+    container_name: instanbet-acc-pgadmin
     restart: unless-stopped
     ports:
       - ${PGADMIN_PORT}:80
@@ -35,14 +35,43 @@ services:
       PGADMIN_DEFAULT_PASSWORD: ${DATABASE_PASSWORD}
       PGADMIN_LISTEN_PORT: 80
     volumes:
-      - 'pgadmin-data:/var/lib/pgadmin'
+      - pgadmin-data:/var/lib/pgadmin
     networks:
       - instantbet-account
     depends_on:
       - postgres
 
+
+  redis:
+    image: redis:latest
+    container_name: instanbet-acc-redis
+    hostname: ${REDIS_HOSTNAME}
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    volumes:
+      - redis-data:/data
+    networks:
+      - instantbet-account
+    restart: unless-stopped
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: instantbet-acc-redis-commander
+    depends_on:
+      - redis
+    ports:
+      - ${COMMANDER_PORT}:8081
+    environment:
+      - REDIS_HOST=${REDIS_HOSTNAME}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=${REDIS_PORT}
+    networks:
+      - instantbet-account
+    restart: unless-stopped
+
   acc-app:
-    container_name: instanbet-acc
+    container_name: instanbet-acc-app
     build:
       context: ./
       dockerfile: Dockerfile
@@ -60,6 +89,7 @@ services:
     depends_on:
       - postgres
       - pgadmin
+      - redis
 
 volumes:
   acc-app:
@@ -67,4 +97,6 @@ volumes:
   postgres-data:
     driver: local
   pgadmin-data:
+    driver: local
+  redis-data:
     driver: local
