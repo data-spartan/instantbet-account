@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   RedisModuleOptions,
@@ -8,14 +8,7 @@ import { RedisConfigEnum } from './interfaces/redis.enum';
 
 @Injectable()
 export class RedisConfigService implements RedisModuleOptionsFactory {
-  @Inject(ConfigService)
-  private readonly config: ConfigService;
-
-  onModuleInit() {
-    console.warn(`### Redis Service Module ###`);
-    console.warn(`Redis Module Initiated.`);
-    console.warn(`### Redis Service Module END ###`);
-  }
+  constructor(private readonly config: ConfigService) {}
 
   createRedisModuleOptions(): RedisModuleOptions | Promise<RedisModuleOptions> {
     return {

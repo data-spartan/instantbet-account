@@ -1,20 +1,59 @@
 import { InjectRedis } from '@nestjs-modules/ioredis';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
 import {
   FORGOT_PASSWORD_EXPIRES,
+  REFRESH_TOKENS_EXPIRES,
   VERIFY_EMAIL_EXPIRES,
   VERIFY_EMAIL_PREFIX,
   VERIFY_TELEPHONE_EXPIRES,
   VERIFY_TELEPHONE_PREFIX,
 } from './redisCache.consts';
+import { RedisHashesEnum } from './interfaces/redis.enum';
 
 @Injectable()
 export class RedisCacheService {
   constructor(
     @InjectRedis()
     private readonly connection: Redis,
+    private readonly logger: Logger,
   ) {}
+
+  public async hsetRefreshToken(
+    userId: string,
+    token: string,
+    hashName: RedisHashesEnum,
+  ) {
+    try {
+      await this.connection.hset(`${hashName}:${userId}`, userId, token);
+      await this.connection.expire(`${hashName}:${userId}`, 45);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  public async hgetToken(userId: string, hashName: RedisHashesEnum) {
+    try {
+      return await this.connection.hget(`${hashName}:${userId}`, userId);
+    } catch (e) {
+      throw e;
+    }
+  }
+  public async hgetallToken(userId: string, hashName: RedisHashesEnum) {
+    try {
+      return await this.connection.hgetall(`${hashName}:${userId}`);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  public async deleteToken(userId: string, hashName: RedisHashesEnum) {
+    try {
+      await this.connection.del(`${hashName}:${userId}`);
+    } catch (e) {
+      throw e;
+    }
+  }
 
   public async setForgetPasswordToken(userId: string, token: string) {
     try {
