@@ -7,6 +7,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { AuthHelper } from './auth.helper';
 import { Repository } from 'typeorm';
 import { UserRolesEnum } from '../users/roles/roles.enum';
@@ -18,6 +19,8 @@ import { ChangePasswordDto } from '../users/dto';
 import { RefreshToken } from '../users/index.entity';
 import { MailService } from 'src/mailer/mail.service';
 import { ForgotPasswordEmailDto } from './dto';
+import { RedisCacheService } from 'src/shared/redisCache/redisCache.service';
+import { RedisHashesEnum } from 'src/shared/redisCache/interfaces/redis.enum';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -29,6 +32,7 @@ export class AuthService implements OnModuleInit {
     private readonly config: ConfigService,
     private readonly logger: Logger,
     private readonly mailService: MailService,
+    private readonly redisService: RedisCacheService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -86,12 +90,16 @@ export class AuthService implements OnModuleInit {
     }
 
     user = new User(registerDto);
+    user.id = uuidv4();
     user.password = await this.authHelper.encodePassword(user.password);
 
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
-    // const token = await this.authHelper.handleTokens(user);
-    user.verifyEmailToken = await this.authHelper.hashData(emailToken);
 
+    await this.redisService.hsetToken(
+      user.id,
+      emailToken,
+      RedisHashesEnum.VERIFY_EMAIL_TOKEN,
+    );
     const registerUser = await this.userRepo.insert(user);
 
     if (!registerUser) {

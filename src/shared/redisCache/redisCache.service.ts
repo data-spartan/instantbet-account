@@ -19,14 +19,14 @@ export class RedisCacheService {
     private readonly logger: Logger,
   ) {}
 
-  public async hsetRefreshToken(
+  public async hsetToken(
     userId: string,
     token: string,
     hashName: RedisHashesEnum,
   ) {
     try {
       await this.connection.hset(`${hashName}:${userId}`, userId, token);
-      await this.connection.expire(`${hashName}:${userId}`, 45);
+      await this.connection.expire(`${hashName}:${userId}`, 4555);
     } catch (e) {
       throw e;
     }

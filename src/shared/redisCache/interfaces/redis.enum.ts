@@ -7,4 +7,6 @@ export enum RedisConfigEnum {
 
 export enum RedisHashesEnum {
   REFRESH_TOKEN = 'refresh_tokens',
+  VERIFY_EMAIL_TOKEN = 'email_tokens',
+  FORGOT_PASSWORD_TOKEN = 'forgot_password_tokens',
 }
