@@ -95,7 +95,7 @@ export class AuthService implements OnModuleInit {
 
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
 
-    await this.redisService.hsetToken(
+    await this.redisService.hsetVerifyEmailToken(
       user.id,
       emailToken,
       RedisHashesEnum.VERIFY_EMAIL_TOKEN,
@@ -159,7 +159,7 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException('Email already confirmed');
     }
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
-    await this.redisService.hsetToken(
+    await this.redisService.hsetVerifyEmailToken(
       user.id,
       emailToken,
       RedisHashesEnum.FORGOT_PASSWORD_TOKEN,
@@ -244,7 +244,7 @@ export class AuthService implements OnModuleInit {
 
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
 
-    await this.redisService.hsetToken(
+    await this.redisService.hsetForgotPasswordToken(
       user.id,
       emailToken,
       RedisHashesEnum.FORGOT_PASSWORD_TOKEN,
