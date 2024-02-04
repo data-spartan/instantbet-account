@@ -10,11 +10,12 @@ import { Repository } from 'typeorm';
 import { User } from '../../entities/user.entity';
 import * as argon2 from 'argon2';
 import * as dayjs from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
 import { ConfigService } from '@nestjs/config';
 import { RefreshToken } from '../users/index.entity';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 import { PostgresTypeOrmQueries } from 'src/database/postgres/queries/postgresTypeorm.query';
-import { Token } from './interfaces';
+import { RefreshTokenI } from './interfaces';
 
 @Injectable()
 export class AuthHelper {
@@ -97,12 +98,16 @@ export class AuthHelper {
   }
 
   public async getJwtRefreshToken(userId: string) {
-    const payload = { sub: userId };
+    // const iatTimestamp = new Date();
+    const tokenId = uuidv4();
+    const payload = { sub: userId, tokenId };
+
     const refreshToken = await this.jwt.signAsync(
       payload,
       this.refreshKeysToken.refreshTokenPrivateKeyConfig(),
     );
     return {
+      tokenId,
       refreshToken,
     };
   }
@@ -115,11 +120,12 @@ export class AuthHelper {
 
     const hashedRefreshToken = await this.hashData(refreshToken.refreshToken);
     //insertResult is database response object
-    await this.postgresQueries.refreshTokenTransaction(
+    await this.postgresQueries.refreshTokenLoginTransaction(
       // this.dataSource,
       RefreshToken,
       hashedRefreshToken,
       user.id,
+      refreshToken.tokenId,
     );
 
     return {
@@ -128,7 +134,7 @@ export class AuthHelper {
     };
   }
 
-  public async generateRefreshTokens(payload: Token) {
+  public async generateRefreshTokens(payload: RefreshTokenI) {
     const [accessToken, newRefreshToken] = await Promise.all([
       this.getJwtAccessToken(payload.sub),
       this.getJwtRefreshToken(payload.sub),
@@ -142,17 +148,14 @@ export class AuthHelper {
       // this.dataSource,
       RefreshToken,
       hashedRefreshToken,
-      payload.sub,
+      payload,
+      newRefreshToken.tokenId,
     );
 
     return {
       sub: payload.sub,
       accessToken: accessToken.accessToken,
       refreshToken: newRefreshToken.refreshToken,
-      // accessTokenExpires: 10000, //getAccessExpiry(),
-      // user: {
-      //   id: payload.sub,
-      // },
     };
   }
 
@@ -171,12 +174,15 @@ export class AuthHelper {
 
   public async getUserIfRefreshTokenMatches(
     refreshToken: string,
-    payload: Token,
+    payload: RefreshTokenI,
   ) {
     const foundToken = await this.tokenRepo
       .createQueryBuilder('refreshToken')
       .leftJoinAndSelect('refreshToken.user', 'user')
-      .where('refreshToken.userId = :userId', { userId: payload.sub })
+      .where('refreshToken.userId = :userId AND refreshToken.id = :id', {
+        userId: payload.sub,
+        id: payload.tokenId,
+      })
       .select(['refreshToken.refreshToken'])
       .getOne();
     if (foundToken == null) {
@@ -184,6 +190,7 @@ export class AuthHelper {
       //TODO:inform the user with the payload sub
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
+
     const isMatch = await this.verifyData(
       foundToken.refreshToken ?? '', //argon2 hashed
       refreshToken, //Base64Url encoded

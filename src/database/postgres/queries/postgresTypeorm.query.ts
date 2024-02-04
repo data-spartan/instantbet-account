@@ -1,7 +1,8 @@
-import { EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityTarget } from 'typeorm';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PostgresTypeOrmRawQueries } from '../raw-queries/postgresTypeorm.rawqueries';
+import { RefreshToken } from 'src/entities/token.entity';
+import { RefreshTokenI } from 'src/api/auth/interfaces';
 
 @Injectable()
 export class PostgresTypeOrmQueries {
@@ -64,20 +65,52 @@ export class PostgresTypeOrmQueries {
     }
   }
 
-  public async refreshTokenTransaction(
-    entity: EntityClassOrSchema,
+  public async refreshTokenLoginTransaction(
+    entity: EntityTarget<RefreshToken>,
     hashedRefreshToken: string,
-    id: string,
+    userId: string,
+    tokenId: string,
   ) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     const manager = queryRunner.manager;
     try {
-      await manager.delete(entity, { user: id }); //{ user: id }
+      await manager.delete(entity, { user: userId, id: tokenId }); //{ user: id }
       const insertResult = await manager.insert(entity, {
+        id: tokenId,
         refreshToken: hashedRefreshToken,
-        user: id,
+        user: userId,
+      });
+      console.log(insertResult, 'inserted res');
+      await queryRunner.commitTransaction();
+      return insertResult;
+    } catch (error) {
+      await queryRunner.rollbackTransaction().catch((error: Error) => {
+        throw error;
+      });
+      throw new InternalServerErrorException(error);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async refreshTokenTransaction(
+    entity: EntityTarget<RefreshToken>,
+    hashedRefreshToken: string,
+    payload: RefreshTokenI,
+    newtokenId: string,
+  ) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    const manager = queryRunner.manager;
+    try {
+      await manager.delete(entity, { user: payload.sub, id: payload.tokenId }); //{ user: id }
+      const insertResult = await manager.insert(entity, {
+        id: newtokenId,
+        refreshToken: hashedRefreshToken,
+        user: payload.sub,
       });
       await queryRunner.commitTransaction();
       return insertResult;

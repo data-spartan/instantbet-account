@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
@@ -14,6 +20,14 @@ export class PrivateFile {
 
   @Column()
   mimetype: string;
+
+  @CreateDateColumn({
+    type: 'timestamptz',
+    nullable: true,
+    default: null,
+    precision: 6,
+  })
+  createdAt: Date;
 
   constructor(partial: Partial<PrivateFile>) {
     // super()

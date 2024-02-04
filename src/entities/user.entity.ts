@@ -58,19 +58,31 @@ export class User {
   @OneToMany(() => PrivateFile, (file: PrivateFile) => file.owner)
   public files: PrivateFile[];
 
-  @OneToOne(() => RefreshToken, (refreshToken) => refreshToken.user, {
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
     nullable: true,
   })
   public refreshToken?: RefreshToken;
 
-  @Column({ type: 'timestamp', nullable: true, default: null, select: false })
+  @Column({
+    type: 'timestamptz',
+    nullable: true,
+    default: null,
+    select: false,
+    precision: 6,
+  })
   public lastLoginAt: Date | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: 'timestamptz',
+    nullable: true,
+    default: null,
+    select: false,
+    precision: 6,
+  })
   public createdAt: Date;
 
-  @UpdateDateColumn({ select: false })
-  public updatedAt: Date;
+  // @UpdateDateColumn({ select: false })
+  // public updatedAt: Date;
 
   constructor(partial: Partial<User>) {
     // super()

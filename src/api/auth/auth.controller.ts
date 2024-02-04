@@ -25,6 +25,7 @@ import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
 import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
 import { VerifyEmailAuthGuard } from './guards/emailJwt.guard';
+import { Console } from 'console';
 
 @Controller('auth')
 export class AuthController {
@@ -62,12 +63,12 @@ export class AuthController {
     return ResponseSuccess(`user ${user.id} changed password succesfully`);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtRefreshGuard)
   @HttpCode(200)
   @Post('/sign-out')
-  async signOut(@Req() { user }: CustomRequest) {
-    await this.authService.signOut(user.id);
-    return ResponseSuccess(`user ${user.id} signed-out succesfully`);
+  async signOut(@Req() { userId, tokenId }: any) {
+    await this.authService.signOut(userId, tokenId);
+    return ResponseSuccess(`user ${userId} signed-out succesfully`);
   }
 
   @UseGuards(JwtRefreshGuard)
