@@ -76,7 +76,7 @@ export class AuthService implements OnModuleInit {
       this.logger.warn(
         `Administrator creation success. Admin e-mail: ${admin.email}`,
       );
-      this.authHelper.confirmEmail(admin.email, null);
+      // this.authHelper.confirmEmail(admin.email);
     }
   }
 
@@ -159,14 +159,17 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException('Email already confirmed');
     }
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
-    const hashedEmailToken = await this.authHelper.hashData(emailToken);
+    await this.redisService.hsetToken(
+      user.id,
+      emailToken,
+      RedisHashesEnum.FORGOT_PASSWORD_TOKEN,
+    );
     await this.mailService.sendVerificationEmail(
       user.email,
       // user.firstName,
       // user.lastName,
       emailToken,
     );
-    this.userRepo.update(user.id, { verifyEmailToken: hashedEmailToken });
   }
 
   public async signOut(userId: string, tokenId: string) {
@@ -213,14 +216,16 @@ export class AuthService implements OnModuleInit {
     return true;
   }
 
-  public async confirmForgotPassword(newPassword: string, id: string) {
+  public async confirmForgotPassword(newPassword: string, id: User['id']) {
     const hashedPassword = await this.authHelper.encodePassword(newPassword);
 
     await this.userRepo.update(id, {
       password: hashedPassword,
-      verifyEmailToken: null,
     });
-
+    await this.redisService.deleteToken(
+      id,
+      RedisHashesEnum.FORGOT_PASSWORD_TOKEN,
+    );
     return true;
   }
 
@@ -231,7 +236,6 @@ export class AuthService implements OnModuleInit {
       select: {
         id: true,
         email: true,
-        verifyEmailToken: true,
         role: true,
       },
       where: { email },
@@ -239,10 +243,13 @@ export class AuthService implements OnModuleInit {
     if (!user) throw new HttpException('user not found', HttpStatus.NOT_FOUND);
 
     const { emailToken } = await this.authHelper.getJwtEmailToken(user.email);
-    const hashedEmailToken = await this.authHelper.hashData(emailToken);
 
+    await this.redisService.hsetToken(
+      user.id,
+      emailToken,
+      RedisHashesEnum.FORGOT_PASSWORD_TOKEN,
+    );
     await this.mailService.sendForgotPasswordEmail(user.email, emailToken);
-    this.userRepo.update(user.id, { verifyEmailToken: hashedEmailToken });
     return true;
   }
 
@@ -257,5 +264,19 @@ export class AuthService implements OnModuleInit {
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
+  }
+
+  public async confirmEmail(email: string, userId: string) {
+    const user = await this.userRepo.update(
+      { email },
+      {
+        verifiedEmail: true,
+      },
+    );
+    await this.redisService.deleteToken(
+      userId,
+      RedisHashesEnum.VERIFY_EMAIL_TOKEN,
+    ); //invalidate old email token
+    return user;
   }
 }

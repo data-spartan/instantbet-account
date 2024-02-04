@@ -54,23 +54,12 @@ export class AuthHelper {
     });
   }
 
-  public async confirmEmail(email: string, invalidateToken: null) {
-    return this.userRepo.update(
-      { email },
-      {
-        verifiedEmail: true,
-        verifyEmailToken: invalidateToken,
-      },
-    );
-  }
-
   public async validateUserByEmail(email: string): Promise<User> {
     try {
       return await this.userRepo.findOneOrFail({
         select: {
           id: true,
           email: true,
-          verifyEmailToken: true,
           role: true,
         },
         where: { email: email },

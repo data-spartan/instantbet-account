@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -6,6 +11,8 @@ import { User } from '../../../entities/user.entity';
 import { AuthHelper } from '../auth.helper';
 import { Request } from 'express';
 import { readFileSync } from '../helpers/readFile.helpers';
+import { RedisCacheService } from 'src/shared/redisCache/redisCache.service';
+import { RedisHashesEnum } from 'src/shared/redisCache/interfaces/redis.enum';
 
 @Injectable()
 export class ForgotPasswordStrategy extends PassportStrategy(
@@ -14,6 +21,7 @@ export class ForgotPasswordStrategy extends PassportStrategy(
 ) {
   constructor(
     private readonly authHelper: AuthHelper,
+    private readonly redisService: RedisCacheService,
     private readonly configService: ConfigService,
   ) {
     super({
@@ -30,10 +38,20 @@ export class ForgotPasswordStrategy extends PassportStrategy(
   async validate(request: Request, payload: any): Promise<User> | never {
     const emailToken = request.header('Authorization').split(' ')[1];
     const user = await this.authHelper.validateUserByEmail(payload.email);
-    const isMatch = this.authHelper.verifyData(
-      user.verifyEmailToken,
-      emailToken,
+    if (!user) {
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+
+    const token = await this.redisService.hgetToken(
+      user.id,
+      RedisHashesEnum.FORGOT_PASSWORD_TOKEN,
     );
+
+    if (!token) {
+      throw new HttpException('Token expired', HttpStatus.NOT_FOUND);
+    }
+
+    const isMatch = token === emailToken;
     if (!isMatch)
       //it can happen that user clics on resend verifyemail even if link is not expired,
       // need to ensure that only last sent link is used
@@ -41,7 +59,6 @@ export class ForgotPasswordStrategy extends PassportStrategy(
         'Reused some of the previous forgot password links',
       );
 
-    // this.authHelper.confirmEmail(user.email, null);
     return user;
   }
 }

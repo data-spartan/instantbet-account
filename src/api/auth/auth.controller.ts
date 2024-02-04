@@ -113,7 +113,11 @@ export class AuthController {
   @Patch('verify-email')
   @HttpCode(200)
   async emailConfirmation(@Req() { user }: UserContext) {
-    return ResponseSuccess(`user ${user.id} verified e-mail succesfully!`);
+    const result = await this.authService.confirmEmail(user.email, user.id);
+    return ResponseSuccess(
+      `user ${user.id} verified e-mail succesfully!`,
+      result,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

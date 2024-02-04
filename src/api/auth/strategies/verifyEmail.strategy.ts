@@ -49,7 +49,7 @@ export class VerifyEmailStrategy extends PassportStrategy(
     );
 
     if (!token) {
-      throw new HttpException('Email token expired', HttpStatus.NOT_FOUND);
+      throw new HttpException('Token expired', HttpStatus.NOT_FOUND);
     }
 
     const isMatch = token === emailToken;
@@ -60,10 +60,6 @@ export class VerifyEmailStrategy extends PassportStrategy(
         'Reused some of the previous confirmation links',
       );
 
-    await this.redisService.deleteToken(
-      user.id,
-      RedisHashesEnum.VERIFY_EMAIL_TOKEN,
-    ); //invalidate old email token
     return user;
   }
 }
