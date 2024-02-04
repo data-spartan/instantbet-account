@@ -167,7 +167,7 @@ export class AuthService implements OnModuleInit {
         .createQueryBuilder()
         .delete()
         .from(RefreshToken)
-        .where('refreshToken.userId = :userId AND id = :id', {
+        .where('userId = :userId AND id = :id', {
           userId,
           id: tokenId,
         })

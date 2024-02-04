@@ -52,7 +52,6 @@ export class JwtRefreshStrategy extends PassportStrategy(
     );
     if (!user) throw new UnauthorizedException();
     //this validate method attaches user to Request object when return user
-
     return user;
   }
 }

@@ -82,7 +82,6 @@ export class PostgresTypeOrmQueries {
         refreshToken: hashedRefreshToken,
         user: userId,
       });
-      console.log(insertResult, 'inserted res');
       await queryRunner.commitTransaction();
       return insertResult;
     } catch (error) {

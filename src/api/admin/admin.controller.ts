@@ -17,7 +17,7 @@ import { UsersService } from '../users/users.service';
 import { UserRolesEnum } from '../users/roles/roles.enum';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
 import { CreateTestUserDto } from './dto/createTestUser.dto';
-import { CustomRequest } from 'src/common/interfaces';
+import { UserContext } from 'src/common/interfaces';
 import { UserUpdateDto } from '../users/dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
@@ -67,7 +67,7 @@ export class AdminController {
   }
 
   @Get('/me')
-  private async me(@Req() { user }: CustomRequest) {
+  private async me(@Req() { user }: UserContext) {
     const result = await this.usersService.findOne(user.id);
     return ResponseSuccess(`Retrieved user ${user.id} profile.`, result);
   }
@@ -75,7 +75,7 @@ export class AdminController {
   @Patch('/me')
   @UseInterceptors(FileInterceptor('avatar'))
   async update(
-    @Req() { user }: CustomRequest,
+    @Req() { user }: UserContext,
     @Body() body: UserUpdateDto,
     @UploadedFile() avatar: Express.Multer.File,
   ) {

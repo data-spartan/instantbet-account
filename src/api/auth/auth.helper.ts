@@ -45,7 +45,6 @@ export class AuthHelper {
       select: {
         id: true,
         email: true,
-        // verifyEmailToken: true,
         role: true,
         verifiedEmail: true,
         avatar: true,
@@ -186,8 +185,9 @@ export class AuthHelper {
       .select(['refreshToken.refreshToken'])
       .getOne();
     if (foundToken == null) {
-      //refresh token(sent in Auth header from FE) is valid but is not in database
-      //TODO:inform the user with the payload sub
+      //refresh token is valid but is not in database
+      //possible re-use!!! delete all refresh tokens(sessions) belonging to the sub
+      await this.tokenRepo.delete({ user: payload.sub });
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
@@ -205,7 +205,7 @@ export class AuthHelper {
       //can occur when a user runs multiple tabs of the front-end application in a browser or sometimes a lag
       // in a network and trying to use an already invalidated refresh token
       //less than 20s leeway mitigates this
-      if (diff < 20 * 1 * 1) {
+      if (diff < 10 * 1 * 1) {
         console.log('leeway');
         return await this.generateRefreshTokens(payload);
       }
