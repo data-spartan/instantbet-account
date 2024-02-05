@@ -18,12 +18,9 @@ async function bootstrap() {
     cors: true,
   });
   const config: ConfigService = app.get(ConfigService);
-  // app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-  //   index: false,
-  //   prefix: '/uploads',
-  // });
   const port: number = config.get<number>('APP_PORT');
   const apiPrefix: string = config.get('APP_API_PREFIX');
+
   app.setGlobalPrefix(apiPrefix);
   app.set('trust proxy', 1);
   app.use(
