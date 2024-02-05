@@ -1,6 +1,5 @@
 import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApiModule } from './api/api.module';
@@ -16,6 +15,7 @@ import { TypeOrmConfigService } from './config/typeorm/typeorm.service';
 import { LoggerMiddleware } from './middlewares/logging.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ServeStaticConfigService } from './shared/serveStatic/serveStatic.service';
+import { AppService } from './app.service';
 
 @Module({
   imports: [

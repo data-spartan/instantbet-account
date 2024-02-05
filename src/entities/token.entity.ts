@@ -3,10 +3,9 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn,
   JoinColumn,
-  OneToOne,
   Index,
+  ManyToOne,
 } from 'typeorm';
 import { User } from './user.entity';
 
@@ -19,13 +18,15 @@ export class RefreshToken {
   @Column({ type: 'varchar' })
   refreshToken?: string;
 
-  @CreateDateColumn({ type: 'timestamp', nullable: true, default: null })
-  createdAt: Date;
+  @CreateDateColumn({
+    type: 'timestamptz',
+    nullable: true,
+    default: null,
+    precision: 6,
+  })
+  iat: Date;
 
-  @UpdateDateColumn({ type: 'timestamp', nullable: true, default: null })
-  updatedAt: Date;
-
-  @OneToOne(() => User, (user) => user.refreshToken, { onDelete: 'CASCADE' }) //when user is deleted related token is also deleted
+  @ManyToOne(() => User, (user) => user.refreshToken, { onDelete: 'CASCADE' }) //when user is deleted related token is also deleted
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   user: User | string;
 }

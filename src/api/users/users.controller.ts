@@ -14,7 +14,7 @@ import { UserRolesEnum } from './roles/roles.enum';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { CustomRequest } from 'src/common/interfaces';
+import { UserContext } from 'src/common/interfaces';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ResponseSuccess } from 'src/common/response-formatter';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -32,7 +32,7 @@ export class UsersController {
   ) {}
 
   @Get('/me')
-  private async me(@Req() { user }: CustomRequest) {
+  private async me(@Req() { user }: UserContext) {
     const result = await this.usersService.findOne(user.id);
     return ResponseSuccess(`Retrieved user ${user.id} profile.`, result);
   }
@@ -40,7 +40,7 @@ export class UsersController {
   @Patch('/me')
   @UseInterceptors(FileInterceptor('avatar'))
   async update(
-    @Req() { user }: CustomRequest,
+    @Req() { user }: UserContext,
     @UploadedFile() avatar: Express.Multer.File,
     @Body() body: UserUpdateDto,
   ) {
@@ -51,7 +51,7 @@ export class UsersController {
   }
 
   @Delete()
-  async remove(@Req() { user }: CustomRequest) {
+  async remove(@Req() { user }: UserContext) {
     await this.usersService.remove(user.id);
 
     return ResponseSuccess(`user ${user.id} deleted succesfully.`);

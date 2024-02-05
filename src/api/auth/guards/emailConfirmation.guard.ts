@@ -4,14 +4,14 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CustomRequest } from 'src/common/interfaces';
+import { UserContext } from 'src/common/interfaces';
 
 @Injectable()
 export class EmailConfirmationGuard implements CanActivate {
   // decorators resolve from bottom to top,
   // you need first jwtauthguard to populate request object with user
   canActivate(context: ExecutionContext) {
-    const request: CustomRequest = context.switchToHttp().getRequest();
+    const request: UserContext = context.switchToHttp().getRequest();
 
     if (!request.user?.verifiedEmail) {
       throw new UnauthorizedException('Confirm your email first');

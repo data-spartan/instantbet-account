@@ -9,6 +9,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { readFileSync } from '../helpers/readFile.helpers';
 import { ConfigService } from '@nestjs/config';
 import { AuthHelper } from '../auth.helper';
+import { RefreshTokenI } from '../interfaces';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -29,7 +30,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
         (req: Request) => {
           const authCookie = req?.cookies['auth-cookie'];
           if (authCookie && authCookie.refreshToken) {
-            return req.cookies['auth-cookie'].refreshToken;
+            return req.cookies['auth-cookie'].refreshToken; //this where token is validated aggainst secrets
           }
           return null;
         },
@@ -37,7 +38,10 @@ export class JwtRefreshStrategy extends PassportStrategy(
     });
   }
 
-  async validate(req: Request, payload: any) {
+  async validate(req: Request, payload: RefreshTokenI) {
+    if (req.originalUrl.includes('sign-out')) {
+      return { userId: payload.sub, tokenId: payload.tokenId };
+    }
     const data = req?.cookies['auth-cookie'];
     if (!data?.refreshToken) {
       throw new BadRequestException('invalid refresh token');
@@ -48,7 +52,6 @@ export class JwtRefreshStrategy extends PassportStrategy(
     );
     if (!user) throw new UnauthorizedException();
     //this validate method attaches user to Request object when return user
-
     return user;
   }
 }
