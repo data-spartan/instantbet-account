@@ -19,8 +19,8 @@ import { ChangePasswordDto } from '../users/dto';
 import { RefreshToken } from '../users/index.entity';
 import { MailService } from 'src/mailer/mail.service';
 import { ForgotPasswordEmailDto } from './dto';
-import { RedisCacheService } from 'src/shared/redisCache/redisCache.service';
-import { RedisHashesEnum } from 'src/shared/redisCache/interfaces/redis.enum';
+import { RedisCacheService } from 'src/libs/common/redisCache/redisCache.service';
+import { RedisHashesEnum } from 'src/libs/common/redisCache/interfaces/redis.enum';
 
 @Injectable()
 export class AuthService implements OnModuleInit {

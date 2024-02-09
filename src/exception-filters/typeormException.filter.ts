@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 
 import { TypeORMError } from 'typeorm';
 import { checkTypeORMErrorType } from './helpers';
-import { GlobalResponseError } from 'src/common/response-formatter';
+import { GlobalResponseError } from 'src/libs/common/response-formatter';
 @Catch(TypeORMError)
 export class TypeORMExceptionFilter implements ExceptionFilter {
   // constructor(private readonly logger: LoggerService) {}

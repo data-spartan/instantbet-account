@@ -17,13 +17,13 @@ import { UsersService } from '../users/users.service';
 import { UserRolesEnum } from '../users/roles/roles.enum';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
 import { CreateTestUserDto } from './dto/createTestUser.dto';
-import { UserContext } from 'src/common/interfaces';
+import { UserContext } from 'src/libs/common/interfaces';
 import { UserUpdateDto } from '../users/dto';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { ResponseSuccess } from 'src/common/response-formatter';
+import { ResponseSuccess } from 'src/libs/common/response-formatter';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UsersPaginationQueryDto } from '../users/dto/usersPaginationQuery.dto';
-import { CheckIdDto } from 'src/common/dto/checkId.dto';
+import { CheckIdDto } from 'src/libs/common/dto/checkId.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('admin')

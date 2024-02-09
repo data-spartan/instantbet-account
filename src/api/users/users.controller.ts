@@ -14,9 +14,9 @@ import { UserRolesEnum } from './roles/roles.enum';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { UserContext } from 'src/common/interfaces';
+import { UserContext } from 'src/libs/common/interfaces';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { ResponseSuccess } from 'src/common/response-formatter';
+import { ResponseSuccess } from 'src/libs/common/response-formatter';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 

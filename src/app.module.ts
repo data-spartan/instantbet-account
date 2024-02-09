@@ -8,14 +8,15 @@ import {
   AllExceptionsFilter,
   TypeORMExceptionFilter,
 } from './exception-filters';
-import { DirectoryCreationService } from './shared/dirCreation/dirCreation';
+import { DirectoryCreationService } from './libs/common/dirCreation/dirCreation';
 
 import { ResponseMessageInterceptor } from './interceptors/responseMessage.interceptor';
 import { TypeOrmConfigService } from './config/typeorm/typeorm.service';
 import { LoggerMiddleware } from './middlewares/logging.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { ServeStaticConfigService } from './shared/serveStatic/serveStatic.service';
+import { ServeStaticConfigService } from './libs/common/serveStatic/serveStatic.service';
 import { AppService } from './app.service';
+import { RabbitMQModule } from './libs/common/rabitQueue/rabitmq.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AppService } from './app.service';
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     ApiModule,
+    RabbitMQModule,
   ],
   controllers: [AppController],
   providers: [

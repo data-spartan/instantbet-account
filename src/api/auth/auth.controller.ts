@@ -17,13 +17,13 @@ import {
 } from './dto';
 import { JwtAuthGuard } from './guards/jwtAuth.guard';
 import { AuthService } from './auth.service';
-import { UserContext } from 'src/common/interfaces';
+import { UserContext } from 'src/libs/common/interfaces';
 import { ChangePasswordDto } from '../users/dto';
 import { Response } from 'express';
 import { JwtRefreshGuard } from './guards/jwtRefreshAuth.guard';
 import { ForgotPasswordJwtAuthGuard } from './guards/forgotPasswordJwt.guard';
 import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
-import { ResponseSuccess } from 'src/common/response-formatter';
+import { ResponseSuccess } from 'src/libs/common/response-formatter';
 import { VerifyEmailAuthGuard } from './guards/emailJwt.guard';
 import { SignOutDto } from './dto/signOut.dto';
 import { RefreshTokenDto } from './dto/refreshToken.dto';

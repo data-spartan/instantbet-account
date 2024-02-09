@@ -13,8 +13,8 @@ import {
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { MediaService } from './media.service';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
-import { UserContext } from 'src/common/interfaces';
-import { ResponseSuccess } from 'src/common/response-formatter';
+import { UserContext } from 'src/libs/common/interfaces';
+import { ResponseSuccess } from 'src/libs/common/response-formatter';
 import { DeleteMediaDto } from './dto/deleteMedia.dto';
 
 @Controller('/media')

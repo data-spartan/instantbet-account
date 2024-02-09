@@ -17,7 +17,7 @@ import { readFileSync } from './helpers/readFile.helpers';
 import { DatabaseModule } from 'src/database/database.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwtRefresh.strategy';
-import { RedisCacheModule } from 'src/shared/redisCache/redisCache.module';
+import { RedisCacheModule } from 'src/libs/common/redisCache/redisCache.module';
 
 @Module({
   imports: [
