@@ -1,5 +1,5 @@
+import { User } from '@app/common/entities';
 import { Injectable } from '@nestjs/common';
-import { User } from 'src/api/users/index.entity';
 import { AuthGuard, IAuthGuard } from '@nestjs/passport';
 import { jwtGuardException } from 'src/exception-filters/exceptions';
 

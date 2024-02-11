@@ -1,4 +1,4 @@
-import { IErrorResponse } from '../interfaces';
+import { IErrorResponse } from '../types/error.type';
 
 export const GlobalResponseError = (
   statusCode: number,

@@ -1,3 +1,4 @@
+import { passwordRegex } from '@app/common/regex/regexPatterns';
 import {
   ValidationOptions,
   registerDecorator,
@@ -6,8 +7,6 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { ChangePasswordDto } from 'src/api/users/dto';
-
-import { passwordRegex } from 'src/constants';
 import { InvalidPasswordFormatException } from 'src/exception-filters/exceptions/invalidPasswordFormat.exception';
 
 const exceptionInvalidPasswordFormat = (label: string) =>

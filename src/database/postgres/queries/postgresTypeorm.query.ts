@@ -1,8 +1,8 @@
 import { DataSource, EntityTarget } from 'typeorm';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PostgresTypeOrmRawQueries } from '../raw-queries/postgresTypeorm.rawqueries';
-import { RefreshToken } from 'src/entities/token.entity';
 import { RefreshTokenI } from 'src/api/auth/interfaces';
+import { RefreshToken } from '@app/common/entities';
 
 @Injectable()
 export class PostgresTypeOrmQueries {

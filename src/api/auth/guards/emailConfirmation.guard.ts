@@ -1,10 +1,10 @@
+import { UserContext } from '@app/common';
 import {
   Injectable,
   CanActivate,
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserContext } from 'src/libs/common/interfaces';
 
 @Injectable()
 export class EmailConfirmationGuard implements CanActivate {

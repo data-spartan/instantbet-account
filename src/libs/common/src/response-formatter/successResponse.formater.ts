@@ -1,4 +1,4 @@
-import { ISuccessResponse } from '../interfaces';
+import { ISuccessResponse } from '../types/successResponse.type';
 
 export const ResponseSuccess = (
   message: string = '',

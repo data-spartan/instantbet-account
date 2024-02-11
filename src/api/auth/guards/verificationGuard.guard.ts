@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthHelper } from '../auth.helper';
-import { User } from 'src/api/users/index.entity';
+import { User } from '@app/common/entities';
 
 @Injectable()
 export class LoginVerifiedGuard implements CanActivate {

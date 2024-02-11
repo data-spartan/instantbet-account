@@ -4,7 +4,7 @@ import {
   RedisModuleOptions,
   RedisModuleOptionsFactory,
 } from '@nestjs-modules/ioredis';
-import { RedisConfigEnum } from './interfaces/redis.enum';
+import { RedisConfigEnum } from '../types/redis.type';
 
 @Injectable()
 export class RedisConfigService implements RedisModuleOptionsFactory {

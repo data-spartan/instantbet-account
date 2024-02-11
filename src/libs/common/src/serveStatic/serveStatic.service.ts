@@ -6,7 +6,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
-import { ServeStaticConfigEnum } from 'src/constants/serveStatic.enum';
+import { ServeStaticConfigEnum } from '../types/serveStatic.type';
 
 @Injectable()
 export class ServeStaticConfigService

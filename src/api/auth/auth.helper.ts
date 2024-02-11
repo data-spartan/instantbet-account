@@ -7,15 +7,14 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../entities/user.entity';
 import * as argon2 from 'argon2';
 import * as dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { ConfigService } from '@nestjs/config';
-import { RefreshToken } from '../users/index.entity';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 import { PostgresTypeOrmQueries } from 'src/database/postgres/queries/postgresTypeorm.query';
 import { RefreshTokenI } from './interfaces';
+import { RefreshToken, User } from '@app/common/entities';
 
 @Injectable()
 export class AuthHelper {

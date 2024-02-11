@@ -14,11 +14,11 @@ import { UserRolesEnum } from './roles/roles.enum';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
 import { UserUpdateDto } from './dto/update-user.dto';
 import { AuthService } from '../auth/auth.service';
-import { UserContext } from 'src/libs/common/interfaces';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { ResponseSuccess } from 'src/libs/common/response-formatter';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { UserContext } from '@app/common';
+import { ResponseSuccess } from '@app/common/response-formatter/successResponse.formater';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard) // EmailConfirmationGuard)

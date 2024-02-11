@@ -9,7 +9,7 @@ import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { ALLOWED_FILE_SIZE_TO_UPLOAD } from './multer.consts';
 import { fileExtensionAccepted } from './multer.utility';
-import { ServeStaticConfigEnum } from 'src/constants/serveStatic.enum';
+import { ServeStaticConfigEnum } from '../types/serveStatic.type';
 
 @Injectable()
 export class MulterLocalConfigService implements MulterOptionsFactory {

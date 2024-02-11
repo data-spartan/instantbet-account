@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { MediaController } from './media.controller';
 import { MulterModule } from '@nestjs/platform-express';
-import { MulterConfigService } from '../../libs/common/multer/multer.service';
 import { AuthModule } from '../auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PrivateFile, User } from '../users/index.entity';
 import { S3Provider } from './s3.provider';
+import { MulterConfigService } from '@app/common';
+import { PrivateFile, User } from '@app/common/entities';
 
 @Module({
   imports: [

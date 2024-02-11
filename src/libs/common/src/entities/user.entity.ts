@@ -3,15 +3,13 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn,
   Unique,
   Index,
-  OneToOne,
   OneToMany,
 } from 'typeorm';
-import { UserRolesEnum } from '../api/users/roles/roles.enum';
 import { RefreshToken } from './token.entity';
 import { PrivateFile } from './file.entity';
+import { UserRolesEnum } from 'src/api/users/roles/roles.enum';
 
 //changed default UQ name to be able to catch UQ constraint error properly
 //in typeormException.filter and propagate adequate resp to the client

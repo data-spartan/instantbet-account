@@ -7,14 +7,9 @@ import {
 import { extname } from 'path';
 import {
   ALLOWED_FILE_SIZE_TO_UPLOAD,
-  ALLOWED_FILE_TYPES_TO_UPLOAD,
   ALLOWED_NUMBER_OF_FILES_TO_UPLOAD,
 } from './multer.consts';
-
-export const fileExtensionAccepted = (mimetype: string) => {
-  if (ALLOWED_FILE_TYPES_TO_UPLOAD.includes(mimetype)) return true;
-  return false;
-};
+import { fileExtensionAccepted } from './multer.utility';
 
 @Injectable()
 export class MulterConfigService implements MulterOptionsFactory {

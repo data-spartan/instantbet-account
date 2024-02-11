@@ -19,8 +19,11 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "src/*": ["src/*"],
-      "tests/*": ["src/test/*"]
-    }
+      "@app/tests/*": ["test/*"],
+      "@app/common": ["src/libs/common/src"],
+      "@app/common/*": ["src/libs/common/src/*"]
+    },
+  
   },
   "watchOptions": { "excludeFiles": ["src/logs"] }
 }

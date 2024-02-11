@@ -1,7 +1,8 @@
 import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { checkErrorType } from './helpers';
-import { GlobalResponseError } from 'src/libs/common/response-formatter';
+import { GlobalResponseError } from '@app/common/response-formatter/errorResponse.formatter';
+
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   constructor(

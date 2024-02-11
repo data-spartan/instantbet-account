@@ -14,18 +14,12 @@ describe('AuthModule (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     app.use(cookieParser());
     await app.init();
   });
   beforeEach(async () => {
-    // const moduleFixture: TestingModule = await Test.createTestingModule({
-    //   imports: [AppModule],
-    // }).compile();
-
-    // app = moduleFixture.createNestApplication();
     const authMock = new UserMock();
     MOCK_USER = authMock.authUser();
 

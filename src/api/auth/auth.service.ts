@@ -11,16 +11,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { AuthHelper } from './auth.helper';
 import { Repository } from 'typeorm';
 import { UserRolesEnum } from '../users/roles/roles.enum';
-import { User } from '../../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { ConfigService } from '@nestjs/config';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from '../users/dto';
-import { RefreshToken } from '../users/index.entity';
 import { MailService } from 'src/mailer/mail.service';
 import { ForgotPasswordEmailDto } from './dto';
-import { RedisCacheService } from 'src/libs/common/redisCache/redisCache.service';
-import { RedisHashesEnum } from 'src/libs/common/redisCache/interfaces/redis.enum';
+import { RefreshToken, User } from '@app/common/entities';
+import { RedisCacheService, RedisHashesEnum } from '@app/common';
 
 @Injectable()
 export class AuthService implements OnModuleInit {

@@ -5,8 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PrivateFile, User } from '../users/index.entity';
 import { S3Enum } from './s3.provider';
+import { PrivateFile, User } from '@app/common/entities';
 
 @Injectable()
 export class MediaService {

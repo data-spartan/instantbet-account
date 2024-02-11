@@ -1,5 +1,5 @@
+import { IErrorTypeObject } from '@app/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { IErrorTypeObject } from 'src/libs/common/interfaces';
 
 export const checkErrorType = (
   error: Error,

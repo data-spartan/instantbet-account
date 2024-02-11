@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { User } from 'src/api/users/index.entity';
+import { User } from '../entities';
 
 // export interface PartialUser {PartialType<User>}
 

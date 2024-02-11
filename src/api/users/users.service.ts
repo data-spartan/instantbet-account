@@ -1,12 +1,12 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../../entities/user.entity';
 import { CreateTestUserDto } from '../admin/dto';
 import { AuthHelper } from '../auth/auth.helper';
 // import { LoggerService } from 'src/logger/logger.service';
 import { PostgresTypeOrmQueries } from 'src/database/postgres/queries/postgresTypeorm.query';
 import { unlink } from 'fs';
+import { User } from '@app/common/entities';
 
 @Injectable()
 export class UsersService {

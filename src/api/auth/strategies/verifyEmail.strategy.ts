@@ -7,12 +7,11 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { User } from '../../../entities/user.entity';
 import { AuthHelper } from '../auth.helper';
 import { Request } from 'express';
 import { readFileSync } from '../helpers/readFile.helpers';
-import { RedisCacheService } from 'src/libs/common/redisCache/redisCache.service';
-import { RedisHashesEnum } from 'src/libs/common/redisCache/interfaces/redis.enum';
+import { RedisCacheService, RedisHashesEnum } from '@app/common';
+import { User } from '@app/common/entities';
 
 @Injectable()
 export class VerifyEmailStrategy extends PassportStrategy(

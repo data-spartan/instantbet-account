@@ -5,7 +5,7 @@ import {
   FORGOT_PASSWORD_EXPIRES,
   VERIFY_EMAIL_EXPIRES,
 } from './redisCache.consts';
-import { RedisHashesEnum } from './interfaces/redis.enum';
+import { RedisHashesEnum } from '../types/redis.type';
 
 @Injectable()
 export class RedisCacheService {

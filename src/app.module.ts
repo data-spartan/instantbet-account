@@ -8,23 +8,28 @@ import {
   AllExceptionsFilter,
   TypeORMExceptionFilter,
 } from './exception-filters';
-import { DirectoryCreationService } from './libs/common/dirCreation/dirCreation';
 
 import { ResponseMessageInterceptor } from './interceptors/responseMessage.interceptor';
 import { TypeOrmConfigService } from './config/typeorm/typeorm.service';
 import { LoggerMiddleware } from './middlewares/logging.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { ServeStaticConfigService } from './libs/common/serveStatic/serveStatic.service';
 import { AppService } from './app.service';
-import { RabbitMQModule } from './libs/common/rabitQueue/rabitmq.module';
+import {
+  DirectoryCreationService,
+  RabbitMQModule,
+  ServeStaticConfigService,
+} from '@app/common';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      //using this.config.get can read proces.env var or .env file if specified
-      // envFilePath: '.env',
-      ignoreEnvFile: process.env.NODE_ENV === 'dev' ? false : true,
+      /*
+      using this.config.get can read proces.env.VAR or .env file if specified
+      dockerized app doesnt read direclty from .env. We pass .env content in docker-compose file
+       and config.get is reading var as proces.env behind the scenes
+       */
+      ignoreEnvFile: process.env.NODE_ENV === 'production' ? true : false,
     }),
     //If we need to get the localy uploaded users media
     //the server detects the file as a route, thats why we need ServeStatic

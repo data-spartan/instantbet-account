@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
-import { User } from '../../entities/user.entity';
 import { AdminController } from './admin.controller';
 import { UsersModule } from '../users/users.module';
+import { User } from '@app/common/entities';
 // import { LoggerService } from 'src/logger/logger_.service';
 // import { LoggerConfig } from 'src/logger/logger.config';
 // import { ConfigService } from '@nestjs/config';

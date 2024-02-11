@@ -7,8 +7,6 @@ import { AuthHelper } from './auth.helper';
 import { AuthService } from './auth.service';
 
 import { ConfigService } from '@nestjs/config';
-import { User } from '../../entities/user.entity';
-import { RefreshToken } from '../users/index.entity';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 import { MailModule } from 'src/mailer/mail.module';
 import { VerifyEmailStrategy } from './strategies/verifyEmail.strategy';
@@ -17,7 +15,8 @@ import { readFileSync } from './helpers/readFile.helpers';
 import { DatabaseModule } from 'src/database/database.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwtRefresh.strategy';
-import { RedisCacheModule } from 'src/libs/common/redisCache/redisCache.module';
+import { RefreshToken, User } from '@app/common/entities';
+import { RedisCacheModule } from '@app/common';
 
 @Module({
   imports: [
