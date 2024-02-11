@@ -8,7 +8,6 @@ import {
   AllExceptionsFilter,
   TypeORMExceptionFilter,
 } from './exception-filters';
-
 import { ResponseMessageInterceptor } from './interceptors/responseMessage.interceptor';
 import { TypeOrmConfigService } from './config/typeorm/typeorm.service';
 import { LoggerMiddleware } from './middlewares/logging.middleware';

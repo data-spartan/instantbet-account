@@ -14,6 +14,7 @@ export class RedisConfigService implements RedisModuleOptionsFactory {
     return {
       type: this.config.get<any>(RedisConfigEnum.REDIS_TYPE),
       options: {
+        db: process.env.NODE_ENV === 'test' ? 1 : 0,
         host: this.config.get<string>(RedisConfigEnum.REDIS_HOST),
         port: +this.config.get<number>(RedisConfigEnum.REDIS_PORT),
         password: this.config.get<string>(RedisConfigEnum.REDIS_PASSWORD),
