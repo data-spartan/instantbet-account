@@ -18,10 +18,9 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "src/*": ["src/*"],
-      "@app/tests/*": ["test/*"],
-      "@app/common": ["src/libs/common/src"],
-      "@app/common/*": ["src/libs/common/src/*"]
+      "@account*": ["apps/account/src*"],
+      "@app/common": ["libs/common/src"],
+      "@app/common/*": ["libs/common/src/*"]
     },
   
   },
