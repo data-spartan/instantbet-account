@@ -30,7 +30,8 @@ export class MailerConfigService implements MailerOptionsFactory {
         )}>`,
       },
       template: {
-        dir: join(__dirname, '../templates'),
+        //need to match with nestcli asset conf bcs dirname is /dist/apps/account
+        dir: join(__dirname, '../../mailer/templates'),
         adapter: new HandlebarsAdapter(), //{
         // inlineCssEnabled: true,
         /** See https://www.npmjs.com/package/inline-css#api */

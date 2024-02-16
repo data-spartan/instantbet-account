@@ -62,11 +62,14 @@ export class UsersService {
       if (avatar) {
         attrs.avatar = avatar.path;
       }
-      unlink(user.avatar, (err) => {
-        if (err) {
-          throw err;
-        }
-      });
+      if (user.avatar) {
+        unlink(user.avatar, (err) => {
+          if (err) {
+            // throw err;
+            console.log(err);
+          }
+        });
+      }
       await this.userRepo.update({ id: user.id }, { ...attrs });
       return { id: user.id, props: `${Object.keys(attrs).join(',')}` };
     } catch (error) {
