@@ -18,7 +18,7 @@
     "test:watch": "TZ=UTC jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json --runInBand --forceExit"
+    "test:e2e": "jest --config ./apps/account/test/jest-e2e.json --runInBand --forceExit"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.498.0",
@@ -98,7 +98,9 @@
     "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
     "moduleNameMapper": {
-      "^src/(.*)$": "<rootDir>/src/$1",
+      "@app/([^/]*)/(.*)$": "<rootDir>/libs/$1/src/$2",
+      "@app/(.*)": "<rootDir>/libs/$1/src",
+      "^@account/(.*)$": "<rootDir>/apps/account/src/$1",
       "^tests/(.*)$": "<rootDir>/../src/shared/tests/$1"
     },
     "transform": {

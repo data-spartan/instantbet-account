@@ -13,10 +13,9 @@ import { ForgotPasswordStrategy } from './strategies/forgotPasswordToken.strateg
 import { readFileSync } from './helpers/readFile.helpers';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwtRefresh.strategy';
-import { RefreshToken, User } from 'libs/common/src/entities';
-import { RedisCacheModule } from 'libs/common/src';
 import { MailModule } from '@account/mailer/mail.module';
 import { DatabaseModule } from '@account/database/database.module';
+import { RedisCacheModule, RefreshToken, User } from '@app/common';
 
 @Module({
   imports: [

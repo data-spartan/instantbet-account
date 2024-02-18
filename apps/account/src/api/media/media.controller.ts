@@ -14,8 +14,7 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { MediaService } from './media.service';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
 import { DeleteMediaDto } from './dto/deleteMedia.dto';
-import { UserContext } from 'libs/common/src';
-import { ResponseSuccess } from 'libs/common/src/response-formatter/successResponse.formater';
+import { ResponseSuccess, UserContext } from '@app/common';
 
 @Controller('/media')
 export class MediaController {

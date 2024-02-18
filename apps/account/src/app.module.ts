@@ -17,7 +17,7 @@ import {
   DirectoryCreationService,
   RabbitMQModule,
   ServeStaticConfigService,
-} from 'libs/common/src';
+} from '@app/common';
 
 @Module({
   imports: [

@@ -17,8 +17,7 @@ import { AuthService } from '../auth/auth.service';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UserContext } from 'libs/common/src';
-import { ResponseSuccess } from 'libs/common/src/response-formatter/successResponse.formater';
+import { ResponseSuccess, UserContext } from '@app/common';
 
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard) // EmailConfirmationGuard)

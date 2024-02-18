@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../apps/account/app.module';
 import { clearDatabase } from './typeormTest';
 import { UserMock } from './mock/user.mock';
 import * as cookieParser from 'cookie-parser';
+import { AppModule } from '@account/app.module';
 
 describe('AuthModule (e2e)', () => {
   let app: INestApplication;

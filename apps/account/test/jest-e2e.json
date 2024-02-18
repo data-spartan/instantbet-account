@@ -6,9 +6,10 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "moduleDirectories": ["<rootDir>/../", "node_modules"],
+  "moduleDirectories": ["<rootDir>/../../", "node_modules"],
   "moduleNameMapper": {
-    "@app/([^/]*)/(.*)": "<rootDir>../src/libs/$1/src/$2",
-    "@app/(.*)": "<rootDir>../src/libs/$1/src"
+    "@app/([^/]*)/(.*)": "<rootDir>../../../libs/$1/src/$2",
+    "@app/(.*)": "<rootDir>../../../libs/$1/src",
+    "@account/(.*)": "<rootDir>/../../account/src/$1"
   }
 }

@@ -4,9 +4,13 @@ import { AuthModule } from '../auth/auth.module';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { MulterModule } from '@nestjs/platform-express';
-import { PrivateFile, RefreshToken, User } from 'libs/common/src/entities';
-import { MulterLocalConfigService } from 'libs/common/src';
 import { DatabaseModule } from '@account/database/database.module';
+import {
+  MulterLocalConfigService,
+  PrivateFile,
+  RefreshToken,
+  User,
+} from '@app/common';
 
 @Module({
   imports: [

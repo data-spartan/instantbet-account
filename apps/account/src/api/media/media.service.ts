@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { S3Enum } from './s3.provider';
-import { PrivateFile, User } from 'libs/common/src/entities';
+import { PrivateFile, User } from '@app/common';
 
 @Injectable()
 export class MediaService {

@@ -25,8 +25,7 @@ import { EmailConfirmationGuard } from './guards/emailConfirmation.guard';
 import { VerifyEmailAuthGuard } from './guards/emailJwt.guard';
 import { SignOutDto } from './dto/signOut.dto';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
-import { ResponseSuccess } from 'libs/common/src/response-formatter/successResponse.formater';
-import { UserContext } from 'libs/common/src';
+import { ResponseSuccess, UserContext } from '@app/common';
 
 @Controller('auth')
 export class AuthController {

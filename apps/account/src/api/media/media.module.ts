@@ -5,8 +5,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { AuthModule } from '../auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { S3Provider } from './s3.provider';
-import { MulterConfigService } from 'libs/common/src';
-import { PrivateFile, User } from 'libs/common/src/entities';
+import { MulterConfigService, PrivateFile, User } from '@app/common';
 
 @Module({
   imports: [

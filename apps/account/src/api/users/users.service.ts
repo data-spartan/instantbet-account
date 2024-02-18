@@ -5,8 +5,8 @@ import { CreateTestUserDto } from '../admin/dto';
 import { AuthHelper } from '../auth/auth.helper';
 // import { LoggerService } from 'src/logger/logger.service';
 import { unlink } from 'fs';
-import { User } from 'libs/common/src/entities';
 import { PostgresTypeOrmQueries } from '@account/database/postgres/queries/postgresTypeorm.query';
+import { User } from '@app/common';
 
 @Injectable()
 export class UsersService {

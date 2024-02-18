@@ -16,8 +16,12 @@ import { ConfigService } from '@nestjs/config';
 import { LoginDto } from './dto/login.dto';
 import { ChangePasswordDto } from '../users/dto';
 import { ForgotPasswordEmailDto } from './dto';
-import { RefreshToken, User } from 'libs/common/src/entities';
-import { RedisCacheService, RedisHashesEnum } from 'libs/common/src';
+import {
+  RedisCacheService,
+  RedisHashesEnum,
+  RefreshToken,
+  User,
+} from '@app/common';
 import { MailService } from '@account/mailer/mail.service';
 
 @Injectable()

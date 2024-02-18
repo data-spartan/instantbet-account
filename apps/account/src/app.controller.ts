@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { RabbitMQPublisher } from 'libs/common/src';
+import { RabbitMQPublisher } from '@app/common';
 
 @Controller()
 export class AppController {

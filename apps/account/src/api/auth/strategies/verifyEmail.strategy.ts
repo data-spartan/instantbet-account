@@ -10,8 +10,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthHelper } from '../auth.helper';
 import { Request } from 'express';
 import { readFileSync } from '../helpers/readFile.helpers';
-import { RedisCacheService, RedisHashesEnum } from 'libs/common/src';
-import { User } from 'libs/common/src/entities';
+import { RedisCacheService, RedisHashesEnum, User } from '@app/common';
 
 @Injectable()
 export class VerifyEmailStrategy extends PassportStrategy(

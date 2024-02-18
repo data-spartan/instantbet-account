@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { TypeORMConfigEnum } from './typeorm.enum';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
-import { entities } from 'libs/common/src';
+import { entities } from '@app/common/entities/api.entities';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
