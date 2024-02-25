@@ -4,6 +4,6 @@
     "declaration": false,
     "outDir": "../../dist/apps/notifications"
   },
-  "include": ["src/**/*"],
+  "include": ["main.ts","src/**/*"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

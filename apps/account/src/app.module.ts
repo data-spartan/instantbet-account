@@ -38,7 +38,10 @@ import {
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     ApiModule,
-    RmqModule,
+    RmqModule.register({
+      //registering producer
+      name: 'EMAIL',
+    }),
   ],
   controllers: [AppController],
   providers: [

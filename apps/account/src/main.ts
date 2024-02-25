@@ -19,8 +19,8 @@ async function bootstrap() {
     }),
     cors: true,
   });
-  const rmqService = app.get<RmqService>(RmqService);
-  app.connectMicroservice<RmqOptions>(rmqService.getOptions('EMAIL', true));
+  // const rmqService = app.get<RmqService>(RmqService);
+  // app.connectMicroservice<RmqOptions>(rmqService.getOptions('EMAIL', true));
 
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('APP_PORT');
@@ -44,7 +44,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  await app.startAllMicroservices();
+  // await app.startAllMicroservices();
   await app.listen(port);
 }
 bootstrap();

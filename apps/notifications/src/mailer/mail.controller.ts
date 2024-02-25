@@ -16,7 +16,8 @@ export class MailController {
     @Payload() { email, emailToken }: any,
     @Ctx() context: RmqContext,
   ) {
-    this.mailService.sendVerificationEmail(email, emailToken);
+    console.log(emailToken, email);
+    await this.mailService.sendVerificationEmail(email, emailToken);
     this.rmqService.ack(context);
   }
 }
