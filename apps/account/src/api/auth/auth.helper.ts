@@ -13,8 +13,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { ConfigService } from '@nestjs/config';
 import { RefreshPrivateSecretService } from './refreshKeysLoad.service';
 import { RefreshTokenI } from './interfaces';
-import { PostgresTypeOrmQueries } from '@account/database/postgres/queries/postgresTypeorm.query';
 import { RefreshToken, User } from '@app/common';
+import { PostgresTypeOrmQueries } from '@app/common/database/postgres/queries/postgresTypeorm.query';
 
 @Injectable()
 export class AuthHelper {

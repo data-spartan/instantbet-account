@@ -13,9 +13,8 @@ import { ForgotPasswordStrategy } from './strategies/forgotPasswordToken.strateg
 import { readFileSync } from './helpers/readFile.helpers';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwtRefresh.strategy';
-import { MailModule } from '@account/mailer/mail.module';
-import { DatabaseModule } from '@account/database/database.module';
-import { RedisCacheModule, RefreshToken, User } from '@app/common';
+import { RedisCacheModule, RefreshToken, RmqModule, User } from '@app/common';
+import { DatabaseModule } from '@app/common/database/database.module';
 
 @Module({
   imports: [
@@ -41,9 +40,11 @@ import { RedisCacheModule, RefreshToken, User } from '@app/common';
       }),
     }),
     TypeOrmModule.forFeature([User, RefreshToken]),
-    MailModule,
     DatabaseModule,
     RedisCacheModule,
+    RmqModule.register({
+      name: 'EMAIL',
+    }),
   ],
   controllers: [AuthController],
   providers: [

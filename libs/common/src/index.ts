@@ -32,3 +32,6 @@ export * from './entities/token.entity';
 export * from './entities/file.entity';
 
 export * from './regex/regexPatterns';
+
+export * from './rmq/rmq.module';
+export * from './rmq/rmq.service';

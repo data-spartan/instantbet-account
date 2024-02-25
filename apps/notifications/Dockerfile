@@ -20,4 +20,4 @@ USER node
 # Creates a "dist" folder with the production build
 RUN npm run build
 # Start the server using the production build
-CMD [ "node", "dist/apps/account/main.js" ]
+CMD [ "node", "dist/apps/notifications/main.js" ]

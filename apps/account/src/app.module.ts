@@ -15,7 +15,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { AppService } from './app.service';
 import {
   DirectoryCreationService,
-  RabbitMQModule,
+  RmqModule,
   ServeStaticConfigService,
 } from '@app/common';
 
@@ -38,7 +38,7 @@ import {
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     ApiModule,
-    RabbitMQModule,
+    RmqModule,
   ],
   controllers: [AppController],
   providers: [

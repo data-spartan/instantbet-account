@@ -2,6 +2,7 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   Logger,
   OnModuleInit,
@@ -22,7 +23,7 @@ import {
   RefreshToken,
   User,
 } from '@app/common';
-import { MailService } from '@account/mailer/mail.service';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -33,8 +34,8 @@ export class AuthService implements OnModuleInit {
     private readonly authHelper: AuthHelper,
     private readonly config: ConfigService,
     private readonly logger: Logger,
-    private readonly mailService: MailService,
     private readonly redisService: RedisCacheService,
+    @Inject('EMAIL') private emailClient: ClientProxy,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -108,12 +109,10 @@ export class AuthService implements OnModuleInit {
       throw new HttpException('Something went wrong', HttpStatus.FORBIDDEN);
     }
 
-    await this.mailService.sendVerificationEmail(
-      user.email,
-      // user.firstName,
-      // user.lastName,
+    this.emailClient.emit('verification', {
+      email: user.email,
       emailToken,
-    );
+    });
 
     return user.id;
   }
@@ -166,12 +165,10 @@ export class AuthService implements OnModuleInit {
       emailToken,
       RedisHashesEnum.FORGOT_PASSWORD_TOKEN,
     );
-    await this.mailService.sendVerificationEmail(
-      user.email,
-      // user.firstName,
-      // user.lastName,
+    this.emailClient.emit('verification', {
+      email: user.email,
       emailToken,
-    );
+    });
   }
 
   public async signOut(userId: string, tokenId: string) {
@@ -251,7 +248,7 @@ export class AuthService implements OnModuleInit {
       emailToken,
       RedisHashesEnum.FORGOT_PASSWORD_TOKEN,
     );
-    await this.mailService.sendForgotPasswordEmail(user.email, emailToken);
+    // await this.mailService.sendForgotPasswordEmail(user.email, emailToken);
     return true;
   }
 

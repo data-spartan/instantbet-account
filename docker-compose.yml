@@ -85,6 +85,7 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASSWORD}
+    restart: unless-stopped
 
   acc-app:
     container_name: instanbet-acc-app

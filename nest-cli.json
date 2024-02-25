@@ -9,7 +9,7 @@
     "tsConfigPath": "apps/account/tsconfig.app.json",
     "assets": [{"include": "mailer/templates/**/*","outDir": "dist" }],
     "watchAssets": true,
-    "deleteOutDir": true
+    "deleteOutDir": false
   },
   "projects": {
     "account": {
@@ -19,6 +19,15 @@
       "sourceRoot": "apps/account/src",
       "compilerOptions": {
         "tsConfigPath": "apps/account/tsconfig.app.json"
+      }
+    },
+    "notifications": {
+      "type": "application",
+      "root": "apps/notifications",
+      "entryFile": "main",
+      "sourceRoot": "apps/notifications/src/mailer",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notifications/tsconfig.app.json"
       }
     },
     "common": {
