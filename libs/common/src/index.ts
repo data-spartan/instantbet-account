@@ -10,6 +10,7 @@ export * from './types/error.type';
 export * from './types/successResponse.type';
 export * from './types/redis.type';
 export * from './types/serveStatic.type';
+export * from './types/rabitmq.type';
 
 export * from './multer/multer.consts';
 export * from './multer/multer.service';

@@ -18,6 +18,6 @@ COPY --chown=node:node . .
 # RUN chown -R node /usr/src/app
 USER node
 # Creates a "dist" folder with the production build
-RUN npm run build
+RUN npm run build notifications
 # Start the server using the production build
 CMD [ "node", "dist/apps/notifications/main.js" ]

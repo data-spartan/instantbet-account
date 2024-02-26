@@ -2,6 +2,7 @@ import { Controller } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { MailService } from './mail.service';
 import { RmqService } from '@app/common';
+import { VerifyEmailDto } from './dto/email.dto';
 
 @Controller()
 export class MailController {
@@ -11,12 +12,10 @@ export class MailController {
   ) {}
 
   @EventPattern('verification')
-  //   @UseGuards(JwtAuthGuard)
   async sendVerificationEmail(
-    @Payload() { email, emailToken }: any,
+    @Payload() { email, emailToken }: VerifyEmailDto,
     @Ctx() context: RmqContext,
   ) {
-    console.log(emailToken, email);
     await this.mailService.sendVerificationEmail(email, emailToken);
     this.rmqService.ack(context);
   }

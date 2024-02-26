@@ -15,6 +15,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { AppService } from './app.service';
 import {
   DirectoryCreationService,
+  RabitMqEnum,
   RmqModule,
   ServeStaticConfigService,
 } from '@app/common';
@@ -39,8 +40,8 @@ import {
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     ApiModule,
     RmqModule.register({
-      //registering producer
-      name: 'EMAIL',
+      //creating producer
+      name: RabitMqEnum.EMAIL,
     }),
   ],
   controllers: [AppController],

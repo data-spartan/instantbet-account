@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@account*": ["apps/account/src*"],
+      "@notifications*": ["apps/notifications/src*"],
       "@app/common": ["libs/common/src"],
       "@app/common/*": ["libs/common/src/*"]
     },

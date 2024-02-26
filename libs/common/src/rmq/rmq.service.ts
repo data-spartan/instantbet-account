@@ -14,6 +14,7 @@ export class RmqService {
         queue: this.configService.get<string>(`RABBIT_MQ_${queue}_QUEUE`),
         noAck,
         persistent: true,
+        maxConnectionAttempts: 5,
       },
     };
   }
