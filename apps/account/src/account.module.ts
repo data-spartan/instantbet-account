@@ -13,12 +13,7 @@ import { TypeOrmConfigService } from './config/typeorm/typeorm.service';
 import { LoggerMiddleware } from './middlewares/logging.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { AppService } from './app.service';
-import {
-  DirectoryCreationService,
-  RabitMqEnum,
-  RmqModule,
-  ServeStaticConfigService,
-} from '@app/common';
+import { RabitMqEnum, RmqModule, ServeStaticConfigService } from '@app/common';
 
 @Module({
   imports: [
@@ -47,7 +42,7 @@ import {
   controllers: [AppController],
   providers: [
     Logger,
-    DirectoryCreationService,
+    // DirectoryCreationService,
     //using this construct if want you can inject filters wherever you want
     // using  app.useGlobalFilters you cant inject
     {
@@ -65,7 +60,7 @@ import {
     AppService,
   ],
 })
-export class AppModule {
+export class AccountModule {
   constructor(private configService: ConfigService) {}
   configure(consumer: MiddlewareConsumer): void {
     consumer.apply(LoggerMiddleware).forRoutes('*');

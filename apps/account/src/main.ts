@@ -1,22 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { WinstonModule } from 'nest-winston';
 
 import * as cookieParser from 'cookie-parser';
-import { instance } from './logger/loggerApp.config';
+import { AccountModule } from './account.module';
+import { loggerConfig } from '@app/common';
 
 async function bootstrap() {
-  const app: NestExpressApplication = await NestFactory.create(AppModule, {
+  const app: NestExpressApplication = await NestFactory.create(AccountModule, {
     logger: WinstonModule.createLogger({
-      instance: instance,
+      instance: loggerConfig('./apps/account'),
     }),
     cors: true,
   });
-
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('APP_PORT');
   const apiPrefix: string = config.get('APP_API_PREFIX');
