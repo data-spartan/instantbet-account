@@ -16,9 +16,11 @@ async function bootstrap() {
       cors: true,
     },
   );
-
   const rmqService = app.get<RmqService>(RmqService);
-  app.connectMicroservice(rmqService.getOptions(RabitMqEnum.EMAIL));
+  app.connectMicroservice(rmqService.getOptions(RabitMqEnum.EMAIL), {
+    inheritAppConfig: true,
+  });
+
   await app.startAllMicroservices();
   await app.listen(3001);
 }

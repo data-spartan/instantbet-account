@@ -1,6 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './mailer/mail.module';
+import { APP_FILTER } from '@nestjs/core';
+import { ExceptionFilterRpc } from '@app/common';
 
 @Module({
   imports: [
@@ -16,5 +18,17 @@ import { MailModule } from './mailer/mail.module';
     }),
     MailModule,
   ],
+  providers: [
+    Logger,
+    {
+      provide: APP_FILTER,
+      useClass: ExceptionFilterRpc,
+    },
+  ],
 })
-export class NotificationsModule {}
+export class NotificationsModule {
+  // cant use midleware for microservices, use interceptor for logging
+  // configure(consumer: MiddlewareConsumer): void {
+  //   consumer.apply(LoggerMiddlewareRpc).forRoutes('*');
+  // }
+}

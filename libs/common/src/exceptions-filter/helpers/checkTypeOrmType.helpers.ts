@@ -1,6 +1,6 @@
 import { QueryFailedError } from 'typeorm';
 import { HttpStatus } from '@nestjs/common';
-import { IErrorTypeObject } from 'libs/common/src';
+import { IErrorTypeObject } from '@app/common/types/error.type';
 
 export const checkTypeORMErrorType = (
   error: Error,

@@ -19,4 +19,13 @@ export class MailController {
     await this.mailService.sendVerificationEmail(email, emailToken);
     this.rmqService.ack(context);
   }
+
+  @EventPattern('forgot_password')
+  async sendForgotPasswordEmail(
+    @Payload() { email, emailToken }: VerifyEmailDto,
+    @Ctx() context: RmqContext,
+  ) {
+    await this.mailService.sendForgotPasswordEmail(email, emailToken);
+    this.rmqService.ack(context);
+  }
 }

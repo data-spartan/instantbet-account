@@ -1,7 +1,7 @@
 import { User } from 'libs/common/src/entities';
 import { Injectable } from '@nestjs/common';
 import { AuthGuard, IAuthGuard } from '@nestjs/passport';
-import { jwtGuardException } from '@account/exception-filters/exceptions';
+import { jwtGuardException } from '@app/common';
 
 @Injectable() //when req comes to guard,first goes through canAcivate
 //,then it calls accessToken strategy

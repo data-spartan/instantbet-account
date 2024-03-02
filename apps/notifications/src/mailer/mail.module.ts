@@ -17,4 +17,9 @@ import { RmqModule } from '@app/common';
   providers: [MailService, MailSender],
   exports: [MailService],
 })
-export class MailModule {}
+export class MailModule {
+  constructor() {}
+  // configure(consumer: MiddlewareConsumer): void {
+  //   consumer.apply(LoggerMiddlewareRpc).forRoutes('*');
+  // }
+}

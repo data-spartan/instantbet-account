@@ -23,7 +23,7 @@ export class MailerConfigService implements MailerOptionsFactory {
           pass: this.configService.get<string>(MailerConfigEnum.EMAIL_PASSWORD), // generated ethereal password
         },
       },
-      preview: true,
+      preview: false,
       defaults: {
         from: `"No Reply" <${this.configService.get<string>(
           MailerConfigEnum.NO_REPLY_EMAIL,

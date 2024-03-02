@@ -4,16 +4,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApiModule } from './api/api.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import {
-  AllExceptionsFilter,
-  TypeORMExceptionFilter,
-} from './exception-filters';
 import { ResponseMessageInterceptor } from './interceptors/responseMessage.interceptor';
 import { TypeOrmConfigService } from './config/typeorm/typeorm.service';
-import { LoggerMiddleware } from './middlewares/logging.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { AppService } from './app.service';
-import { RabitMqEnum, RmqModule, ServeStaticConfigService } from '@app/common';
+import {
+  AllExceptionsFilter,
+  LoggerMiddlewareHttp,
+  RabitMqEnum,
+  RmqModule,
+  ServeStaticConfigService,
+  TypeORMExceptionFilter,
+} from '@app/common';
 
 @Module({
   imports: [
@@ -63,7 +65,7 @@ import { RabitMqEnum, RmqModule, ServeStaticConfigService } from '@app/common';
 export class AccountModule {
   constructor(private configService: ConfigService) {}
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddlewareHttp).forRoutes('*');
   }
   // async onModuleInit(): Promise<void> {
   //   Logger.log('✅ App Users Module initialized!');

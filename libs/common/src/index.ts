@@ -38,3 +38,11 @@ export * from './rmq/rmq.module';
 export * from './rmq/rmq.service';
 
 export * from './logger/loggerApp.config';
+export * from './logger/logging.middleware';
+
+export * from './exceptions-filter/helpers/checkErrorTypes.helpers';
+export * from './exceptions-filter/helpers/checkTypeOrmType.helpers';
+export * from './exceptions-filter/exceptions/invalidPasswordFormat.exception';
+export * from './exceptions-filter/exceptions/jwtGuard.exception';
+export * from './exceptions-filter/allException.filter';
+export * from './exceptions-filter/typeormException.filter';

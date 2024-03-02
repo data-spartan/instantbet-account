@@ -248,7 +248,10 @@ export class AuthService implements OnModuleInit {
       emailToken,
       RedisHashesEnum.FORGOT_PASSWORD_TOKEN,
     );
-    // await this.mailService.sendForgotPasswordEmail(user.email, emailToken);
+    this.emailClient.emit('forgot_password', {
+      email: user.email,
+      emailToken,
+    });
     return true;
   }
 

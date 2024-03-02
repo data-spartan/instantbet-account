@@ -36,7 +36,7 @@ export class MailService {
     // const { emailToken } = await this.authHelper.getJwtEmailToken(email);
     const verifyLink = this.generateVerificationLink(emailToken);
     await this.mailSender.sendEmail<VerificationEmailContext>({
-      to: email,
+      to: '',
       subject: 'Verify E-mail Address @ InstantBet',
       template: EmailTemplatesEnum.VerificationEmail,
       context: {
