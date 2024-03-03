@@ -41,7 +41,6 @@ services:
     depends_on:
       - postgres
 
-
   redis:
     image: redis:latest
     container_name: instanbet-acc-redis
@@ -70,11 +69,29 @@ services:
       - instantbet-account
     restart: unless-stopped
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: instantbet-acc-rabbitmq
+    hostname: rabbitmq
+    volumes:
+      - rabitmq-data:/var/lib/rabbitmq
+      - rabitmq-logs:/var/log/rabbitmq
+      # - ~/.rabit-conf/:/etc/rabbitmq/
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - instantbet-account
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASSWORD}
+    restart: unless-stopped
+
   acc-app:
     container_name: instanbet-acc-app
     build:
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: ./apps/account/Dockerfile
       # args:
       #   - ENV=${ENV}
     env_file:
@@ -99,4 +116,8 @@ volumes:
   pgadmin-data:
     driver: local
   redis-data:
+    driver: local
+  rabitmq-data:
+    driver: local
+  rabitmq-logs:
     driver: local

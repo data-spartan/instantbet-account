@@ -18,9 +18,12 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "src/*": ["src/*"],
-      "tests/*": ["src/test/*"]
-    }
+      "@account*": ["apps/account/src*"],
+      "@notifications*": ["apps/notifications/src*"],
+      "@app/common": ["libs/common/src"],
+      "@app/common/*": ["libs/common/src/*"]
+    },
+  
   },
-  "watchOptions": { "excludeFiles": ["src/logs"] }
+  "watchOptions": { "excludeFiles": ["logs"] }
 }
