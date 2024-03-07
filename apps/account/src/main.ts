@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -18,6 +18,7 @@ async function bootstrap() {
   });
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('APP_PORT');
+  const appName: string = config.get('APP_NAME');
   const apiPrefix: string = config.get('APP_API_PREFIX');
 
   app.setGlobalPrefix(apiPrefix);
@@ -38,6 +39,8 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
-  await app.listen(port);
+  await app.listen(port, () => {
+    Logger.log(`${appName} is listening on port: ${port}`);
+  });
 }
 bootstrap();

@@ -13,6 +13,7 @@ interface RmqModuleOptions {
 })
 export class RmqModule {
   static register({ name }: RmqModuleOptions): DynamicModule {
+    const enviroment = process.env.NODE_ENV;
     return {
       module: RmqModule,
       imports: [
@@ -22,7 +23,11 @@ export class RmqModule {
             useFactory: (configService: ConfigService) => ({
               transport: Transport.RMQ,
               options: {
-                urls: [configService.get<string>('RABBIT_MQ_URI')],
+                urls: [
+                  enviroment !== 'production'
+                    ? configService.get<string>('RABBIT_MQ_URI_LOCAL')
+                    : configService.get<string>('RABBIT_MQ_URI'),
+                ],
                 queue: configService.get<string>(`RABBIT_MQ_${name}_QUEUE`),
               },
             }),

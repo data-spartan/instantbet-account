@@ -47,7 +47,8 @@ services:
     hostname: ${REDIS_HOSTNAME}
     command: redis-server --requirepass ${REDIS_PASSWORD}
     ports:
-      - ${REDIS_PORT}:${REDIS_PORT}
+    # inter port must be always 6379 bcs thats default port of docker redis unless you bind redis.conf file to docker volume
+      - ${REDIS_PORT}:6379
     volumes:
       - redis-data:/data
     networks:
@@ -102,14 +103,38 @@ services:
       - instantbet-account
     volumes:
       - acc-app:/usr/src/logs
+      - ./uploads:/usr/src/uploads
     restart: unless-stopped
     depends_on:
       - postgres
       - pgadmin
       - redis
 
+  notifications-app:
+    container_name: instanbet-notifications
+    build:
+      context: ./
+      dockerfile: ./apps/notifications/Dockerfile
+      # args:
+      #   - ENV=${ENV}
+    env_file:
+      - .env
+    ports:
+      - ${NOTIFICATIONS_PORT}:${NOTIFICATIONS_PORT}
+    networks:
+      - instantbet-account
+    volumes:
+      - notifications-app:/usr/src/logs
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+      - acc-app
+      
+
 volumes:
   acc-app:
+    driver: local
+  notifications-app:
     driver: local
   postgres-data:
     driver: local

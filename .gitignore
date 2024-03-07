@@ -12,7 +12,7 @@ yarn-error.log*
 lerna-debug.log*
 
 # Uploads
-uploads
+uploads/*
 
 
 # PUB/PRIV KEYS

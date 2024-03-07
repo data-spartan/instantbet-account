@@ -11,17 +11,16 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     const enviroment = process.env.NODE_ENV;
     const db_hostname =
-      enviroment === 'production' ? process.env.DATABASE_HOSTNAME : 'localhost';
+      enviroment !== 'production' ? 'localhost' : process.env.DATABASE_HOSTNAME;
     const baseDB = this.config.get<string>(TypeORMConfigEnum.DATABASE_NAME);
     const db = enviroment !== 'test' ? baseDB : baseDB.concat('-', 'test');
     return {
       type: this.config.get<PostgresConnectionOptions['type']>(
         TypeORMConfigEnum.DATABASE_TYPE,
       ),
-
       database: db,
       host: db_hostname,
-      port: Number(this.config.get<string>(TypeORMConfigEnum.DATABASE_PORT)),
+      port: +this.config.get<string>(TypeORMConfigEnum.DATABASE_PORT),
       username: this.config.get<string>(TypeORMConfigEnum.DATABASE_USERNAME),
       password: this.config.get<string>(TypeORMConfigEnum.DATABASE_PASSWORD),
       logging: false,

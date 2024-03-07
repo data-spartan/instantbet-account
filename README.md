@@ -1,11 +1,12 @@
 # instantbet-account
 ### ABOUT:
 
-- instantbet-account is responsible for Auth(authN/authZ) and Account services
+- instantbet-account is monorepo containing Auth(authN/authZ), account and notification services
 - RBAC based authN and authZ with rotating refresh tokens, ES256 token signing algorithm with pub/priv keys and email verification
+- RabitMQ based email notifications
 
 Complete BE App README.md is on the following link: 
 - https://github.com/data-spartan/instantbet-BE
 
 ### TECH STACK
-- NestJS, TypeScript, Postgres, Redis, Kafka, Docker
+- Nodejs, NestJS, TypeScript, Postgres, Redis, RabitMq, Docker

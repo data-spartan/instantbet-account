@@ -4,7 +4,7 @@ import * as request from 'supertest';
 import { clearDatabase } from './typeormTest';
 import { UserMock } from './mock/user.mock';
 import * as cookieParser from 'cookie-parser';
-import { AppModule } from '@account/app.module';
+import { AccountModule } from '@account/account.module';
 
 describe('AuthModule (e2e)', () => {
   let app: INestApplication;
@@ -12,7 +12,7 @@ describe('AuthModule (e2e)', () => {
   let MOCK_USER;
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AccountModule],
     }).compile();
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
