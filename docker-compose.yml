@@ -3,6 +3,11 @@ version: '3.9'
 networks:
   instantbet-account:
     driver: bridge
+  instantbet-notifications:
+    driver: bridge
+  # rabitmq is on instanbet-account network and notifications on another
+  instantbet-account_instantbet-account:
+    external: true
 
 services:
   postgres:
@@ -22,7 +27,11 @@ services:
     networks:
       - instantbet-account
     healthcheck:
-      test: exit 0
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 20s
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -122,7 +131,8 @@ services:
     ports:
       - ${NOTIFICATIONS_PORT}:${NOTIFICATIONS_PORT}
     networks:
-      - instantbet-account
+      - instantbet-notifications
+      - instantbet-account_instantbet-account
     volumes:
       - notifications-app:/usr/src/logs
     restart: unless-stopped
