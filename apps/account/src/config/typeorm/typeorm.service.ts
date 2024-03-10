@@ -10,8 +10,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   constructor(private readonly config: ConfigService) {}
   createTypeOrmOptions(): TypeOrmModuleOptions {
     const enviroment = process.env.NODE_ENV;
-    const db_hostname =
-      enviroment !== 'production' ? 'localhost' : process.env.DATABASE_HOSTNAME;
+    const db_hostname = process.env.DATABASE_HOSTNAME;
     const baseDB = this.config.get<string>(TypeORMConfigEnum.DATABASE_NAME);
     const db = enviroment !== 'test' ? baseDB : baseDB.concat('-', 'test');
     return {

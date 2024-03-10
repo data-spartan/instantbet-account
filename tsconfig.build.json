@@ -3,5 +3,16 @@
   "compilerOptions": {
     "outDir": "./dist"
   },
+  "watchOptions": {
+    // dynamic polling instead of systems native events for file changes
+    "watchFile": "dynamicPriorityPolling",
+    "watchDirectory": "dynamicPriorityPolling",
+    "excludeDirectories": [
+      "**/node_modules",
+      "dist",
+      "logs",
+      "uploads"
+    ]
+},
   "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

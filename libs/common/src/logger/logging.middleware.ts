@@ -11,7 +11,6 @@ export class LoggerMiddlewareHttp implements NestMiddleware {
     const ingoingTimestamp = Date.now();
 
     response.on('finish', () => {
-      console.log(response);
       if (!response.locals.errResp) {
         const { statusCode, message } = response.locals.loggingData;
         const processingTime = Date.now() - ingoingTimestamp;
@@ -36,14 +35,11 @@ export class LoggerMiddlewareRpc implements NestMiddleware {
   constructor(private logger: Logger) {}
 
   use(request: Request, response: Response, next: NextFunction): void {
-    console.log(response);
     const { method, baseUrl } = response.req;
     const ingoingTimestamp = Date.now();
     response.on('finish', () => {
-      console.log(response);
       const { statusCode, message } = response.locals.loggingData;
       const processingTime = Date.now() - ingoingTimestamp;
-      // console.log(statusCode);
       this.logger.log({
         statusCode,
         message,

@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"apps/**/*.ts\" \"libs/**/*.ts\"",
     "docker:dev": "docker compose up -d postgres pgadmin",
-    "start": "cross-env NODE_ENV=dev TZ=UTC nest start",
+    "start": "TZ=UTC nest start",
     "start:dev": "cross-env NODE_ENV=dev TZ=UTC nest start --watch",
     "start:dev:mail": "cross-env NODE_ENV=dev TZ=UTC nest start --watch ./apps/notifications",
     "start:debug": "cross-env NODE_ENV=dev TZ=UTC nest start --debug --watch",

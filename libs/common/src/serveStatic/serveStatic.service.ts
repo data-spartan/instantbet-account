@@ -17,10 +17,10 @@ export class ServeStaticConfigService
 
   onModuleInit() {
     const publicFolderUrl = join(
-      this.config.get<string>('APP_ROOT_DIR'),
+      // this.config.get<string>('APP_ROOT_DIR'),
       this.config.get<string>(ServeStaticConfigEnum.APP_FILE_PUBLIC_IMAGES_DIR),
     );
-    if (process.env.NODE_ENV !== 'production' && !existsSync(publicFolderUrl)) {
+    if (!existsSync(publicFolderUrl)) {
       console.warn(`### Serve Static Module ###`);
       console.warn(
         `Folder for static serving doesn't exist. Creating: ${this.config.get<string>(

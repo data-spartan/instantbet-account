@@ -20,4 +20,8 @@ USER node
 # Creates a "dist" folder with the production build
 RUN npm run build notifications
 # Start the server using the production build
-CMD [ "node", "dist/apps/notifications/main.js" ]
+CMD if [ "$NODE_ENV" = "production" ]; \
+then npm run start notifications; \
+else npm run start:dev notifications; \
+fi
+# CMD [ "node", "dist/apps/notifications/main.js" ]
