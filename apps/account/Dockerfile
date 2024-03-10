@@ -24,4 +24,3 @@ CMD if [ "$NODE_ENV" = "production" ]; \
 then npm run start account; \
 else npm run start:dev account; \
 fi
-# CMD [ "node", "dist/apps/account/main.js" ]

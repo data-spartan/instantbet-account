@@ -113,6 +113,8 @@ services:
     volumes:
       - acc-logs:/usr/src/logs
       - acc-uploads:/usr/src/uploads
+      - .:/usr/src
+      - /usr/src/node_modules
     restart: unless-stopped
     depends_on:
       - postgres
@@ -135,6 +137,8 @@ services:
       - instantbet-account_instantbet-account
     volumes:
       - notifications-app:/usr/src/logs
+      - .:/usr/src
+      - /usr/src/node_modules
     restart: unless-stopped
     depends_on:
       - rabbitmq

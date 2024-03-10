@@ -24,4 +24,3 @@ CMD if [ "$NODE_ENV" = "production" ]; \
 then npm run start notifications; \
 else npm run start:dev notifications; \
 fi
-# CMD [ "node", "dist/apps/notifications/main.js" ]
