@@ -10,4 +10,4 @@
 **/*.md
 **/.vscode
 **/.env*
-# **/.keys
+**/.keys

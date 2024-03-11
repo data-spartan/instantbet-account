@@ -101,6 +101,7 @@ services:
     container_name: instanbet-acc-app
     build:
       context: ./
+      target: dev
       dockerfile: ./apps/account/Dockerfile
       # args:
       #   - ENV=${ENV}
@@ -113,6 +114,7 @@ services:
     volumes:
       - acc-logs:/usr/src/logs
       - acc-uploads:/usr/src/uploads
+      - ./.keys:/usr/src/.keys
       - .:/usr/src
       - /usr/src/node_modules
     restart: unless-stopped
@@ -125,6 +127,7 @@ services:
     container_name: instanbet-notifications
     build:
       context: ./
+      target: dev
       dockerfile: ./apps/notifications/Dockerfile
       # args:
       #   - ENV=${ENV}

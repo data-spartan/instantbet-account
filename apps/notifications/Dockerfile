@@ -1,26 +1,36 @@
 # Base image
-FROM node:18.18.0-alpine
+FROM node:18.18.0-alpine As dev
 
-# ARG ENV
-# ENV NODE_ENV ${ENV}
-# Create app directory
 WORKDIR /usr/src
+
 #in case error: EACCES: permission denied mkdir
-RUN mkdir -p logs && chown -R node:node /usr/src/
+RUN chown -R node:node /usr/src/ && mkdir -p usr/src/logs && chown -R node:node usr/src/logs
 
 COPY --chown=node:node package*.json ./
 
 # Install app dependencies
-RUN npm ci && npm cache clean --force
+RUN npm ci --only=dev && npm cache clean --force
 
 # Bundle app source
 COPY --chown=node:node . .
 # RUN chown -R node /usr/src/app
-USER node
-# Creates a "dist" folder with the production build
+
+# Creates a "dist" folder with the dev build
 RUN npm run build notifications
-# Start the server using the production build
-CMD if [ "$NODE_ENV" = "production" ]; \
-then npm run start notifications; \
-else npm run start:dev notifications; \
+
+USER node
+
+CMD if [ "$NODE_ENV" != "production" ]; \
+then npm run start:dev notifications; \
 fi
+
+FROM node:18.18.0-alpine As production
+
+WORKDIR /usr/src
+
+COPY --chown=node:node package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+COPY --chown=node:node --from=dev /usr/src/dist ./dist
+
+CMD ["node", "dist/apps/notifications/main"]
