@@ -15,18 +15,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       ignoreExpiration: false,
       passReqToCallback: true,
+
       secretOrKey: readFileSync(
         configService.get<string>('JWT_PUBLIC_SECRET_ACCESS'),
       ).toString(),
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        (req: Request) => {
-          const authCookie = req?.cookies['auth-cookie'];
-          if (authCookie && authCookie.accessToken) {
-            return req.cookies['auth-cookie'].accessToken;
-          }
-          return null;
-        },
-      ]),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
 

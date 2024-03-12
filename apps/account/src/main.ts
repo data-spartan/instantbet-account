@@ -25,7 +25,7 @@ async function bootstrap() {
   app.set('trust proxy', 1);
   app.use(
     helmet({
-      crossOriginResourcePolicy: { policy: 'cross-origin' },
+      crossOriginResourcePolicy: { policy: 'same-site' },
     }),
   );
   app.use(cookieParser());

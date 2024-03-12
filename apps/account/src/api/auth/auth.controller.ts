@@ -47,8 +47,14 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const { token, id } = await this.authService.login(body);
-    res.cookie('auth-cookie', token, { httpOnly: true, secure: false });
-    return ResponseSuccess(`user ${id} loged in succesfully`);
+    res.cookie('auth-cookie', token.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: true,
+    });
+    return ResponseSuccess(`user ${id} loged in succesfully`, {
+      access_token: token.accessToken,
+    });
   }
 
   @UseGuards(EmailConfirmationGuard)
@@ -75,15 +81,17 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Get('/refresh')
   async refresh(
-    @Req() { sub, accessToken, refreshToken }: RefreshTokenDto,
+    @Req() { sub, access_token, refresh_token }: RefreshTokenDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     res.cookie(
       'auth-cookie',
-      { accessToken, refreshToken },
-      { httpOnly: true, secure: false },
+      { refresh_token },
+      { httpOnly: true, secure: true },
     );
-    return ResponseSuccess(`user ${sub} refreshed tokens succesfully`);
+    return ResponseSuccess(`user ${sub} refreshed tokens succesfully`, {
+      access_token,
+    });
   }
 
   @Post('/forgot-password')

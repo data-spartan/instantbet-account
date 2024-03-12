@@ -144,8 +144,8 @@ export class AuthService implements OnModuleInit {
         HttpStatus.NOT_FOUND,
       );
     }
-    // if (!user.verifiedEmail)
-    //   throw new HttpException('Confirm your email first', HttpStatus.FORBIDDEN);
+    if (!user.verifiedEmail)
+      throw new HttpException('Confirm your email first', HttpStatus.FORBIDDEN);
 
     const token = await this.authHelper.generateLoginTokens(user);
     await this.userRepo.update(user.id, { lastLoginAt: new Date() });

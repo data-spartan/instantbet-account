@@ -29,7 +29,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request) => {
           const authCookie = req?.cookies['auth-cookie'];
-          if (authCookie && authCookie.refreshToken) {
+          if (authCookie?.refreshToken) {
             return req.cookies['auth-cookie'].refreshToken; //this where token is validated aggainst secrets
           }
           return null;
