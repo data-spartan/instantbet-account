@@ -3,10 +3,27 @@ import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './mailer/mail.module';
 import { APP_FILTER } from '@nestjs/core';
 import { ExceptionFilterRpc } from '@app/common';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      validationOptions: Joi.object({
+        NODE_ENV: Joi.string().required(),
+
+        RABBIT_MQ_URI: Joi.string().required(),
+        RABIT_PORT: Joi.number().required(),
+        RABBITMQ_DEFAULT_USER: Joi.string().required(),
+        RABBITMQ_DEFAULT_PASSWORD: Joi.string().required(),
+        RABBIT_MQ_EMAIL_QUEUE: Joi.string().required(),
+
+        S3_KEY: Joi.string().required(),
+        S3_SECRET: Joi.string().required(),
+        S3_ENDPOINT: Joi.string().required(),
+        S3_REGION: Joi.string().required(),
+        S3_BUCKET_NAME: Joi.string().required(),
+        S3_BUCKET_URL: Joi.string().required(),
+      }),
       isGlobal: true,
       /*
       using this.config.get can read proces.env.VAR or .env file if specified
