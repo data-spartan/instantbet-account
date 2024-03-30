@@ -16,10 +16,46 @@ import {
   ServeStaticConfigService,
   TypeORMExceptionFilter,
 } from '@app/common';
+import * as Joi from 'joi';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      validationSchema: Joi.object({
+        JWT_PRIVATE_SECRET_ACCESS: Joi.string().required(),
+        JWT_PUBLIC_SECRET_ACCESS: Joi.string().required(),
+        JWT_PRIVATE_SECRET_REFRESH: Joi.string().required(),
+        JWT_PUBLIC_SECRET_REFRESH: Joi.string().required(),
+        NODE_ENV: Joi.string().required(),
+
+        DATABASE_NAME: Joi.string().required(),
+        DATABASE_USERNAME: Joi.string().required(),
+        DATABASE_PASSWORD: Joi.string().required(),
+        DATABASE_HOSTNAME: Joi.string().required(),
+        DATABASE_TYPE: Joi.string().required(),
+        DATABASE_PORT: Joi.number().required(),
+        DATABASE_SCHEMA: Joi.string().required(),
+
+        RABBIT_MQ_URI: Joi.string().required(),
+        RABIT_PORT: Joi.number().required(),
+        RABBITMQ_DEFAULT_USER: Joi.string().required(),
+        RABBITMQ_DEFAULT_PASSWORD: Joi.string().required(),
+        RABBIT_MQ_EMAIL_QUEUE: Joi.string().required(),
+
+        S3_KEY: Joi.string().required(),
+        S3_SECRET: Joi.string().required(),
+        S3_ENDPOINT: Joi.string().required(),
+        S3_REGION: Joi.string().required(),
+        S3_BUCKET_NAME: Joi.string().required(),
+        S3_BUCKET_URL: Joi.string().required(),
+
+        REDIS_HOSTNAME: Joi.string().required(),
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PASSWORD: Joi.string().required(),
+        REDIS_PORT: Joi.number().required(),
+        COMMANDER_PORT: Joi.number().required(),
+        REDIS_TYPE: Joi.string().required(),
+      }),
       isGlobal: true,
       /*
       using this.config.get can read proces.env.VAR or .env file if specified

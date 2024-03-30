@@ -37,7 +37,7 @@ export class UsersController {
   }
 
   @Patch('/me')
-  @UseInterceptors(FileInterceptor('avatar'))
+  @UseInterceptors(FileInterceptor('avatar')) //i am using static files uploads just for showcase
   async update(
     @Req() { user }: UserContext,
     @UploadedFile() avatar: Express.Multer.File,

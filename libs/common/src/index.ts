@@ -17,10 +17,6 @@ export * from './multer/multer.service';
 export * from './multer/multer.utility';
 export * from './multer/multerLocal.service';
 
-export * from './rabitQueue/rabitmq.module';
-export * from './rabitQueue/rabitmq.publisher';
-export * from './rabitQueue/rabitmq.subscriber';
-
 export * from './redisCache/redisCache.consts';
 export * from './redisCache/redisCache.module';
 export * from './redisCache/redisCache.service';

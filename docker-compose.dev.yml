@@ -101,7 +101,7 @@ services:
     container_name: instanbet-acc-app
     build:
       context: ./
-      target: production
+      target: dev
       dockerfile: ./apps/account/Dockerfile
       # args:
       #   - ENV=${ENV}
@@ -115,6 +115,8 @@ services:
       - acc-logs:/usr/src/logs
       - acc-uploads:/usr/src/uploads
       - ./.keys:/usr/src/.keys
+      - .:/usr/src
+      - /usr/src/node_modules
     restart: unless-stopped
     depends_on:
       - postgres
@@ -125,7 +127,7 @@ services:
     container_name: instanbet-notifications
     build:
       context: ./
-      target: production
+      target: dev
       dockerfile: ./apps/notifications/Dockerfile
       # args:
       #   - ENV=${ENV}
@@ -138,6 +140,8 @@ services:
       - instantbet-account_instantbet-account
     volumes:
       - notifications-app:/usr/src/logs
+      - .:/usr/src
+      - /usr/src/node_modules
     restart: unless-stopped
     depends_on:
       - rabbitmq

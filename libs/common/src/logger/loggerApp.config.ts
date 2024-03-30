@@ -26,8 +26,8 @@ const loggerFactory = (path: string) => {
       new transports.File({
         filename: 'app.log',
         dirname: `${path}/${process.env.LOG_DIR}`,
-        maxsize: Number(process.env.LOG_MAXSIZE),
-        maxFiles: Number(process.env.LOG_MAXFILES),
+        maxsize: +process.env.LOG_MAXSIZE,
+        maxFiles: +process.env.LOG_MAXFILES,
         level: 'info',
       }),
     ],

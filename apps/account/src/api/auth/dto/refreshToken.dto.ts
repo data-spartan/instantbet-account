@@ -5,8 +5,8 @@ export class RefreshTokenDto {
   sub: string;
 
   @IsNotEmpty()
-  accessToken: string;
+  access_token: string;
 
   @IsNotEmpty()
-  refreshToken: string;
+  refresh_token: string;
 }
